@@ -1,4 +1,4 @@
-var Table = require("./list");
+var Table = require("./table");
 
 module.exports = function (config) {
 
