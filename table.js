@@ -292,10 +292,6 @@ function Table(module) {
         removeSelected: removeSelected,
         deselect: deselect,
         selectItem: selectItem,
-        goToNextPage: goToNextPage,
-        goToPrevPage: goToPrevPage,
-        showPage: showPage,
-        emptyPagination: emptyPagination,
         show: show,
         hide: hide
     };
