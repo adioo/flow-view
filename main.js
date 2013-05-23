@@ -1,4 +1,4 @@
-var List = require("./list");
+var Table = require("./list");
 
 module.exports = function (config) {
 
@@ -10,5 +10,5 @@ module.exports = function (config) {
         "delete": "remove"
     }
 
-    List(this, config);
+    Table(this, config);
 }

@@ -1,21 +1,12 @@
 exports.create = function(link, ds, callback) {
 
     M.database.open(ds, function(err, db) {
-
-        if (err) {
-            callback(err);
-            return;
-        }
+        if (err) { return callback(err); }
 
         db.collection(ds.collection, function(err, collection) {
-
-            if (err) {
-                callback(err);
-                return;
-            }
+            if (err) { callback(err); }
 
             collection.insert(link, function(err, docs) {
-
                 if (err) { return callback(err); }
                 if (!docs[0] || !docs.length) { return callback("No data inserted."); }
 
@@ -32,21 +23,12 @@ exports.read = function(link, ds, callback) {
     var options = data.options || {};
 
     M.database.open(ds, function(err, db) {
-
-        if (err) {
-            callback(err);
-            return;
-        }
+        if (err) { return callback(err); }
 
         db.collection(ds.collection, function(err, collection) {
-
-            if (err) {
-                callback(err);
-                return;
-            }
+            if (err) { return callback(err); }
 
             collection.find(filter, options).toArray(function(err, docs) {
-
                 if (err) { return callback(err); }
 
                 callback(null, docs || []);
@@ -59,57 +41,13 @@ exports.update = function(ds, callback) {
     callback(200, { status: "OK" });
 };
 
-exports.getPages = function(link, ds, callback) {
-    
-    var pagesNr = 0;
-    
-    var data = link.data || {};
-    var size = data.size;
-    
-    var filter = data.filter || {};
-    var options = data.options || {};
-        
-    M.database.open(ds, function(err, db) {
-
-        if (err) {
-            callback(err);
-            return;
-        }
-
-        db.collection(ds.collection, function(err, collection) {
-
-            if (err) {
-                callback(err);
-                return;
-            }
-
-            collection.count(filter, function(err, length) {
-
-                if (err) { return callback(err); }
-                
-                pagesNr = Math.ceil(length / size);
-
-                callback(null, pagesNr);
-            });
-        });
-    });
-};
-
 exports.remove = function(link, ds, callback) {
 
     M.database.open(ds, function(err, db) {
-
-        if (err) {
-            callback(err);
-            return;
-        }
+        if (err) { return callback(err); }
 
         db.collection(ds.collection, function(err, collection) {
-
-            if (err) {
-                callback(err);
-                return;
-            }
+            if (err) { return callback(err); }
 
             var key = Object.keys(link.data)[0];
             var values = link.data[key] || [];
@@ -125,7 +63,6 @@ exports.remove = function(link, ds, callback) {
             filter[key] = { $in: values };
 
             collection.remove(filter, function(err, docs) {
-
                 if (err) { return callback(err); }
 
                 callback(null);

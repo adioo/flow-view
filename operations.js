@@ -31,7 +31,7 @@ exports.create = function(link) {
         return;
     }
 
-    // if this is a sample list
+    // if this is a sample table
     if (link.params && link.params.ds === "testDS") {
         var itemData = createSampleItem(link.data);
         link.send(200, itemData);
@@ -96,30 +96,6 @@ exports.update = function(link) {
         }
         
         executeProviderOperation(link, ds, 'update');
-    });
-};
-
-exports.getPages = function(link) {
-    
-    if (link.params && link.params.ds === "testDS") {
-
-        var data = link.data || {};
-        var size = data.size;
-
-        pagesNr = Math.ceil(sampleItems.length / size);
-        
-        link.send(200, "" + (pagesNr || 0));
-        return;
-    }
-
-    M.datasource.resolve(link.params.ds, function(err, ds) {
-
-        if (err) {
-            link.send(400, err);
-            return;
-        }
-
-        executeProviderOperation(link, ds, 'getPages');
     });
 };
 
