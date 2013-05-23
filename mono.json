@@ -1,7 +1,7 @@
 {
     "source": "github",
-    "owner": "jillix",
-    "name": "bind-list",
+    "owner": "IonicaBizau",
+    "name": "bind-table",
     "dependencies": [
         "/main.js",
         "/list.js",
@@ -13,10 +13,9 @@
         { "file": "operations.js", "function": "create" },
         { "file": "operations.js", "function": "read" },
         { "file": "operations.js", "function": "update" },
-        { "file": "operations.js", "function": "remove" },
-        { "file": "operations.js", "function": "getPages" }
+        { "file": "operations.js", "function": "remove" }
     ],
     "templates": {
-        "List with pagination": "templates/list_with_pagination"
+        "List with pagination": "templates/table"
     }
 }
