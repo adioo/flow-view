@@ -70,3 +70,39 @@ exports.remove = function(link, ds, callback) {
         });
     });
 };
+
+exports.getPages = function(link, ds, callback) {
+    
+    var pagesNr = 0;
+    
+    var data = link.data || {};
+    var size = data.size;
+    
+    var filter = data.filter || {};
+    var options = data.options || {};
+        
+    M.database.open(ds, function(err, db) {
+
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        db.collection(ds.collection, function(err, collection) {
+
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            collection.count(filter, function(err, length) {
+
+                if (err) { return callback(err); }
+                
+                pagesNr = Math.ceil(length / size);
+
+                callback(null, pagesNr);
+            });
+        });
+    });
+};

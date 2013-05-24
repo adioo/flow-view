@@ -15,10 +15,7 @@ function executeProviderOperation(link, ds, name) {
     }
 
     provider[name](link, ds, function(err, data) {
-        if (err) {
-            link.send(400, err);
-            return;
-        }
+        if (err) { return link.send(400, err); }
 
         link.send(200, data);
     });
@@ -26,10 +23,7 @@ function executeProviderOperation(link, ds, name) {
 
 exports.create = function(link) {
 
-    if (!link.data) {
-        link.send(400, { status: "Missing data" });
-        return;
-    }
+    if (!link.data) { return link.send(400, { status: "Missing data" }); }
 
     // if this is a sample table
     if (link.params && link.params.ds === "testDS") {
@@ -39,11 +33,7 @@ exports.create = function(link) {
     }
 
     M.datasource.resolve(link.params.ds, function(err, ds) {
-
-        if (err) {
-            link.send(400, err);
-            return;
-        }
+        if (err) { return link.send(400, err); }
 
         executeProviderOperation(link, ds, 'create');
     });
@@ -76,11 +66,7 @@ exports.read = function(link) {
     }
 
     M.datasource.resolve(link.params.ds, function(err, ds) {
-
-        if (err) {
-            link.send(400, err);
-            return;
-        }
+        if (err) { return link.send(400, err); }
 
         executeProviderOperation(link, ds, 'read');
     });
@@ -120,6 +106,30 @@ exports.remove = function(link) {
         }
 
         executeProviderOperation(link, ds, 'remove');
+    });
+};
+
+exports.getPages = function(link) {
+    
+    if (link.params && link.params.ds === "testDS") {
+
+        var data = link.data || {};
+        var size = data.size;
+
+        pagesNr = Math.ceil(sampleItems.length / size);
+        
+        link.send(200, "" + (pagesNr || 0));
+        return;
+    }
+
+    M.datasource.resolve(link.params.ds, function(err, ds) {
+
+        if (err) {
+            link.send(400, err);
+            return;
+        }
+
+        executeProviderOperation(link, ds, 'getPages');
     });
 };
 

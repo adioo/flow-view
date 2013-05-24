@@ -45,3 +45,7 @@ exports.getPages = function(ds, callback) {
 exports.remove = function(ds, callback) {
     callback(null, "Not implemented yet for Orient.");
 };
+
+exports.getPages = function(ds, callback) {
+    callback(null, "Not implemented yet for Orient.")
+};
