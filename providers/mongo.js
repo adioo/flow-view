@@ -99,23 +99,22 @@ exports.getPages = function(link, ds, callback) {
 };
 
 exports.edit = function (link, ds, callback) {
-    
+
     var data = link.data || {};
-
     
-    return callback();
-
     M.database.open(ds, function(err, db) {
         if (err) { return callback(err); }
 
         db.collection(ds.collection, function(err, collection) {
             if (err) { return callback(err); }
-
-            collection.count(filter, function(err, length) {
-                if (err) { return callback(err); }
-                
-                callback(null, pagesNr);
-            });
+            
+            // TODO Update document
+            callback(); 
+           // collection.update(data.dataId,  function(err, length) {
+           //     if (err) { return callback(err); }
+           //     
+           //     callback(null, pagesNr);
+           // });
         });
     });
 }

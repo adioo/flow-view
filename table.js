@@ -602,7 +602,12 @@ function Table(module) {
             type:  config.editable.type,
             pk:    config.editable.pk,
             url:   config.editable.url,
-            title: config.editable.title
+            title: config.editable.title,
+            params: function(params) {
+                var data = params;
+                data.dataId = $(this).parent().attr("id");
+                return data;
+            }
         });
     }
 
