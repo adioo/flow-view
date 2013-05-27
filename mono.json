@@ -16,7 +16,8 @@
         { "file": "operations.js", "function": "read" },
         { "file": "operations.js", "function": "update" },
         { "file": "operations.js", "function": "remove" },
-        { "file": "operations.js", "function": "getPages" }
+        { "file": "operations.js", "function": "getPages" },
+        { "file": "operations.js", "function": "edit" }
     ],
     "templates": {
         "List with pagination": "templates/table"
