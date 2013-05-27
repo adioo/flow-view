@@ -43,6 +43,14 @@ function Table(module) {
         
         if (pagination) { pagination = config.options.pagination; }
 
+        // editable
+        config.editable          = config.editable       || {};
+        config.editable.type     = config.editable.type  || "text";
+        config.editable.pk       = config.editable.pk    || 1;
+        config.editable.title    = config.editable.title || "Edit:";
+        // If no selector provided, then there will be no editable elements on the page
+        config.editable.selector = config.editable.selector || ""; 
+
         return config;
     }
 
@@ -448,6 +456,8 @@ function Table(module) {
             }
 
             var autoselect = config.options.autoselect;
+            setEditable();
+
             switch (autoselect) {
                 case "first":
                     selectItem(data[0]);
@@ -584,6 +594,16 @@ function Table(module) {
     function emptyPagination() {
         $("." + pagination.numbers.classes.item).remove();
         pagination.dom.pages = [];
+    }
+
+    // editable elements
+    function setEditable () {
+        $(config.editable.selector, self.dom).editable({
+            type:  config.editable.type,
+            pk:    config.editable.pk,
+            url:   config.editable.url,
+            title: config.editable.title
+        });
     }
 
     return {
