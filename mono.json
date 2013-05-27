@@ -8,7 +8,8 @@
         "github/jillix/bind/v0.1.0",
         "github/jillix/events/v0.1.0",
         "/editable/js/bootstrap-editable.min.js",
-        "http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"
+        "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js",
+        "//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"
     ],
     "operations": [
         { "file": "operations.js", "function": "create" },
