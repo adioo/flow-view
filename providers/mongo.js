@@ -82,21 +82,12 @@ exports.getPages = function(link, ds, callback) {
     var options = data.options || {};
         
     M.database.open(ds, function(err, db) {
-
-        if (err) {
-            callback(err);
-            return;
-        }
+        if (err) { return callback(err); }
 
         db.collection(ds.collection, function(err, collection) {
-
-            if (err) {
-                callback(err);
-                return;
-            }
+            if (err) { return callback(err); }
 
             collection.count(filter, function(err, length) {
-
                 if (err) { return callback(err); }
                 
                 pagesNr = Math.ceil(length / size);
@@ -106,3 +97,25 @@ exports.getPages = function(link, ds, callback) {
         });
     });
 };
+
+exports.edit = function (link, ds, callback) {
+    
+    var data = link.data || {};
+
+    
+    return callback();
+
+    M.database.open(ds, function(err, db) {
+        if (err) { return callback(err); }
+
+        db.collection(ds.collection, function(err, collection) {
+            if (err) { return callback(err); }
+
+            collection.count(filter, function(err, length) {
+                if (err) { return callback(err); }
+                
+                callback(null, pagesNr);
+            });
+        });
+    });
+}

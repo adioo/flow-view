@@ -75,12 +75,8 @@ exports.read = function(link) {
 exports.update = function(link) {
 
     M.datasource.resolve(link.params.ds, function(err, ds) {
+        if (err) { return link.send(400, err); }
 
-        if (err) {
-            link.send(400, err);
-            return;
-        }
-        
         executeProviderOperation(link, ds, 'update');
     });
 };
@@ -99,11 +95,7 @@ exports.remove = function(link) {
     }
 
     M.datasource.resolve(link.params.ds, function(err, ds) {
-
-        if (err) {
-            link.send(400, err);
-            return;
-        }
+        if (err) { return link.send(400, err); }
 
         executeProviderOperation(link, ds, 'remove');
     });
@@ -123,15 +115,19 @@ exports.getPages = function(link) {
     }
 
     M.datasource.resolve(link.params.ds, function(err, ds) {
-
-        if (err) {
-            link.send(400, err);
-            return;
-        }
+        if (err) { return link.send(400, err); }
 
         executeProviderOperation(link, ds, 'getPages');
     });
 };
+
+exports.edit = function (link) {
+    M.datasource.resolve(link.params.ds, function(err, ds) {
+        if (err) { return link.send(400, err); }
+
+        executeProviderOperation(link, ds, 'edit');
+    });
+}
 
 function createSampleItem(data) {
 
