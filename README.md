@@ -1,4 +1,6 @@
-list
-====
+Bind-list CRUD
+==============
 
-List module for bind
+CRUD Version of bind-list module
+
+No datasources needed.
