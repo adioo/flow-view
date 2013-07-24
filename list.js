@@ -370,12 +370,30 @@ function List(module) {
     }
 
     function getPages(data, callback) {
-        self.link("getPages", { data: data }, function(err, pagesNr) {
+
+        var query = data.filter || {};
+        var options = data.options || {};
+
+        delete options.limit;
+        delete options.skip;
+
+        var crudObj = {
+            t: config.options.template,
+            q: query,
+            o: options,
+            f: {
+                "$all": 1,
+                "_id": 0
+            }
+        }
+
+        self.emit("find", crudObj, function(err, docs) {
             if (err) {
                 callback(err);
                 return;
             }
 
+            var pagesNr = Math.ceil(docs.length / size);
             callback(null, pagesNr);
         });
     }
@@ -450,7 +468,16 @@ function List(module) {
             return;
         }
 
-        self.link(config.crud.read, { data: data }, function(err, data) {
+        var query = data.filter || {};
+        var options = data.options || {};
+
+        var crudObj = {
+            t: config.options.template,
+            q: query,
+            o: options
+        };
+
+        self.emit("find", crudObj, function(err, data) {
 
             if (err) { return; }
 
@@ -479,7 +506,13 @@ function List(module) {
     }
 
     function createItem(itemData) {
-        self.link(config.crud.create, { data: itemData }, function(err, data) {
+
+        var crudObj = {
+            t: config.options.template,
+            d: itemData
+        };
+
+        self.emit("insert", crudObj, function(err, data) {
             if (err) { return; }
             if (!pagination) {
                 render.call(self, data);
@@ -491,9 +524,15 @@ function List(module) {
     }
 
     function _sendRemove(itemData) {
-        var data = {};
-        data[config.options.id] = [itemData[config.options.id]];
-        self.link(config.crud['delete'], { data: data }, function(err, data) {
+        var query = {};
+        query[config.options.id] = [itemData[config.options.id]];
+
+        var crudObj = {
+            t: config.options.template,
+            q: query
+        };
+
+        self.emit("remove", crudObj, function(err, data) {
             if (err) { return; }
             $("#" + itemData[config.options.id]).remove();
         });
@@ -523,7 +562,12 @@ function List(module) {
         filter.data = {};
         filter.data[config.options.id] = ids;
 
-        self.link(config.crud['delete'], filter, function(err, data) {
+        var crudObj = {
+            t: config.options.template,
+            q: filter
+        };
+
+        self.emit("remove", crudObj, function(err, data) {
             if (err) { return; }
             $("." + selectedClass, container).remove();
         });
