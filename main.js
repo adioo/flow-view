@@ -8,7 +8,7 @@ module.exports = function (config) {
         update: "update",
         // "delete" is considered a keywork by some browsers
         "delete": "remove"
-    }
+    };
 
     List(this, config);
-}
+};
