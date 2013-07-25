@@ -378,7 +378,7 @@ function List(module) {
         delete options.skip;
 
         var crudObj = {
-            t: config.options.template,
+            t: config.options.type,
             q: query,
             o: options,
             f: {
@@ -472,7 +472,7 @@ function List(module) {
         var options = data.options || {};
 
         var crudObj = {
-            t: config.options.template,
+            t: config.options.type,
             q: query,
             o: options
         };
@@ -508,7 +508,7 @@ function List(module) {
     function createItem(itemData) {
 
         var crudObj = {
-            t: config.options.template,
+            t: config.options.type,
             d: itemData
         };
 
@@ -528,7 +528,7 @@ function List(module) {
         query[config.options.id] = [itemData[config.options.id]];
 
         var crudObj = {
-            t: config.options.template,
+            t: config.options.type,
             q: query
         };
 
@@ -563,7 +563,7 @@ function List(module) {
         filter.data[config.options.id] = ids;
 
         var crudObj = {
-            t: config.options.template,
+            t: config.options.type,
             q: filter
         };
 
