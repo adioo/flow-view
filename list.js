@@ -393,7 +393,7 @@ function List(module) {
                 return;
             }
 
-            var pagesNr = Math.ceil(docs.length / size);
+            var pagesNr = Math.ceil(docs.length / pagination.size);
             callback(null, pagesNr);
         });
     }
