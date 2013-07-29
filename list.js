@@ -478,14 +478,13 @@ function List(module) {
         };
 
         self.emit("find", crudObj, function(err, data) {
-
-            if (err) { return; }
-
-            renderItems(data);
+            renderItems(err, data);
         });
     }
 
-    function renderItemsFromResult (data) {
+    function renderItemsFromResult (err, data) {
+
+        if (err) { return; }
 
         clearList();
 
@@ -501,10 +500,13 @@ function List(module) {
             // setDisabled(filter, options);
         }
 
-        renderItems(data);
+        renderItems(err, data);
     }
 
     function renderItems (data) {
+
+        if (err) { return; }
+
         if (!data || !data.length) {
             return;
         }
@@ -698,4 +700,4 @@ module.exports = function (module, config) {
     list.init(config);
 
     return list;
-}
+
