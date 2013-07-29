@@ -503,7 +503,7 @@ function List(module) {
         renderItems(err, data);
     }
 
-    function renderItems (data) {
+    function renderItems (err, data) {
 
         if (err) { return; }
 
@@ -700,4 +700,4 @@ module.exports = function (module, config) {
     list.init(config);
 
     return list;
-
+};
