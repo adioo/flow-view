@@ -481,28 +481,51 @@ function List(module) {
 
             if (err) { return; }
 
-            if (!data || !data.length) {
-                return;
-            }
-
-            for (var i in data) {
-                render.call(self, data[i]);
-            }
-
-            var autoselect = config.options.autoselect;
-            switch (autoselect) {
-                case "first":
-                    selectItem(data[0]);
-                    break;
-                case "last":
-                    selectItem(data[data.length - 1]);
-                    break;
-                default:
-                    if (typeof autoselect === "number") {
-                        selectItem(data[autoselect]);
-                    }
-            }
+            renderItems(data);
         });
+    }
+
+    function renderItemsFromResult (data) {
+
+        clearList();
+
+        if (pagination) {
+            alert("Pagination not yet implemented using bind-filter... :-(");
+            // TODO
+            // var size = pagination.size;
+            // var skip = (page - 1) * size;
+
+            // options.limit = options.size || size;
+            // options.skip = options.skip || skip;
+
+            // setDisabled(filter, options);
+        }
+
+        renderItems(data);
+    }
+
+    function renderItems (data) {
+        if (!data || !data.length) {
+            return;
+        }
+
+        for (var i in data) {
+            render.call(self, data[i]);
+        }
+
+        var autoselect = config.options.autoselect;
+        switch (autoselect) {
+            case "first":
+                selectItem(data[0]);
+                break;
+            case "last":
+                selectItem(data[data.length - 1]);
+                break;
+            default:
+                if (typeof autoselect === "number") {
+                    selectItem(data[autoselect]);
+                }
+        }
     }
 
     function createItem(itemData) {
@@ -648,6 +671,7 @@ function List(module) {
     return {
         init: init,
         read: read,
+        renderItemsFromResult: renderItemsFromResult,
         createItem: createItem,
         removeItem: removeItem,
         removeSelected: removeSelected,
