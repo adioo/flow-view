@@ -596,7 +596,7 @@ function List(module) {
 
         var $table = $(config.table, self.dom);
 
-        if ($table.length) {
+        if (!$table.length) {
             console.error("No table set. Set it as config.table in the module config.");
             return;
         }
