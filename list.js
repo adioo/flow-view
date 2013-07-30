@@ -637,6 +637,7 @@ function List(module) {
         }
 
         config.template.binds = binds;
+        config.template.type = "selector";
 
         template = $template.clone();
         $thead.append($htr);
