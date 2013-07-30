@@ -594,12 +594,6 @@ function List(module) {
 
     function setTemplate (templObj) {
 
-        // TODO Hardcode
-        config.table = ".data-table";
-        config.container = ".data-table tbody";
-        container = $(config.container);
-        // end of TODO
-
         var $table = $(config.table, self.dom);
 
         if ($table.length) {
