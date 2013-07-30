@@ -548,6 +548,106 @@ function List(module) {
         });
     }
 
+    /*
+     *  This function will set the template of table
+     *  --------------------------------------------
+     *  Receives as first argument a template object.
+     *
+     *  Example of object:
+     *  {
+     *     _id:                    {type:string, required:true, default:null}
+     *     _ln._id:                {type:string, default:null}
+     *     _ln._tp:                {type:string, default:null}
+     *     _tp:                    {type:string, required:true, default:null}
+     *     address.city:           {type:string, default:null}
+     *     address.street:         {type:string, default:null}
+     *     address.zip:            {type:string, max:9999, min:1000, default:null}
+     *     cc.comments:            {type:string, default:null}
+     *     cc.last_contact.by:     {type:string, default:null}
+     *     cc.last_contact.date:   {type:string, default:null}
+     *     cc.no_call:             {type:string, default:null}
+     *     cc.no_contact:          {type:string, default:null}
+     *     cc.phone_busy:          {type:string, default:null}
+     *     cc.wrong_phone:         {type:string, default:null}
+     *     company:                {type:string, default:null}
+     *     dd.branch:              {type:string, default:null}
+     *     dd.crn:                 {type:string, default:null}
+     *     dd.gf:                  {type:string, default:null}
+     *     dd.region:              {type:string, default:null}
+     *     dd.sow:                 {type:string, default:null}
+     *     email:                  {type:string, default:null}
+     *     lang:                   {type:string, default:null}
+     *     name.first:             {type:string, default:null}
+     *     name.last:              {type:string, default:null}
+     *     name.role:              {type:string, default:null}
+     *     tel:                    {type:string, default:null}
+     *  }
+     *
+     *  The following columns will be generated:
+     *
+     *  +--------------+----------------+-----+-----+
+     *  | address.city | address.street | ... | tel |
+     *  +--------------+----------------+-----+-----+
+     *  |        Here will come the data rows       |
+     *  +-------------------------------------------+
+     * */
+
+    function setTemplate (templObj) {
+
+        // TODO Hardcode
+        config.table = ".data-table";
+        config.container = ".data-table tbody";
+        container = $(config.container);
+        // end of TODO
+
+        var $table = $(config.table, self.dom);
+
+        if ($table.length) {
+            console.error("No table set. Set it as config.table in the module config.");
+            return;
+        }
+
+        var $thead = $table.find("thead");
+        var $htr = $("<tr>");
+        var $template = $("<tr>");
+
+        var binds = [];
+
+        for (var key in templObj) {
+            if (key[0] !== "_") {
+
+                // build heads of table
+                var $th = $("<th>");
+                var label = templObj[key].label;
+                if (label && typeof label === "object") { label = label[M.getLocale()]; }
+                if (!label) { label = key; }
+
+                $th.text(label);
+                $htr.append($th);
+
+                // build the template
+                var $td = $("<td>");
+                $td.attr("data-field", key);
+                $template.append($td);
+
+                // build binds
+                var newBind = {
+                    target: "[data-field='" + key + "']",
+                    html: {
+                        source: key
+                    }
+                };
+
+                binds.push(newBind);
+            }
+        }
+
+        config.template.binds = binds;
+
+        template = $template.clone();
+        $thead.append($htr);
+    }
+
     function _sendRemove(itemData) {
         var query = {};
         query[config.options.id] = [itemData[config.options.id]];
@@ -674,6 +774,7 @@ function List(module) {
         init: init,
         read: read,
         renderItemsFromResult: renderItemsFromResult,
+        setTemplate: setTemplate,
         createItem: createItem,
         removeItem: removeItem,
         removeSelected: removeSelected,
