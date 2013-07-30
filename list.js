@@ -201,7 +201,7 @@ function List(module) {
             Bind.call(self, bindObj, item);
         }
 
-        newItem.attr('id', item[config.options.id]);
+        newItem.attr("id", item[config.options.id]);
     }
 
     function clearList() {
@@ -445,7 +445,7 @@ function List(module) {
 
         data.filter = {};
         // merge the configured filters
-        if (config.options.filters && typeof config.options.filters === 'object') {
+        if (config.options.filters && typeof config.options.filters === "object") {
             for (var i in config.options.filters) {
                 data.filter[i] = (config.options.filters || {})[i];
             }
