@@ -640,6 +640,7 @@ function List(module) {
         config.template.type = "selector";
 
         template = $template.clone();
+        $thead.html("");
         $thead.append($htr);
     }
 
