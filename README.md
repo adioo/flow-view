@@ -1,6 +1,4 @@
-Bind-list CRUD
+Bind-table CRUD
 ==============
 
-CRUD Version of bind-list module
-
-No datasources needed.
+Bind-table module for CRUD.
