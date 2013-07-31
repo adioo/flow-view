@@ -593,6 +593,8 @@ function List(module) {
      * */
 
     function setTemplate (templObj) {
+        // TODO quick fix for the new template format
+        templObj = templObj.schema;
 
         var $table = $(config.table, self.dom);
 
