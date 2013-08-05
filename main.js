@@ -1,3 +1,4 @@
+M.wrap('github/IonicaBizau/bind-list-crud/dev/main.js', function (require, module, exports) {
 var List = require("./list");
 
 module.exports = function (config) {
@@ -12,3 +13,5 @@ module.exports = function (config) {
 
     List(this, config);
 };
+
+return module; });
