@@ -610,32 +610,43 @@ function List(module) {
         var binds = [];
 
         for (var key in templObj) {
+            // do not display core properties
             if (key[0] !== "_") {
-
-                // build heads of table
-                var $th = $("<th>");
-                var label = templObj[key].label;
-                if (label && typeof label === "object") { label = label[M.getLocale()]; }
-                if (!label) { label = key; }
-
-                $th.text(label);
-                $htr.append($th);
-
-                // build the template
-                var $td = $("<td>");
-                $td.attr("data-field", key);
-                $template.append($td);
-
-                // build binds
-                var newBind = {
-                    target: "[data-field='" + key + "']",
-                    html: {
-                        source: key
-                    }
-                };
-
-                binds.push(newBind);
+                continue;
             }
+
+            // do not display hidden properties
+            if (templObj[key].hidden) {
+                continue;
+            }
+
+            // build heads of table
+            var $th = $("<th>");
+            // with i18n labels from the schema
+            var label = templObj[key].label;
+            if (label && typeof label === "object") {
+                label = label[M.getLocale()];
+            }
+            // if no label defined in the schema or no label for the current locale, use the key
+            label = label || key;
+
+            $th.text(label);
+            $htr.append($th);
+
+            // build the template
+            var $td = $("<td>");
+            $td.attr("data-field", key);
+            $template.append($td);
+
+            // build binds
+            var newBind = {
+                target: "[data-field='" + key + "']",
+                html: {
+                    source: key
+                }
+            };
+
+            binds.push(newBind);
         }
 
         config.template.binds = binds;
@@ -800,3 +811,4 @@ module.exports = function (module, config) {
 
     return list;
 };
+
