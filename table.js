@@ -609,9 +609,11 @@ function List(module) {
 
         var binds = [];
 
+        var orderedFields = [];
+
         for (var key in templObj) {
             // do not display core properties
-            if (key[0] !== "_") {
+            if (key[0] === "_") {
                 continue;
             }
 
@@ -620,8 +622,6 @@ function List(module) {
                 continue;
             }
 
-            // build heads of table
-            var $th = $("<th>");
             // with i18n labels from the schema
             var label = templObj[key].label;
             if (label && typeof label === "object") {
@@ -630,19 +630,36 @@ function List(module) {
             // if no label defined in the schema or no label for the current locale, use the key
             label = label || key;
 
-            $th.text(label);
+            orderedFields.push({ key: key, label: label, value: templObj[key]});
+        }
+
+        orderedFields.sort(function(f1, f2) {
+            if (f1.value.order < f2.value.order) {
+                return -1;
+            } else if (f1.value.order > f2.value.order) {
+                return 1;
+            } else {
+                return f1.label <= f2.label ? -1 : 1;
+            }
+        });
+
+        for (var i = 0; i < orderedFields.length; ++i) {
+            // build heads of table
+            var $th = $("<th>");
+
+            $th.text(orderedFields[i].label);
             $htr.append($th);
 
             // build the template
             var $td = $("<td>");
-            $td.attr("data-field", key);
+            $td.attr("data-field", orderedFields[i].key);
             $template.append($td);
 
             // build binds
             var newBind = {
-                target: "[data-field='" + key + "']",
+                target: "[data-field='" + orderedFields[i].key + "']",
                 html: {
-                    source: key
+                    source: orderedFields[i].key
                 }
             };
 
