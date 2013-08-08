@@ -659,7 +659,8 @@ function List(module) {
             var newBind = {
                 target: "[data-field='" + orderedFields[i].key + "']",
                 html: {
-                    source: orderedFields[i].key
+                    source: orderedFields[i].key,
+                    default: ''
                 }
             };
 
