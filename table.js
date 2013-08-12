@@ -13,6 +13,9 @@ function List(module) {
 
     function processConfig(config) {
         config.template.binds = config.template.binds || [];
+        config.cache = {
+            templateBinds: JSON.parse(JSON.stringify(config.template.binds))
+        };
 
         config.options = config.options || {};
         config.options.sort = config.options.sort || {};
@@ -667,7 +670,7 @@ function List(module) {
             binds.push(newBind);
         }
 
-        config.template.binds = binds;
+        config.template.binds = config.cache.templateBinds.concat(binds);
         config.template.type = "selector";
 
         template = $template.clone();
@@ -829,4 +832,3 @@ module.exports = function (module, config) {
 
     return list;
 };
-
