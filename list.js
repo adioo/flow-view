@@ -1,4 +1,3 @@
-M.wrap('github/IonicaBizau/bind-list-crud/dev/list.js', function (require, module, exports) {
 var Bind = require("github/jillix/bind");
 var Events = require("github/jillix/events");
 
@@ -202,7 +201,7 @@ function List(module) {
             Bind.call(self, bindObj, item);
         }
 
-        newItem.attr('id', item[config.options.id]);
+        newItem.attr("id", item[config.options.id]);
     }
 
     function clearList() {
@@ -379,11 +378,12 @@ function List(module) {
         delete options.skip;
 
         var crudObj = {
-            t: config.options.type,
+            t: config.options.template,
             q: query,
             o: options,
             f: {
-                "$all": 1,
+                // this will make sure we receive only empty objects (if the dummy property does not exist)
+                "_dummy_property": 1,
                 "_id": 0
             }
         }
@@ -446,7 +446,7 @@ function List(module) {
 
         data.filter = {};
         // merge the configured filters
-        if (config.options.filters && typeof config.options.filters === 'object') {
+        if (config.options.filters && typeof config.options.filters === "object") {
             for (var i in config.options.filters) {
                 data.filter[i] = (config.options.filters || {})[i];
             }
@@ -473,14 +473,12 @@ function List(module) {
         var options = data.options || {};
 
         var crudObj = {
-            t: config.options.type,
+            t: config.options.template,
             q: query,
             o: options
         };
 
-        // TODO
-        // self.emit("find", crudObj, function(err, data) {
-        self.emit("getTemplates", [], function(err, data) {
+        self.emit("find", crudObj, function(err, data) {
             renderItems(err, data);
         });
     }
@@ -705,4 +703,3 @@ module.exports = function (module, config) {
     return list;
 };
 
-return module; });
