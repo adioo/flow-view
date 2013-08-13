@@ -1,4 +1,3 @@
-M.wrap('github/IonicaBizau/bind-table-crud/dev/table.js', function (require, module, exports) {
 var Bind = require("github/jillix/bind");
 var Events = require("github/jillix/events");
 
@@ -801,29 +800,41 @@ function List(module) {
     }
 
     function getSelected () {
-        // TODO
-        return [];
+
+        var $selected = $("." + config.options.classes.item + "." + config.options.classes.selected);
+
+        // var selectedData = [];
+        // $selected.each(function () {
+        // // TODO How do we get the dataItem?
+        // //    selectedData = $(this).
+        // });
+
+        return $selected;
     }
 
     function selectNext () {
 
-        if (config.selection !== "single") {
+        if (config.options.selection !== "single") {
             return console.error("Cannot select next if selection is non single.");
         }
 
-        var selected = getSelected();
-
-        // TODO
-        // selectItem();
-
+        var $selected = getSelected();
+        var $next = $selected.next();
+        // TODO Next page
+        if (!$next.length) { return; }
+        $next.click();
     }
 
     function selectPrev () {
-        if (config.selection !== "single") {
+        if (config.options.selection !== "single") {
             return console.error("Cannot select next if selection is non single.");
         }
-        //TODO
-        // selectItem();
+
+        var $selected = getSelected();
+        var $prev = $selected.prev();
+        // TODO Prev page
+        if (!$prev.length) { return; }
+        $prev.click();
     }
 
     function emptyPagination() {
@@ -836,7 +847,6 @@ function List(module) {
         read: read,
         renderItemsFromResult: renderItemsFromResult,
         getSelected: getSelected,
-        nextItem: nextItem,
         selectNext: selectNext,
         selectPrev: selectPrev,
         setTemplate: setTemplate,
@@ -867,5 +877,3 @@ module.exports = function (module, config) {
 
     return list;
 };
-
-return module; });

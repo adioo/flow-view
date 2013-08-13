@@ -1,4 +1,3 @@
-M.wrap('github/IonicaBizau/bind-table-crud/dev/main.js', function (require, module, exports) {
 var List = require("./table");
 
 module.exports = function (config) {
@@ -13,5 +12,3 @@ module.exports = function (config) {
 
     List(this, config);
 };
-
-return module; });
