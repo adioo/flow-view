@@ -1,3 +1,4 @@
+M.wrap('github/IonicaBizau/bind-table-crud/dev/table.js', function (require, module, exports) {
 var Bind = require("github/jillix/bind");
 var Events = require("github/jillix/events");
 
@@ -799,6 +800,32 @@ function List(module) {
         read(fil, ops);
     }
 
+    function getSelected () {
+        // TODO
+        return [];
+    }
+
+    function selectNext () {
+
+        if (config.selection !== "single") {
+            return console.error("Cannot select next if selection is non single.");
+        }
+
+        var selected = getSelected();
+
+        // TODO
+        // selectItem();
+
+    }
+
+    function selectPrev () {
+        if (config.selection !== "single") {
+            return console.error("Cannot select next if selection is non single.");
+        }
+        //TODO
+        // selectItem();
+    }
+
     function emptyPagination() {
         $("." + pagination.numbers.classes.item).remove();
         pagination.dom.pages = [];
@@ -808,6 +835,10 @@ function List(module) {
         init: init,
         read: read,
         renderItemsFromResult: renderItemsFromResult,
+        getSelected: getSelected,
+        nextItem: nextItem,
+        selectNext: selectNext,
+        selectPrev: selectPrev,
         setTemplate: setTemplate,
         createItem: createItem,
         removeItem: removeItem,
@@ -836,3 +867,5 @@ module.exports = function (module, config) {
 
     return list;
 };
+
+return module; });
