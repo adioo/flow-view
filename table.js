@@ -173,9 +173,12 @@ function List(module) {
 
         Events.call(self, config);
 
-
         if (config.options.autofetch) {
-            self.read({}, { sort: config.options.sort });
+            self.read({}, { sort: config.options.sort }, function() {
+                self.emit("ready");
+            });
+        } else {
+            self.emit("ready");
         }
     }
 
@@ -415,7 +418,7 @@ function List(module) {
 
     var oldFilter, newFilter;
 
-    function read(fil, ops) {
+    function read(fil, ops, callback) {
 
         fil = fil || {};
         ops = ops || {};
@@ -482,6 +485,7 @@ function List(module) {
 
         self.emit("find", crudObj, function(err, data) {
             renderItems(err, data);
+            callback(err, data);
         });
     }
 
