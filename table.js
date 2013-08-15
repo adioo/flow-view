@@ -749,7 +749,7 @@ function List(module) {
 
             case "single":
                 var currentItem = $("#" + dataItem[config.options.id], container);
-                if (currentItem.hasClass(selectedClass)) {
+                if (currentItem.hasClass(selectedClass) && config.options.safeSelection) {
                     break;
                 }
 
