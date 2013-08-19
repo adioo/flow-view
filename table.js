@@ -1,5 +1,6 @@
 var Bind = require("github/jillix/bind");
 var Events = require("github/jillix/events");
+var Sort = require("./sort");
 
 function List(module) {
 
