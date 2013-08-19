@@ -50,6 +50,10 @@ function List(module) {
         optClasses.selected = optClasses.selected || "selected";
         config.options.classes = optClasses;
 
+        if (config.options.sort) {
+            Sort.init(self);
+        }
+
         return config;
     }
 
@@ -655,7 +659,29 @@ function List(module) {
             // build heads of table
             var $th = $("<th>");
 
-            $th.text(orderedFields[i].label);
+            var cField = orderedFields[i];
+            var label = cField.label;
+
+            if (!config.options.sort) {
+                $th.text(label);
+            }
+            else {
+                var $span = $("<span>").addClass("sort");
+
+                // TODO Does template contain a sort object?
+                //      If yes, show it!
+                var $nonSorted = $span.clone().text(label);
+                var $sort1 = $span.clone().text("▲ " + label).hide();
+                var $sort2 = $span.clone().text("▼ " + label).hide();
+
+                $nonSorted[0].sort = [];
+                $sort1[0].sort = [[cField.key, 1]];
+                $sort2[0].sort = [[cField.key, 1]];
+
+                $th.append($nonSorted);
+                $th.append($sort1);
+                $th.append($sort2);
+            }
             $htr.append($th);
 
             // build the template
