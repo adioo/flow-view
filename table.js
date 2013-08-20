@@ -663,7 +663,7 @@ function List(module) {
             var cField = orderedFields[i];
             var label = cField.label;
 
-            Sort.setSortCount(2);
+            Sort.setSortCount(orderedFields.length);
 
             if (!config.options.sort) {
                 $th.text(label);

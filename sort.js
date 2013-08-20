@@ -8,9 +8,10 @@ var sortSelector = "th span." + sortClass;
 function init (module, config) {
     self = module;
 
-    $(self.dom).on("click", sortSelector, function () {
+    $(self.dom).on("click", "th", function (e) {
 
         var $current = $(this);
+        $current = $current.find("." + sortClass);
         var $th = $current.parent();
 
         var $current = $th.find("." + sortClass + ":visible");
@@ -20,7 +21,8 @@ function init (module, config) {
         var sort = $next.data(sortClass);
         if (!sort) { return; }
 
-        setSort (sort);
+        setSort (sort, !e.ctrlKey);
+
         updateUI();
 
         // sort, reset, callFind
@@ -57,10 +59,6 @@ function clear () {
 }
 
 function setSortCount (sortCountToSet) {
-    if (sortCount > 2) {
-        return console.error("sortCount cannot be greater than 2.");
-    }
-
     sortCount = sortCountToSet;
 }
 
