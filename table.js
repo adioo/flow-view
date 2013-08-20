@@ -675,16 +675,9 @@ function List(module) {
                 spans.push($span.clone().text("▲ " + label));
 
                 var sort = templateObj.sort;
-                if (sort && sort[0]) {
-                    var key = sort[0][0];
-
-                    if (key === cField.key) {
-                        var direction = sort[0][1] === 1 ? 1 : 2;
-                        spans[direction].show();
-                    }
-                    else {
-                        spans[0].show();
-                    }
+                if (sort && sort[0] && sort[0][0] === cField.key) {
+                    var direction = sort[0][1] === 1 ? 1 : 2;
+                    spans[direction].show();
                 }
                 else {
                     spans[0].show();
