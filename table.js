@@ -663,6 +663,8 @@ function List(module) {
             var cField = orderedFields[i];
             var label = cField.label;
 
+            Sort.setSortCount(2);
+
             if (!config.options.sort) {
                 $th.text(label);
             }
@@ -682,7 +684,7 @@ function List(module) {
 
                 var sort = templateObj.sort;
                 if (sort && sort[0] && sort[0][0] === cField.key) {
-                    Sort.set(sort[0]);
+                    Sort.setSort(sort[0]);
                     var direction = sort[0][1] === 1 ? 1 : 2;
                     spans[direction].show();
                 }
@@ -690,7 +692,7 @@ function List(module) {
                     spans[0].show();
                 }
 
-                spans[0].data("sort", [cField.key,  0]).addClass("non-sorted");
+                spans[0].data("sort", [cField.key, 0]).addClass("sort0");
                 spans[1].data("sort", [cField.key,  1]).addClass("sort1");
                 spans[2].data("sort", [cField.key, -1]).addClass("sort-1");
 

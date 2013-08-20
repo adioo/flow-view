@@ -20,8 +20,7 @@ function init (module, config) {
         var sort = $next.data(sortClass);
         if (!sort) { return; }
 
-        // TODO Don't reset sort
-        set(sort, true);
+        setSort (sort);
         updateUI();
 
         // sort, reset, callFind
@@ -29,12 +28,26 @@ function init (module, config) {
     });
 }
 
-function set (sort, reset) {
+function setSort (sort, reset) {
     if (reset) {
         clear();
-        set (sort, false);
+        setSort (sort, false);
     } else {
-        // TODO Remove duplicate keys
+        if (!sort.length) { return; }
+
+        for (var i = 0; i < sortCache.sort.length; ++i) {
+            if (sort[0] === sortCache.sort[i][0]) {
+                sortCache.sort.splice(i, 1);
+                break;
+            }
+        }
+
+        if (sort[1] === 0) { return; }
+
+        if (sortCache.sort.length >= sortCount) {
+            sortCache.sort.splice(0, 1);
+        }
+
         sortCache.sort.push(sort);
     }
 }
@@ -56,7 +69,7 @@ function updateUI () {
     $(sortSelector, self.dom).hide();
 
     // show non-sorted
-    $(sortSelector + ".non-sorted", self.dom).show();
+    $(sortSelector + ".sort0", self.dom).show();
 
     for (var i = 0; i < sortCache.sort.length; ++i) {
         var cSort = sortCache.sort[i];
@@ -69,7 +82,7 @@ module.exports = {
     init: init,
     clear: clear,
     setSortCount: setSortCount,
-    set: set
+    setSort: setSort
 };
 
 return module; });
