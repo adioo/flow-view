@@ -671,8 +671,8 @@ function List(module) {
                 var spans = [];
 
                 spans.push($span.clone().text(label));
-                spans.push($span.clone().text("▲ " + label));
                 spans.push($span.clone().text("▼ " + label));
+                spans.push($span.clone().text("▲ " + label));
 
                 var sort = templateObj.sort;
                 if (sort && sort[0]) {
