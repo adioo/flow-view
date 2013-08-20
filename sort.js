@@ -14,7 +14,7 @@ module.exports = {
 
             $current.hide();
             $next.show();
-            var sort = $next[0].sort;
+            var sort = $next.data("sort");
             if (!sort) { return; }
 
             self.emit("sort", sort);

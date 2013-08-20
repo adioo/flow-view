@@ -604,10 +604,9 @@ function List(module) {
      *  +-------------------------------------------+
      * */
 
-    function setTemplate (templObj) {
-        // TODO quick fix for the new template format
-        templObj = templObj.schema;
+    function setTemplate (templateObj) {
 
+        templObj = templateObj.schema;
         var $table = $(config.table, self.dom);
 
         if (!$table.length) {
@@ -658,7 +657,6 @@ function List(module) {
         for (var i = 0; i < orderedFields.length; ++i) {
             // build heads of table
             var $th = $("<th>");
-
             var cField = orderedFields[i];
             var label = cField.label;
 
@@ -666,21 +664,37 @@ function List(module) {
                 $th.text(label);
             }
             else {
-                var $span = $("<span>").addClass("sort");
+                // sort settings
+                var $span = $("<span>").addClass("sort").hide();
 
-                // TODO Does template contain a sort object?
-                //      If yes, show it!
-                var $nonSorted = $span.clone().text(label);
-                var $sort1 = $span.clone().text("▲ " + label).hide();
-                var $sort2 = $span.clone().text("▼ " + label).hide();
+                // nonsorted, sorted1, sorted2
+                var spans = [];
 
-                $nonSorted[0].sort = [];
-                $sort1[0].sort = [[cField.key, 1]];
-                $sort2[0].sort = [[cField.key, 1]];
+                spans.push($span.clone().text(label));
+                spans.push($span.clone().text("▲ " + label));
+                spans.push($span.clone().text("▼ " + label));
 
-                $th.append($nonSorted);
-                $th.append($sort1);
-                $th.append($sort2);
+                var sort = templateObj.sort;
+                if (sort && sort[0]) {
+                    var key = sort[0][0];
+
+                    if (key === cField.key) {
+                        var direction = sort[0][1] === 1 ? 1 : 2;
+                        spans[direction].show();
+                    }
+                    else {
+                        spans[0].show();
+                    }
+                }
+                else {
+                    spans[0].show();
+                }
+
+                spans[0].data("sort", { sort: [] });
+                spans[1].data("sort", { sort: [[cField.key, 1]] });
+                spans[2].data("sort", { sort: [[cField.key, -1]] });
+
+                $th.append(spans);
             }
             $htr.append($th);
 
