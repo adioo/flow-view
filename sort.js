@@ -17,7 +17,8 @@ module.exports = {
             var sort = $next.data("sort");
             if (!sort) { return; }
 
-            self.emit("sort", sort);
+            // sort, reset, callFind
+            self.emit("sort", sort, false, true);
         });
     }
 };
