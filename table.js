@@ -1,3 +1,4 @@
+M.wrap('github/IonicaBizau/bind-table-crud/dev/table.js', function (require, module, exports) {
 var Bind = require("github/jillix/bind");
 var Events = require("github/jillix/events");
 var Sort = require("./sort");
@@ -606,6 +607,8 @@ function List(module) {
 
     function setTemplate (templateObj) {
 
+        Sort.clear();
+
         templObj = templateObj.schema;
         var $table = $(config.table, self.dom);
 
@@ -665,17 +668,21 @@ function List(module) {
             }
             else {
                 // sort settings
-                var $span = $("<span>").addClass("sort").hide();
+                var $span = $("<span>")
+                                .addClass("sort")
+                                .attr("data-key-sort", cField.key)
+                                .hide();
 
                 // nonsorted, sorted1, sorted2
                 var spans = [];
 
                 spans.push($span.clone().text(label));
-                spans.push($span.clone().text("▼ " + label));
                 spans.push($span.clone().text("▲ " + label));
+                spans.push($span.clone().text("▼ " + label));
 
                 var sort = templateObj.sort;
                 if (sort && sort[0] && sort[0][0] === cField.key) {
+                    Sort.set(sort[0]);
                     var direction = sort[0][1] === 1 ? 1 : 2;
                     spans[direction].show();
                 }
@@ -683,9 +690,9 @@ function List(module) {
                     spans[0].show();
                 }
 
-                spans[0].data("sort", { sort: [] });
-                spans[1].data("sort", { sort: [[cField.key, 1]] });
-                spans[2].data("sort", { sort: [[cField.key, -1]] });
+                spans[0].data("sort", [cField.key,  0]).addClass("non-sorted");
+                spans[1].data("sort", [cField.key,  1]).addClass("sort1");
+                spans[2].data("sort", [cField.key, -1]).addClass("sort-1");
 
                 $th.append(spans);
             }
@@ -911,3 +918,5 @@ module.exports = function (module, config) {
 
     return list;
 };
+
+return module; });
