@@ -714,6 +714,10 @@ function List(module) {
                 }
             };
 
+            if (orderedFields[i].value.filter) {
+                newBind.html.filter = orderedFields[i].value.filter;
+            }
+
             binds.push(newBind);
         }
 
