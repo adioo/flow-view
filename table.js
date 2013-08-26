@@ -187,13 +187,19 @@ function List(module) {
             self.emit("ready");
         }
 
-        $(self.dom).on("keyup", "tr:focus", function (event) {
+        $(self.dom).on("keydown", "tr:focus", function (event) {
             switch (event.keyCode) {
                 case 38:
                     focusPrev();
                     break;
                 case 40:
                     focusNext();
+                    break;
+                case 37:
+                    selectPrev();
+                    break;
+                case 39:
+                    selectNext();
                     break;
                 case 13:
                     $("tr:focus").click();
@@ -635,7 +641,7 @@ function List(module) {
         var $htr = $("<tr>");
         var $template = $("<tr>");
 
-        $template.attr("tabindex", "2");
+        $template.attr("tabindex", config.options.tabindex);
 
         var binds = [];
 
@@ -905,6 +911,7 @@ function List(module) {
         if($focused.length === 0) { return; }
 
         var $next = $focused.next();
+        if(!$next.length) { return; }
         $focused.blur();
         $next.focus();
     }
@@ -914,6 +921,7 @@ function List(module) {
         if($focused.length === 0) { return; }
 
         var $prev = $focused.prev();
+        if(!$prev.length) { return; }
         $focused.blur();
         $prev.focus();
     }
