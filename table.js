@@ -186,6 +186,20 @@ function List(module) {
         } else {
             self.emit("ready");
         }
+
+        $(self.dom).on("keyup", "tr:focus", function (event) {
+            switch (event.keyCode) {
+                case 38:
+                    focusPrev();
+                    break;
+                case 40:
+                    focusNext();
+                    break;
+                case 13:
+                    $("tr:focus").click();
+                    break;
+            }
+        });
     }
 
     function render(item) {
@@ -621,6 +635,8 @@ function List(module) {
         var $htr = $("<tr>");
         var $template = $("<tr>");
 
+        $template.attr("tabindex", "2");
+
         var binds = [];
 
         var orderedFields = [];
@@ -884,6 +900,24 @@ function List(module) {
         $prev.click();
     }
 
+    function focusNext () {
+        var $focused = $("tr:focus");
+        if($focused.length === 0) { return; }
+
+        var $next = $focused.next();
+        $focused.blur();
+        $next.focus();
+    }
+
+    function focusPrev () {
+        var $focused = $("tr:focus");
+        if($focused.length === 0) { return; }
+
+        var $prev = $focused.prev();
+        $focused.blur();
+        $prev.focus();
+    }
+
     function emptyPagination() {
         $("." + pagination.numbers.classes.item).remove();
         pagination.dom.pages = [];
@@ -896,6 +930,8 @@ function List(module) {
         getSelected: getSelected,
         selectNext: selectNext,
         selectPrev: selectPrev,
+        focusNext: focusNext,
+        focusPrev: focusPrev,
         setTemplate: setTemplate,
         createItem: createItem,
         removeItem: removeItem,
