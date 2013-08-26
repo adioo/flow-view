@@ -221,20 +221,34 @@ function List(module) {
 
         $(self.dom).on("keydown", "tr:focus", function (event) {
             switch (event.keyCode) {
+                // key up
                 case 38:
-                    focusPrev();
+                    if ($(this).prev().length) {
+                        focusPrev();
+                        event.preventDefault();
+                    }
                     break;
+                // key down
                 case 40:
-                    focusNext();
+                    if ($(this).next().length) {
+                        focusNext();
+                        event.preventDefault();
+                    }
                     break;
+                // key left
                 case 37:
                     selectPrev();
+                    event.preventDefault();
                     break;
+                // key right
                 case 39:
                     selectNext();
+                    event.preventDefault();
                     break;
+                // enter
                 case 13:
                     $("tr:focus").click();
+                    event.preventDefault();
                     break;
             }
         });
