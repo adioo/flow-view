@@ -14,6 +14,8 @@ function List(module) {
     var page = 1;
 
     function processConfig(config) {
+        config.binds = config.binds || [];
+        config.template = config.template || {};
         config.template.binds = config.template.binds || [];
         config.cache = {
             templateBinds: JSON.parse(JSON.stringify(config.template.binds))
@@ -53,6 +55,36 @@ function List(module) {
 
         if (config.options.sort) {
             Sort.init(self);
+        }
+
+        if (config.options.infiniteScroll) {
+            config.options.infiniteScroll.skip = 0;
+
+            if (!config.options.infiniteScroll.automatic) {
+
+                // insert a new bind in binds
+                config.binds.push({
+                    "target": ".load-more-btn",
+                    "on": [{
+                        "name": "click",
+                        "handler": "fetchNext"
+                    }]
+                });
+
+                // TODO Configurable from descriptor
+                var $infiniteScroll = $(".infinite-scroll", self.dom);
+                var $loadMoreBtn = $infiniteScroll.find(".load-more-btn");
+                var $loading = $loadMoreBtn.find(".loading");
+                var $loaded = $loadMoreBtn.find(".loaded");
+
+                config.options.infiniteScroll.domRefs = {
+                    container: $infiniteScroll,
+                    loadMoreBtn: $loadMoreBtn,
+                    loading: $loading,
+                    loaded: $loaded
+                }
+            }
+            // TODO Automatic scroll
         }
 
         return config;
@@ -519,7 +551,21 @@ function List(module) {
 
         if (err) { return; }
 
-        clearList();
+        if (!config.options.infiniteScroll || (config.options.infiniteScroll && !config.options.infiniteScroll.skip)) {
+            clearList();
+        }
+
+        if (config.options.infiniteScroll) {
+            // update ui
+            if (!config.options.infiniteScroll.automatic) {
+                var infDomRefs = config.options.infiniteScroll.domRefs;
+                infDomRefs.loading.hide();
+                infDomRefs.loaded.show();
+                infDomRefs.loadMoreBtn.removeAttr("disabled");
+            } else {
+                // TODO Automatic scroll
+            }
+        }
 
         if (pagination) {
             alert("Pagination not yet implemented using bind-filter... :-(");
@@ -628,6 +674,10 @@ function List(module) {
     function setTemplate (templateObj) {
 
         Sort.clear();
+
+        if (config.options.infiniteScroll) {
+            config.options.infiniteScroll.skip = 0;
+        }
 
         templObj = templateObj.schema;
         var $table = $(config.table, self.dom);
@@ -926,6 +976,42 @@ function List(module) {
         $prev.focus();
     }
 
+    /**
+     *  Load more data in data table
+     *
+     *  This can be used only when infinite scroll is set
+     *
+     * */
+    function fetchNext () {
+        config.options.infiniteScroll.skip += config.options.infiniteScroll.count;
+
+        var options = {
+            skip: config.options.infiniteScroll.skip,
+            limit: config.options.infiniteScroll.count
+        };
+
+        if (!config.options.infiniteScroll.automatic) {
+            var infDomRefs = config.options.infiniteScroll.domRefs;
+            infDomRefs.loading.show();
+            infDomRefs.loaded.hide();
+            infDomRefs.loadMoreBtn.attr("disabled", "");
+        } else {
+            // TODO Automatic scroll
+        }
+
+        // set bind filter options
+        //  reset: false,
+        //  callFind: true
+        //
+        //  The bind-crud-table module will listen for `result` event emited
+        //  by bind-filter and will render the items (renderItemsFromResult function)
+        self.emit("setOptions", options, false, true);
+    }
+
+    function clearSkip () {
+        config.options.infiniteScroll.skip = 0;
+    }
+
     function emptyPagination() {
         $("." + pagination.numbers.classes.item).remove();
         pagination.dom.pages = [];
@@ -948,6 +1034,8 @@ function List(module) {
         selectItem: selectItem,
         goToNextPage: goToNextPage,
         goToPrevPage: goToPrevPage,
+        fetchNext: fetchNext,
+        clearSkip: clearSkip,
         showPage: showPage,
         emptyPagination: emptyPagination,
         show: show,

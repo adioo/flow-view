@@ -26,7 +26,7 @@ function init (module, config) {
         updateUI();
 
         // sort, reset, callFind
-        self.emit("sort", sortCache, false, true);
+        self.emit("setOptions", sortCache, false, true);
     });
 }
 
