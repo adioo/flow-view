@@ -12,6 +12,7 @@ function List(module) {
     var pagination;
     var paginationNumbers = false;
     var page = 1;
+    var tabindexExists = false;
 
     function processConfig(config) {
         config.binds = config.binds || [];
@@ -272,6 +273,11 @@ function List(module) {
             .addClass(config.options.classes.item)
             .appendTo(container)
             .show();
+
+        if(tabindexExists === false) {
+            newItem.attr("tabindex", config.options.tabindex);
+            tabindexExists = true;
+        }
 
         for (var i in config.template.binds) {
             var bindObj = config.template.binds[i];
@@ -604,6 +610,8 @@ function List(module) {
             return;
         }
 
+        tabindexExists = false;
+
         for (var i in data) {
             render.call(self, data[i]);
         }
@@ -705,7 +713,7 @@ function List(module) {
         var $htr = $("<tr>");
         var $template = $("<tr>");
 
-        $template.attr("tabindex", config.options.tabindex);
+        //$template.attr("tabindex", config.options.tabindex);
 
         var binds = [];
 
@@ -974,9 +982,12 @@ function List(module) {
         var $focused = $("tr:focus");
         if($focused.length === 0) { return; }
 
-        var $next = $focused.next();
+        var $next = $focused.next("tr");
+        
         if(!$next.length) { return; }
-        $focused.blur();
+
+        $focused.removeAttr("tabindex");
+        $next.attr("tabindex", config.options.tabindex);
         $next.focus();
     }
 
@@ -984,9 +995,11 @@ function List(module) {
         var $focused = $("tr:focus");
         if($focused.length === 0) { return; }
 
-        var $prev = $focused.prev();
+        var $prev = $focused.prev("tr");
         if(!$prev.length) { return; }
-        $focused.blur();
+
+        $focused.removeAttr("tabindex");
+        $prev.attr("tabindex", config.options.tabindex);
         $prev.focus();
     }
 
