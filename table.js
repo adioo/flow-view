@@ -236,6 +236,16 @@ function List(module) {
                         event.preventDefault();
                     }
                     break;
+                // enter
+                case 13:
+                    $("tr:focus").click();
+                    event.preventDefault();
+                    break;
+            }
+        });
+
+        $(self.dom).on("keydown", "detail_view", function (event) {
+            switch (event.keyCode) {
                 // key left
                 case 37:
                     selectPrev();
@@ -244,11 +254,6 @@ function List(module) {
                 // key right
                 case 39:
                     selectNext();
-                    event.preventDefault();
-                    break;
-                // enter
-                case 13:
-                    $("tr:focus").click();
                     event.preventDefault();
                     break;
             }
