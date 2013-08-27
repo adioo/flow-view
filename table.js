@@ -12,9 +12,10 @@ function List(module) {
     var pagination;
     var paginationNumbers = false;
     var page = 1;
-    var tabindexExists = false;
+    var needsTabindex = false;
 
     function processConfig(config) {
+
         config.binds = config.binds || [];
         config.template = config.template || {};
         config.template.binds = config.template.binds || [];
@@ -25,6 +26,10 @@ function List(module) {
         config.options = config.options || {};
         config.options.sort = config.options.sort || {};
         config.options.id = config.options.id || "id";
+
+        if (config.options.tabindex) {
+            needsTabindex = true;
+        }
 
         config.options.pagination = config.options.pagination || {};
 
@@ -236,16 +241,6 @@ function List(module) {
                         event.preventDefault();
                     }
                     break;
-                // enter
-                case 13:
-                    $("tr:focus").click();
-                    event.preventDefault();
-                    break;
-            }
-        });
-
-        $(self.dom).on("keydown", "detail_view", function (event) {
-            switch (event.keyCode) {
                 // key left
                 case 37:
                     selectPrev();
@@ -256,11 +251,16 @@ function List(module) {
                     selectNext();
                     event.preventDefault();
                     break;
+                // enter
+                case 13:
+                    $("tr:focus").click();
+                    event.preventDefault();
+                    break;
             }
         });
     }
 
-    function render(item) {
+    function render (item) {
         switch (config.template.type) {
             case "selector":
                 renderSelector.call(self, item);
@@ -279,9 +279,9 @@ function List(module) {
             .appendTo(container)
             .show();
 
-        if(tabindexExists === false) {
+        if (needsTabindex) {
             newItem.attr("tabindex", config.options.tabindex);
-            tabindexExists = true;
+            needsTabindex = false;
         }
 
         for (var i in config.template.binds) {
@@ -615,8 +615,6 @@ function List(module) {
             return;
         }
 
-        tabindexExists = false;
-
         for (var i in data) {
             render.call(self, data[i]);
         }
@@ -636,7 +634,7 @@ function List(module) {
         }
     }
 
-    function createItem(itemData) {
+    function createItem (itemData) {
 
         var crudObj = {
             t: config.options.type,
@@ -644,11 +642,12 @@ function List(module) {
         };
 
         self.emit("insert", crudObj, function(err, data) {
+
             if (err) { return; }
+
             if (!pagination) {
                 render.call(self, data);
-            }
-            else {
+            } else {
                 showPage(page, dbData.filter, dbData.options);
             }
         });
@@ -701,6 +700,8 @@ function List(module) {
     function setTemplate (templateObj) {
 
         Sort.clear();
+
+        needsTabindex = config.options.tabindex ? true : false;
 
         if (config.options.infiniteScroll) {
             config.options.infiniteScroll.skip = 0;
@@ -883,7 +884,7 @@ function List(module) {
         $("." + selectedClass, container).removeClass(selectedClass);
     }
 
-    function selectItem(dataItem) {
+    function selectItem (dataItem) {
 
         if (!dataItem) {
             return;
@@ -910,6 +911,18 @@ function List(module) {
 
             default: // none
         }
+
+        focusItem(dataItem);
+    }
+
+    function focusItem (dataItem) {
+
+        if (!dataItem) {
+            return;
+        }
+
+        $("." + config.options.classes.item, module.dom).removeAttr("tabindex");
+        $("#" + dataItem[config.options.id], module.dom).attr("tabindex", config.options.tabindex).focus();
     }
 
     function show() {
@@ -983,29 +996,36 @@ function List(module) {
         $prev.click();
     }
 
-    function focusNext () {
-        var $focused = $("tr:focus");
-        if($focused.length === 0) { return; }
-
-        var $next = $focused.next("tr");
-        
-        if(!$next.length) { return; }
-
-        $focused.removeAttr("tabindex");
-        $next.attr("tabindex", config.options.tabindex);
-        $next.focus();
+    function focusPrev () {
+        _focus('prev');
     }
 
-    function focusPrev () {
-        var $focused = $("tr:focus");
-        if($focused.length === 0) { return; }
+    function focusNext () {
+        _focus('next');
+    }
 
-        var $prev = $focused.prev("tr");
-        if(!$prev.length) { return; }
+    function _focus (direction) {
+        // get the focused item using the configured class for items
+        var $focused = $("." + config.options.classes.item + ":focus");
 
+        // no focus, no fun
+        if ($focused.length === 0) {
+            return;
+        }
+
+        var $target = $focused[direction]("." + config.options.classes.item);
+        
+        // no more item to focus on
+        if (!$target.length) {
+            return;
+        }
+
+        // move the tabindex attribute in order to come back to this item
         $focused.removeAttr("tabindex");
-        $prev.attr("tabindex", config.options.tabindex);
-        $prev.focus();
+        $target.attr("tabindex", config.options.tabindex);
+
+        // and finally we focus!
+        $target.focus();
     }
 
     /**
@@ -1054,16 +1074,20 @@ function List(module) {
         read: read,
         renderItemsFromResult: renderItemsFromResult,
         getSelected: getSelected,
+
         selectNext: selectNext,
         selectPrev: selectPrev,
+        selectItem: selectItem,
         focusNext: focusNext,
         focusPrev: focusPrev,
+        focusItem: focusItem,
+        deselect: deselect,
+
         setTemplate: setTemplate,
         createItem: createItem,
         removeItem: removeItem,
         removeSelected: removeSelected,
-        deselect: deselect,
-        selectItem: selectItem,
+
         goToNextPage: goToNextPage,
         goToPrevPage: goToPrevPage,
         fetchNext: fetchNext,
