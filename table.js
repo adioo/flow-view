@@ -885,8 +885,39 @@ function List(module) {
         $("." + selectedClass, container).removeClass(selectedClass);
     }
 
-    function refreshItem (new) {
-        // TODO
+    function refreshItem (err, item) {
+
+        if (err) { return alert(err); }
+
+        // TODO Change this when bind-filter will an object in a different format
+        if (item._id && item.bindFilterMessage === "hide") {
+            return hideItem(item);
+        }
+
+        if (item._id && item.bindFilterMessage === "show") {
+            showItem(item);
+        }
+
+        var res = {};
+        (function recurse(obj, current) {
+          for(var key in obj) {
+            var value = obj[key];
+            var newKey = (current ? current + "." + key : key);  // joined key with dot
+            if(value && typeof value === "object") {
+              recurse(value, newKey);  // it's a nested object, so do it again
+            } else {
+              res[newKey] = value;  // it's not an object, so set the property
+            }
+          }
+        })(item);
+
+        // run the binds
+        // TODO Remove `on` handlers
+        for (var i in config.template.binds) {
+            var bindObj = config.template.binds[i];
+            bindObj.context = $("#" + item._id);
+            Bind.call(self, bindObj, item);
+        }
     }
 
     function selectItem (dataItem) {
@@ -939,11 +970,19 @@ function List(module) {
         $("#" + dataItem[config.options.id], module.dom).attr("tabindex", config.options.tabindex).focus();
     }
 
-    function show() {
+    function showItem (dataItem) {
+        $("#" + dataItem._id).fadeIn();
+    }
+
+    function hideItem (dataItem) {
+        $("#" + dataItem._id).fadeOut();
+    }
+
+    function show () {
         $(self.dom).parent().show();
     }
 
-    function hide() {
+    function hide () {
         $(self.dom).parent().hide();
     }
 
@@ -1113,6 +1152,9 @@ function List(module) {
         clearSkip: clearSkip,
         showPage: showPage,
         emptyPagination: emptyPagination,
+
+        showItem: showItem,
+        hideItem: hideItem,
 
         show: show,
         hide: hide
