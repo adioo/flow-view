@@ -277,6 +277,7 @@ function List(module) {
             .removeClass("template")
             .addClass(config.options.classes.item)
             .appendTo(container)
+            .data("dataItem", item)
             .show();
 
         if (needsTabindex) {
@@ -884,10 +885,19 @@ function List(module) {
         $("." + selectedClass, container).removeClass(selectedClass);
     }
 
+    function refreshItem (new) {
+        // TODO
+    }
+
     function selectItem (dataItem) {
 
         if (!dataItem) {
             return;
+        }
+
+        if (dataItem instanceof jQuery) {
+            dataItem = getDataItem(dataItem);
+            selectItem(dataItem);
         }
 
         var selectedClass = config.options.classes.selected;
@@ -913,6 +923,10 @@ function List(module) {
         }
 
         focusItem(dataItem);
+    }
+
+    function getDataItem (jQueryObject) {
+        return jQueryObject.data("dataItem");
     }
 
     function focusItem (dataItem) {
@@ -958,17 +972,20 @@ function List(module) {
         read(fil, ops);
     }
 
-    function getSelected () {
+    function getSelected (data) {
 
         var $selected = $("." + config.options.classes.item + "." + config.options.classes.selected);
 
-        // var selectedData = [];
-        // $selected.each(function () {
-        // // TODO How do we get the dataItem?
-        // //    selectedData = $(this).
-        // });
+        if (!data) {
+            return $selected;
+        }
 
-        return $selected;
+        var selectedData = [];
+        $selected.each(function () {
+            selectedData.push($(this).data("dataItem"));
+        });
+
+        return selectedData;
     }
 
     function selectNext () {
@@ -981,7 +998,7 @@ function List(module) {
         var $next = $selected.next();
         // TODO Next page
         if (!$next.length) { return; }
-        $next.click();
+        selectItem($next);
     }
 
     function selectPrev () {
@@ -993,7 +1010,7 @@ function List(module) {
         var $prev = $selected.prev();
         // TODO Prev page
         if (!$prev.length) { return; }
-        $prev.click();
+        selectItem($prev);
     }
 
     function focusPrev () {
@@ -1014,7 +1031,7 @@ function List(module) {
         }
 
         var $target = $focused[direction]("." + config.options.classes.item);
-        
+
         // no more item to focus on
         if (!$target.length) {
             return;
@@ -1083,6 +1100,8 @@ function List(module) {
         focusItem: focusItem,
         deselect: deselect,
 
+        refreshItem: refreshItem,
+
         setTemplate: setTemplate,
         createItem: createItem,
         removeItem: removeItem,
@@ -1094,6 +1113,7 @@ function List(module) {
         clearSkip: clearSkip,
         showPage: showPage,
         emptyPagination: emptyPagination,
+
         show: show,
         hide: hide
     };
