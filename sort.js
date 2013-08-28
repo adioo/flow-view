@@ -1,78 +1,89 @@
 M.wrap('github/IonicaBizau/bind-table-crud/dev/sort.js', function (require, module, exports) {
-var self;
-var sortCache = { "sort": [] };
-var sortCount = 1;
-var sortClass = "sort"
-var sortSelector = "th span." + sortClass;
+
 
 function init (module, config) {
-    self = module;
+    var self = module;
 
-    $(self.dom).on("click", "th", function (e) {
+    (function (mod) {
 
-        var $current = $(this);
-        $current = $current.find("." + sortClass);
-        var $th = $current.parent();
+        mod.sortCache = { "sort": [] };
+        mod.sortCount = 1;
+        mod.sortClass = "sort"
+        mod.sortSelector = "th span." + mod.sortClass;
 
-        var $current = $th.find("." + sortClass + ":visible");
-        var $next = $current.next();
-        if (!$next.length) { $next = $th.find("." + sortClass).first(); }
+        $(mod.dom).on("click", "th", function (e) {
 
-        var sort = $next.data(sortClass);
-        if (!sort) { return; }
+            var $current = $(this);
+            $current = $current.find("." + mod.sortClass);
+            var $th = $current.parent();
 
-        setSort (sort, !e.ctrlKey);
+            var $current = $th.find("." + mod.sortClass + ":visible");
+            var $next = $current.next();
+            if (!$next.length) { $next = $th.find("." + mod.sortClass).first(); }
 
-        updateUI();
+            var sort = $next.data(mod.sortClass);
+            if (!sort) { return; }
 
-        // sort, reset, callFind
-        self.emit("setOptions", sortCache, false, true);
-    });
+            setSort.call(mod, sort, !e.ctrlKey);
+
+            updateUI.call(mod);
+
+            // sort, reset, callFind
+            mod.emit("setOptions", mod.sortCache, false, true);
+        });
+    })(self);
 }
 
 function setSort (sort, reset) {
+    var self = this;
+
     if (reset) {
-        clear();
-        setSort (sort, false);
+        clear.call(this);
+        setSort.call(this, sort, false);
     } else {
         if (!sort.length) { return; }
 
-        for (var i = 0; i < sortCache.sort.length; ++i) {
-            if (sort[0] === sortCache.sort[i][0]) {
-                sortCache.sort.splice(i, 1);
+        for (var i = 0; i < self.sortCache.sort.length; ++i) {
+            if (sort[0] === self.sortCache.sort[i][0]) {
+                self.sortCache.sort.splice(i, 1);
                 break;
             }
         }
 
         if (sort[1] === 0) { return; }
 
-        if (sortCache.sort.length >= sortCount) {
-            sortCache.sort.splice(0, 1);
+        if (self.sortCache.sort.length >= self.sortCount) {
+            self.sortCache.sort.splice(0, 1);
         }
 
-        sortCache.sort.push(sort);
+        self.sortCache.sort.push(sort);
     }
 }
 
 function clear () {
-    sortCache.sort = [];
+    var self = this;
+    self.sortCache = self.sortCache || {};
+    self.sortCache.sort = [];
 }
 
 function setSortCount (sortCountToSet) {
-    sortCount = sortCountToSet;
+    var self = this;
+    self.sortCount = sortCountToSet;
 }
 
 function updateUI () {
+    var self = this;
+
     // hide all sort spans
-    $(sortSelector, self.dom).hide();
+    $(self.sortSelector, self.dom).hide();
 
     // show non-sorted
-    $(sortSelector + ".sort0", self.dom).show();
+    $(self.sortSelector + ".sort0", self.dom).show();
 
-    for (var i = 0; i < sortCache.sort.length; ++i) {
-        var cSort = sortCache.sort[i];
+    for (var i = 0; i < self.sortCache.sort.length; ++i) {
+        var cSort = self.sortCache.sort[i];
         $("[data-key-sort='" + cSort[0] + "']").hide();
-        $("[data-key-sort='" + cSort[0] + "']." + sortClass + cSort[1]).show();
+        $("[data-key-sort='" + cSort[0] + "']." + self.sortClass + cSort[1]).show();
     }
 }
 

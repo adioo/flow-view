@@ -758,13 +758,12 @@ function List(module) {
             }
         });
 
+        Sort.setSortCount.call(self, orderedFields.length);
         for (var i = 0; i < orderedFields.length; ++i) {
             // build heads of table
             var $th = $("<th>");
             var cField = orderedFields[i];
             var label = cField.label;
-
-            Sort.setSortCount(orderedFields.length);
 
             if (!config.options.sort) {
                 $th.text(label);
