@@ -575,7 +575,7 @@ function List(module) {
 
     function renderItemsFromResult (err, data) {
 
-        if (err) { return; }
+        if (err || typeof data === "string") { return; }
 
         if (!config.options.infiniteScroll || (config.options.infiniteScroll && !config.options.infiniteScroll.skip)) {
             clearList();
