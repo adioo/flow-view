@@ -31,6 +31,7 @@ function List(module) {
             needsTabindex = true;
         }
 
+        /*
         config.options.pagination = config.options.pagination || {};
 
         if (JSON.stringify(config.options.pagination) !== "{}") {
@@ -53,6 +54,7 @@ function List(module) {
         if (pagination) {
             pagination = config.options.pagination;
         }
+        */
 
         var optClasses = config.options.classes || {}
         optClasses.item = optClasses.item || "item";
