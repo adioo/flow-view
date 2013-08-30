@@ -102,6 +102,7 @@ function List(module) {
         // initialize the globals
         self = this;
         config = processConfig(conf);
+        self.config = config;
         if (config.container) {
             container = $(config.container, module.dom);
         } else {
@@ -579,8 +580,9 @@ function List(module) {
 
         if (err || typeof data === "string") { return; }
 
-        if (!config.options.infiniteScroll || (config.options.infiniteScroll && !config.options.infiniteScroll.skip)) {
+        if (self.clearList || !config.options.infiniteScroll || (config.options.infiniteScroll && !config.options.infiniteScroll.skip)) {
             clearList();
+            self.clearList = false;
         }
 
         if (config.options.infiniteScroll) {

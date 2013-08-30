@@ -28,8 +28,16 @@ function init (module, config) {
 
             updateUI.call(mod);
 
+            var options = mod.sortCache;
+            var infScroll = mod.config.options.infiniteScroll;
+            if (infScroll) {
+                options.limit = infScroll.skip + infScroll.count;
+                options.skip = 0;
+                mod.clearList = true;
+            }
+
             // sort, reset, callFind
-            mod.emit("setOptions", mod.sortCache, false, true);
+            mod.emit("setOptions", options, false, true);
         });
     })(self);
 }
