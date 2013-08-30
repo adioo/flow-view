@@ -1118,6 +1118,7 @@ function List(module) {
     }
 
     function clearSkip () {
+        if (!config.options.infiniteScroll) { return; }
         config.options.infiniteScroll.skip = 0;
     }
 
