@@ -478,7 +478,8 @@ function List(module) {
         var crudObj = {
             t: config.options.template,
             q: query,
-            o: options
+            o: options,
+            f: config.options.fields
         };
 
         self.emit("find", crudObj, function(err, data) {
@@ -706,4 +707,3 @@ module.exports = function (module, config) {
 
     return list;
 };
-
