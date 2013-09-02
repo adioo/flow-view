@@ -171,7 +171,7 @@ function List(module) {
         Events.call(self, config);
 
         if (config.options.autofetch) {
-            self.read({}, { sort: config.options.sort }, function() {
+            self.read({}, { sort: config.options.sort, fields: config.options.fields }, function() {
                 self.emit("ready");
             });
         } else {
@@ -495,15 +495,8 @@ function List(module) {
         clearList();
 
         if (pagination) {
-            alert("Pagination not yet implemented using bind-filter... :-(");
             // TODO
-            // var size = pagination.size;
-            // var skip = (page - 1) * size;
-
-            // options.limit = options.size || size;
-            // options.skip = options.skip || skip;
-
-            // setDisabled(filter, options);
+            alert("Pagination not yet implemented using bind-filter... :-(");
         }
 
         renderItems(err, data);
@@ -707,3 +700,4 @@ module.exports = function (module, config) {
 
     return list;
 };
+
