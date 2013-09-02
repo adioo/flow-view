@@ -712,7 +712,7 @@ function List(module) {
             config.options.infiniteScroll.skip = 0;
         }
 
-        templObj = templateObj.schema;
+        var templObj = templateObj.schema;
         var $table = $(config.table, self.dom);
 
         if (!$table.length) {
