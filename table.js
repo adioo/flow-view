@@ -624,7 +624,14 @@ function List(module) {
             render.call(self, data[i]);
         }
 
-        var autoselect = config.options.autoselect;
+        var autoselect = self.config.options.autoselect;
+
+        var infiniteScroll = self.config.options.infiniteScroll;
+        if (infiniteScroll && infiniteScroll.autoselect) {
+            autoselect = infiniteScroll.autoselect;
+            infiniteScroll.autoselect = undefined;
+        }
+
         switch (autoselect) {
             case "first":
                 selectItem(data[0]);
@@ -1038,8 +1045,18 @@ function List(module) {
 
         var $selected = getSelected();
         var $next = $selected.next();
-        // TODO Next page
-        if (!$next.length) { return; }
+        if (!$next.length) {
+
+            if (self.config.options.infiniteScroll) {
+                fetchNext();
+                selectNext();
+                self.config.options.infiniteScroll.autoselect = "first";
+                return;
+            }
+
+            // TODO Next page
+            return;
+        }
         selectItem($next);
     }
 
