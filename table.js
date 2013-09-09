@@ -814,6 +814,7 @@ function List(module) {
             // build the template
             var $td = $("<td>");
             $td.attr("data-field", orderedFields[i].key);
+            $td.attr("data-type", orderedFields[i].value.type);
             $template.append($td);
 
             // build binds
