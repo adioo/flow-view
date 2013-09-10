@@ -591,7 +591,9 @@ function List(module) {
                 var infDomRefs = config.options.infiniteScroll.domRefs;
                 infDomRefs.loading.hide();
                 infDomRefs.loaded.show();
-                if (data && data.length) {
+                if (!data || !data.length || data.length < config.options.infiniteScroll.count) {
+                    infDomRefs.loadMoreBtn.attr("disabled", "");
+                } else {
                     infDomRefs.loadMoreBtn.removeAttr("disabled");
                 }
             } else {
