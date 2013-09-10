@@ -591,7 +591,9 @@ function List(module) {
                 var infDomRefs = config.options.infiniteScroll.domRefs;
                 infDomRefs.loading.hide();
                 infDomRefs.loaded.show();
-                infDomRefs.loadMoreBtn.removeAttr("disabled");
+                if (data && data.length) {
+                    infDomRefs.loadMoreBtn.removeAttr("disabled");
+                }
             } else {
                 // TODO Automatic scroll
             }
