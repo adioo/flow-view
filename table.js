@@ -1050,8 +1050,7 @@ function List(module) {
 
             if (self.config.options.infiniteScroll) {
                 fetchNext();
-                selectNext();
-                self.config.options.infiniteScroll.autoselect = "first";
+                self.config.options.infiniteScroll.autoselect = 1;
                 return;
             }
 
