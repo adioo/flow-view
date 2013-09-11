@@ -578,11 +578,7 @@ function List(module) {
 
     function renderItemsFromResult (err, data) {
 
-        if (err || typeof data === "string") {
-            // TODO find our who sends data as string?
-            if (typeof data === "string") {
-                alert(data);
-            }
+        if (err) {
             clearList();
             self.clearList = false;
             return;
