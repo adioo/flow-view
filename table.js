@@ -578,7 +578,15 @@ function List(module) {
 
     function renderItemsFromResult (err, data) {
 
-        if (err || typeof data === "string") { return; }
+        if (err || typeof data === "string") {
+            // TODO find our who sends data as string?
+            if (typeof data === "string") {
+                alert(data);
+            }
+            clearList();
+            self.clearList = false;
+            return;
+        }
 
         if (self.clearList || !config.options.infiniteScroll || (config.options.infiniteScroll && !config.options.infiniteScroll.skip)) {
             clearList();
@@ -902,7 +910,10 @@ function List(module) {
 
     function refreshItem (err, item) {
 
-        if (err) { return alert(err); }
+        if (err) {
+            alert(err);
+            return;
+        }
 
         // TODO Change this when bind-filter will an object in a different format
         if (item._id && item.bindFilterMessage === "hide") {
