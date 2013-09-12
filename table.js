@@ -830,7 +830,7 @@ function List(module) {
                 target: "[data-field='" + orderedFields[i].key + "']",
                 html: {
                     source: orderedFields[i].key,
-                    'default': ''
+                    "default": ""
                 }
             };
 
