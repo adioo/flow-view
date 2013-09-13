@@ -628,7 +628,7 @@ function List(module) {
             return;
         }
 
-        for (var i in data) {
+        for (var i = 0, l = data.length; i < l; ++i) {
             render.call(self, data[i]);
         }
 
