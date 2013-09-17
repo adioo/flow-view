@@ -13,6 +13,8 @@ function init (module, config) {
 
         $(mod.dom).on("click", "th", function (e) {
 
+            if($(this).attr('data-nosort')) { return; }
+
             var $current = $(this);
             $current = $current.find("." + mod.sortClass);
             var $th = $current.parent();

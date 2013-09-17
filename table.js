@@ -784,6 +784,10 @@ function List(module) {
             var cField = orderedFields[i];
             var label = cField.label;
 
+            if(orderedFields[i].value.nosort) {
+                $th.attr("data-nosort", "true");
+            }
+
             if (!config.options.sort) {
                 $th.text(label);
             }
