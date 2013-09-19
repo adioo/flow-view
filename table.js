@@ -757,7 +757,7 @@ function List(module) {
             }
 
             // with i18n labels from the schema
-            var label = templObj[key].label;
+            var label = (templObj[key].options || {}).label || templObj[key].name;
             if (label && typeof label === "object") {
                 label = label[M.getLocale()];
             }
