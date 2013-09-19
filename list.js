@@ -195,6 +195,7 @@ function List(module) {
         var newItem = $(template).clone();
         newItem
             .removeClass("template")
+            .removeClass("hide")
             .addClass(config.options.classes.item)
             .appendTo(container)
             .show();
