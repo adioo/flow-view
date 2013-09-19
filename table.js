@@ -805,7 +805,7 @@ function List(module) {
                 spans.push($span.clone().text("▲ " + label));
                 spans.push($span.clone().text("▼ " + label));
 
-                var sort = templateObj.sort;
+                var sort = (templateObj.options || {}).sort;
                 if (sort && sort[0] && sort[0][0] === cField.key) {
                     Sort.setSort(sort[0]);
                     var direction = sort[0][1] === 1 ? 1 : 2;
