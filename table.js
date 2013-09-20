@@ -1108,6 +1108,7 @@ function List(module) {
 
         // no more item to focus on
         if (!$target.length) {
+            fetchNext();
             return;
         }
 
@@ -1117,6 +1118,11 @@ function List(module) {
 
         // and finally we focus!
         $target.focus();
+
+        // fetch more if the focused item is the last
+        if (!$target.next().length) {
+            fetchNext();
+        }
     }
 
     /**
