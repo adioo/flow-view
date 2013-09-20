@@ -802,8 +802,8 @@ function List(module) {
                 var spans = [];
 
                 spans.push($span.clone().text(label));
-                spans.push($span.clone().text("▲ " + label));
-                spans.push($span.clone().text("▼ " + label));
+                spans.push($span.clone().html("<i class='icon-sort-up'></i> " + label));
+                spans.push($span.clone().html("<i class='icon-sort-down'></i> " + label));
 
                 var sort = (templateObj.options || {}).sort;
                 if (sort && sort[0] && sort[0][0] === cField.key) {
