@@ -66,6 +66,8 @@ function List(module) {
         var binds = [];
 
         for (var i in config.controls) {
+            if (!config.controls.hasOwnProperty(i)) return;
+
             switch (i) {
                 case "add":
                     binds.push({
@@ -103,6 +105,7 @@ function List(module) {
             disabledClass = pagination.controls.disable;
 
             for (var i in pagination.controls) {
+                if (!pagination.controls.hasOwnProperty(i)) return;
 
                 switch (i) {
 
@@ -161,11 +164,13 @@ function List(module) {
 
         // run the internal binds
         for (var i in binds) {
+            if (!binds.hasOwnProperty(i)) return;
             Bind.call(self, binds[i]);
         }
 
         // run the binds
         for (var i in config.binds) {
+            if (!config.binds.hasOwnProperty(i)) return;
             Bind.call(self, config.binds[i]);
         }
 
@@ -201,6 +206,7 @@ function List(module) {
             .show();
 
         for (var i in config.template.binds) {
+            if (!config.template.binds.hasOwnProperty(i)) return;
             var bindObj = config.template.binds[i];
             bindObj.context = newItem;
             Bind.call(self, bindObj, item);
@@ -357,6 +363,7 @@ function List(module) {
         }
 
         for (var i in pagination.dom.pages) {
+            if (!pagination.dom.pages.hasOwnProperty(i)) return;
             $(numbersConfig.classes.before).before(pagination.dom.pages[i]);
         }
     }
@@ -453,11 +460,13 @@ function List(module) {
         // merge the configured filters
         if (config.options.filters && typeof config.options.filters === "object") {
             for (var i in config.options.filters) {
+                if (!config.options.filters.hasOwnProperty(i)) return;
                 data.filter[i] = (config.options.filters || {})[i];
             }
         }
 
         for (var i in filter) {
+            if (!filter.hasOwnProperty(i)) return;
             data.filter[i] = filter[i];
         }
 
@@ -692,8 +701,9 @@ function List(module) {
 module.exports = function (module, config) {
 
     var list = new List(module);
-
+    
     for (var i in list) {
+        if (!list.hasOwnProperty(i)) return;
         list[i] = module[i] || list[i];
     }
 
