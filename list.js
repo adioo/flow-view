@@ -17,6 +17,7 @@ function List(module) {
 
         config.options = config.options || {};
         config.options.sort = config.options.sort || {};
+        config.options.filter = config.options.filter || {};
         config.options.id = config.options.id || "id";
 
         config.options.pagination = config.options.pagination || {};
@@ -492,6 +493,11 @@ function List(module) {
             o: options,
             f: config.options.fields
         };
+
+        for (var key in config.options.filter) {
+            if (!config.options.filter.hasOwnProperty(key)) return;
+            crudObj.q[key] = config.options.filter[key];
+        }
 
         self.emit("find", crudObj, function(err, data) {
             renderItems(err, data);
