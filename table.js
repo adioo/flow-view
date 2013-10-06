@@ -26,6 +26,7 @@ function List(module) {
         config.options = config.options || {};
         config.options.sort = config.options.sort || {};
         config.options.id = config.options.id || "id";
+        config.options.showHidden = config.options.showHidden || false;
 
         if (config.options.tabindex) {
             needsTabindex = true;
@@ -766,7 +767,7 @@ function List(module) {
             }
 
             // do not display hidden properties
-            if (templObj[key].hidden) {
+            if (!self.config.options.showHidden && templObj[key].hidden) {
                 continue;
             }
 
