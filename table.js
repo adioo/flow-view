@@ -91,7 +91,16 @@ function List(module) {
                     loadMoreBtn: $loadMoreBtn,
                     loading: $loading,
                     loaded: $loaded
-                }
+                };
+
+                // get count
+                var count = config.options.infiniteScroll.count;
+
+                // if it a number
+                if (typeof count === "number") {
+                    // set filter's limit
+                    self.emit("setOptions", {limit: count});
+                };
             }
             // TODO Automatic scroll
         }
@@ -102,7 +111,13 @@ function List(module) {
     function init(conf) {
         // initialize the globals
         self = this;
+
+        // process config
         config = processConfig(conf);
+
+        // call events
+        Events.call(self, config);
+
         self.config = config;
         if (config.container) {
             container = $(config.container, module.dom);
@@ -222,7 +237,6 @@ function List(module) {
             Bind.call(self, config.binds[i]);
         }
 
-        Events.call(self, config);
 
         if (config.options.autofetch) {
             self.read({}, { sort: config.options.sort }, function() {
