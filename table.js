@@ -117,7 +117,7 @@ function List(module) {
 
         for (var i in config.controls) {
             if (!config.controls.hasOwnProperty(i)) return;
-            
+
             switch (i) {
                 case "add":
                     binds.push({
@@ -213,16 +213,12 @@ function List(module) {
         }
 
         // run the internal binds
-        for (var i in binds) {
-            if (!binds.hasOwnProperty(i)) return;
-
+        for (var i = 0; i < binds.length; ++i) {
             Bind.call(self, binds[i]);
         }
 
         // run the binds
-        for (var i in config.binds) {
-            if (!config.binds.hasOwnProperty(i)) return;
-
+        for (var i = 0; i < config.binds.length; ++i) {
             Bind.call(self, config.binds[i]);
         }
 
@@ -296,9 +292,7 @@ function List(module) {
             needsTabindex = false;
         }
 
-        for (var i in config.template.binds) {
-            if (!config.template.binds.hasOwnProperty(i)) return;
-
+        for (var i = 0; i < config.template.binds.length; ++i) {
             var bindObj = config.template.binds[i];
             bindObj.context = newItem;
             Bind.call(self, bindObj, item);
@@ -454,8 +448,7 @@ function List(module) {
             }
         }
 
-        for (var i in pagination.dom.pages) {
-            if (!pagination.dom.pages.hasOwnProperty(i)) return;
+        for (var i = 0; i < pagination.dom.pages.length; ++i) {
             $(numbersConfig.classes.before).before(pagination.dom.pages[i]);
         }
     }
@@ -550,15 +543,15 @@ function List(module) {
         data.filter = {};
         // merge the configured filters
         if (config.options.filters && typeof config.options.filters === "object") {
-            for (var i in config.options.filters) {
-                if (!config.options.filters.hasOwnProperty(i)) return;
-                data.filter[i] = (config.options.filters || {})[i];
+            for (var filter in config.options.filters) {
+                if (!config.options.filters.hasOwnProperty(filter)) return;
+                data.filter[filter] = (config.options.filters || {})[filter];
             }
         }
 
-        for (var i in filter) {
+        for (var key in filter) {
             if (!filter.hasOwnProperty(i)) return;
-            data.filter[i] = filter[i];
+            data.filter[key] = filter[key];
         }
 
         if (oldFilter !== newFilter && pagination) {
@@ -941,7 +934,7 @@ function List(module) {
 
         var res = {};
         (function recurse(obj, current) {
-          for(var key in obj) {
+          for (var key in obj) {
             if (!obj.hasOwnProperty(key)) return;
 
             var value = obj[key];
@@ -956,9 +949,7 @@ function List(module) {
 
         // run the binds
         // TODO Remove `on` handlers
-        for (var i in config.template.binds) {
-            if (!config.template.binds.hasOwnProperty(i)) return;
-
+        for (var i = 0; i < config.template.binds.length; ++i) {
             var bindObj = config.template.binds[i];
             bindObj.context = $("#" + item._id);
             Bind.call(self, bindObj, item);
@@ -1226,9 +1217,9 @@ module.exports = function (module, config) {
 
     var list = new List(module);
 
-    for (var i in list) {
-        if (!list.hasOwnProperty(i)) return;
-        list[i] = module[i] || list[i];
+    for (var func in list) {
+        if (!list.hasOwnProperty(func)) return;
+        list[func] = module[func] || list[func];
     }
 
     list = Object.extend(list, module);
