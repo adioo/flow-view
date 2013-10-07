@@ -610,6 +610,11 @@ function List(module) {
         }
 
         if (config.options.infiniteScroll) {
+            // if count is undefined
+            if (config.options.infiniteScroll.count === undefined) {
+                config.options.infiniteScroll.count = data.length;
+            }
+
             // update ui
             if (!config.options.infiniteScroll.automatic) {
                 var infDomRefs = config.options.infiniteScroll.domRefs;
