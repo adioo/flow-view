@@ -27,6 +27,7 @@ function List(module) {
         config.options.sort = config.options.sort || {};
         config.options.id = config.options.id || "id";
         config.options.showHidden = config.options.showHidden || false;
+        config.options.noLinks = config.options.noLinks || false;
 
         if (config.options.tabindex) {
             needsTabindex = true;
@@ -590,6 +591,10 @@ function List(module) {
             o: options
         };
 
+        if (self.config.options.noLinks) {
+            crudObj.noMerge = true;
+        }
+
         self.emit("find", crudObj, function(err, data) {
             renderItems(err, data);
             callback(err, data);
@@ -774,9 +779,14 @@ function List(module) {
             if (!templObj.hasOwnProperty(key)) return;
 
             // do not display core properties
-            if (key[0] === "_") {
-                continue;
+            if (self.config.options.noLinks) {
+                if (key[0] === '_' || templObj[key].link) continue;
+            } else {
+                if (key[0] === "_") {
+                    continue;
+                }
             }
+           
 
             // do not display hidden properties
             if (!self.config.options.showHidden && templObj[key].hidden) {
