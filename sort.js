@@ -26,9 +26,6 @@ function init (module, config) {
             var sort = $next.data(mod.sortClass);
             if (!sort) { return; }
 
-            setSort.call(mod, sort, !e.ctrlKey);
-
-            updateUI.call(mod);
 
             var options = mod.sortCache;
             var infScroll = mod.config.options.infiniteScroll;
@@ -38,18 +35,18 @@ function init (module, config) {
                 mod.clearList = true;
             }
 
-            // sort, reset, callFind
-            mod.emit("setOptions", options, false, true);
+            setSort.call(mod, sort, !e.ctrlKey, true);
+            updateUI.call(mod);
         });
     })(self);
 }
 
-function setSort (sort, reset) {
+function setSort (sort, reset, callFind) {
     var self = this;
 
     if (reset) {
         clear.call(this);
-        setSort.call(this, sort, false);
+        setSort.call(this, sort, false, callFind);
     } else {
         if (!sort.length) { return; }
 
@@ -67,6 +64,9 @@ function setSort (sort, reset) {
         }
 
         self.sortCache.sort.push(sort);
+
+        // sort, reset, callFind
+        self.emit("setOptions", self.sortCache, false, callFind);
     }
 }
 

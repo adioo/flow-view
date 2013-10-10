@@ -64,7 +64,7 @@ function List(module) {
         config.options.classes = optClasses;
 
         if (config.options.sort) {
-            Sort.init(self);
+            Sort.init.call(self, self);
         }
 
         if (config.options.infiniteScroll) {
@@ -749,7 +749,7 @@ function List(module) {
 
     function setTemplate (templateObj) {
 
-        Sort.clear();
+        Sort.clear.call(self);
 
         needsTabindex = config.options.tabindex ? true : false;
 
@@ -786,7 +786,7 @@ function List(module) {
                     continue;
                 }
             }
-           
+
 
             // do not display hidden properties
             if (!self.config.options.showHidden && templObj[key].hidden) {
@@ -844,7 +844,7 @@ function List(module) {
 
                 var sort = (templateObj.options || {}).sort;
                 if (sort && sort[0] && sort[0][0] === cField.key) {
-                    Sort.setSort(sort[0]);
+                    Sort.setSort.call(self, sort[0]);
                     var direction = sort[0][1] === 1 ? 1 : 2;
                     spans[direction].show();
                 }
@@ -888,6 +888,7 @@ function List(module) {
         template = $template.clone();
         $thead.html("");
         $thead.append($htr);
+        self.emit("templateSet", config.template);
     }
 
     function _sendRemove(itemData) {
