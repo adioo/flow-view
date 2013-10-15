@@ -490,7 +490,7 @@ function List(module) {
         delete options.skip;
 
         var crudObj = {
-            t: config.options.type,
+            t: config.options.template,
             q: query,
             o: options,
             f: {
@@ -586,7 +586,7 @@ function List(module) {
         var options = data.options || {};
 
         var crudObj = {
-            t: config.options.type,
+            t: config.options.template,
             q: query,
             o: options
         };
@@ -687,7 +687,7 @@ function List(module) {
     function createItem (itemData) {
 
         var crudObj = {
-            t: config.options.type,
+            t: config.options.template,
             d: itemData
         };
 
@@ -749,6 +749,10 @@ function List(module) {
 
     function setTemplate (templateObj) {
 
+        // set the new template
+        self.config.options.template = templateObj._id;
+
+        // clear sort
         Sort.clear.call(self);
 
         needsTabindex = config.options.tabindex ? true : false;
@@ -981,7 +985,7 @@ function List(module) {
 
         // and crud object
         var crudObj = {
-            t: config.options.type,
+            t: config.options.template,
             q: filter
         };
 
@@ -1007,7 +1011,7 @@ function List(module) {
         query[config.options.id] = [itemData[config.options.id]];
 
         var crudObj = {
-            t: config.options.type,
+            t: config.options.template,
             q: query
         };
 
@@ -1042,7 +1046,7 @@ function List(module) {
         filter.data[config.options.id] = ids;
 
         var crudObj = {
-            t: config.options.type,
+            t: config.options.template,
             q: filter
         };
 
