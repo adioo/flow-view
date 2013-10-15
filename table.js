@@ -979,14 +979,12 @@ function List(module) {
             ids.push(checkedItems[i]._id);
         }
 
-        // build query
-        var filter = {};
-        filter[config.options.id] = ids;
-
-        // and crud object
+        // build the crud object
         var crudObj = {
             t: config.options.template,
-            q: filter
+            q: {
+                "$in": ids
+            }
         };
 
         // remove via crud
