@@ -882,6 +882,40 @@ function List(module) {
             binds.push(newBind);
         }
 
+        // get checkboxes from options
+        var checkboxes = self.config.options.checkboxes;
+        // TODO move to descriptor
+        checkboxes = {
+            position: "last"
+        };
+
+        // chekboxes option is set
+        if (checkboxes) {
+            // last --> append, first ---> prepend
+            var how = checkboxes.position === "last" ? "append" : "prepend";
+
+            // create the jQuery object
+            var $checkbox = $("<input>").attr("type", "checkbox");
+
+            var HEADER_CHECKBOX_CLASS = "header-checkbox";
+            var ITEM_CHECKBOX_CLASS = "item-checkbox";
+
+            // append/prepend the checkbox
+            var $checkTh = $("<th>").append($checkbox.clone().addClass(HEADER_CHECKBOX_CLASS));
+
+            // (un)check all handler
+            $("." + HEADER_CHECKBOX_CLASS, $checkTh).on("change", function () {
+                $("." + ITEM_CHECKBOX_CLASS, self.dom).prop("checked", $(this).prop("checked"));
+            });
+
+            $htr[how]($checkTh);
+
+            // ...and to tempalte
+            var $checkTd = $("<td>").append($checkbox.clone().addClass(ITEM_CHECKBOX_CLASS));
+            $template[how]($checkTd);
+        }
+
+
         config.template.binds = config.cache.templateBinds.concat(binds);
         config.template.type = "selector";
 
@@ -889,6 +923,26 @@ function List(module) {
         $thead.html("");
         $thead.append($htr);
         self.emit("templateSet", config.template);
+    }
+
+
+    /*
+     *  Get checked items in the table
+     * */
+    function getChecked (data) {
+
+        var $checked = $("." + config.options.classes.item + " .item-checkbox:checked").closest("tr");
+
+        if (!data) {
+            return $selected;
+        }
+
+        var selectedData = [];
+        $selected.each(function () {
+            selectedData.push($(this).data("dataItem"));
+        });
+
+        return selectedData;
     }
 
     function _sendRemove(itemData) {
@@ -1212,13 +1266,16 @@ function List(module) {
         read: read,
         renderItemsFromResult: renderItemsFromResult,
         getSelected: getSelected,
+        getChecked: getChecked,
 
         selectNext: selectNext,
         selectPrev: selectPrev,
         selectItem: selectItem,
+
         focusNext: focusNext,
         focusPrev: focusPrev,
         focusItem: focusItem,
+
         deselect: deselect,
 
         refreshItem: refreshItem,
