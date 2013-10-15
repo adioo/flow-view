@@ -888,10 +888,6 @@ function List(module) {
 
         // get checkboxes from options
         var checkboxes = self.config.options.checkboxes;
-        // TODO move to descriptor
-        checkboxes = {
-            position: "last"
-        };
 
         // chekboxes option is set
         if (checkboxes) {
