@@ -931,18 +931,75 @@ function List(module) {
      * */
     function getChecked (data) {
 
+        // get checked items
         var $checked = $("." + config.options.classes.item + " .item-checkbox:checked").closest("tr");
 
+        // if data is no true
         if (!data) {
-            return $selected;
+            // return jQuery array
+            return $checked;
         }
 
-        var selectedData = [];
-        $selected.each(function () {
-            selectedData.push($(this).data("dataItem"));
+        // if data IS true, get the data items
+        var checkedData = [];
+        $checked.each(function () {
+            checkedData.push($(this).data("dataItem"));
         });
 
-        return selectedData;
+        // and return them
+        return checkedData;
+    }
+
+    /*
+     *  Remove checked items from the table
+     * */
+    function removeChecked(options, callback) {
+
+        // accept callback as first argument
+        if (typeof options === "function") {
+            callback = options;
+            options = undefined;
+        }
+
+        // set defaults
+        options = options || {};
+        callback = callback || function () {};
+
+
+        // get checked items
+        var checkedItems = self.getChecked.call(self, true);
+
+        // push each item id in ids
+        var ids = [];
+        for (var i = 0; i < checkedItems; ++i) {
+            ids.push(checkedItems[i]._id);
+        }
+
+        // build query
+        var filter = {};
+        filter[config.options.id] = ids;
+
+        // and crud object
+        var crudObj = {
+            t: config.options.type,
+            q: filter
+        };
+
+        // remove via crud
+        self.emit("remove", crudObj, function(err, data) {
+
+            // handle error
+            if (err) { return callback (err); }
+
+            // get jQuery checked items
+            var $checkedItems = self.getChecked.call(self);
+
+            // remove them
+            $checkedItems.remove();
+
+            // and callback
+            callback(err, data);
+        });
     }
 
     function _sendRemove(itemData) {
@@ -1266,7 +1323,9 @@ function List(module) {
         read: read,
         renderItemsFromResult: renderItemsFromResult,
         getSelected: getSelected,
+
         getChecked: getChecked,
+        removeChecked: removeChecked,
 
         selectNext: selectNext,
         selectPrev: selectPrev,
