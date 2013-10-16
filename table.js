@@ -1003,24 +1003,47 @@ function List(module) {
         });
     }
 
-    function _sendRemove(itemData) {
-        var query = {};
-        query[config.options.id] = [itemData[config.options.id]];
+    function _sendRemove(itemData, callback) {
 
+        // default value for callback
+        callback = callback || function () {};
+
+        // build query
+        var query = {};
+
+        // set the id
+        query[config.options.id] = itemData[config.options.id];
+
+        // build the crud object
         var crudObj = {
             t: config.options.template,
             q: query
         };
 
+        // remove via crud
         self.emit("remove", crudObj, function(err, data) {
-            if (err) { return; }
+
+            // handle error
+            if (err) { return callback(err); }
+
+            // update ui
             $("#" + itemData[config.options.id]).remove();
+
+            // callback the response
+            callback(err, data);
+
         });
     }
 
-    function removeItem(itemData) {
+    function removeItem(itemData, callback) {
+
+        // default value for callback
+        callback = callback || function () {};
+
+        // no confirmation
         if (!config.options.deleteConfirmation) {
-            _sendRemove(itemData);
+            // call _sendRemove
+            _sendRemove(itemData, callback);
             return;
         }
 
