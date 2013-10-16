@@ -41,15 +41,30 @@ function init (module, config) {
     })(self);
 }
 
+/*
+ * Sets the sort and emits "setOptions" sending the sortCache
+ * */
+
 function setSort (sort, reset, callFind) {
+
+    // get self
     var self = this;
 
+    // if reset
     if (reset) {
+
+        // clear sort
         clear.call(this);
+
+        // and call again this function with reset false
         setSort.call(this, sort, false, callFind);
+
     } else {
+
+        // return if no sort
         if (!sort.length) { return; }
 
+        // remove existing sorts
         for (var i = 0; i < self.sortCache.sort.length; ++i) {
             if (sort[0] === self.sortCache.sort[i][0]) {
                 self.sortCache.sort.splice(i, 1);
@@ -57,15 +72,19 @@ function setSort (sort, reset, callFind) {
             }
         }
 
+        // no sort
         if (sort[1] === 0) { return; }
 
+        // remove first sort when sort length is higher than sortCount
         if (self.sortCache.sort.length >= self.sortCount) {
             self.sortCache.sort.splice(0, 1);
         }
 
+        // push the new sort array in the sortCache.sort array
         self.sortCache.sort.push(sort);
 
-        // sort, reset, callFind
+        // and emit setOptions:
+        // sort, reset: false, callFind: true/false
         self.emit("setOptions", self.sortCache, false, callFind);
     }
 }
