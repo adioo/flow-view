@@ -72,8 +72,14 @@ function setSort (sort, reset, callFind) {
             }
         }
 
+        // pushSort is set to false when there is no sort
+        var pushSort = true;
+
         // no sort
-        if (sort[1] === 0) { return; }
+        if (sort[1] === 0) {
+            // so, pushSort must be false
+            pushSort = false;
+        }
 
         // remove first sort when sort length is higher than sortCount
         if (self.sortCache.sort.length >= self.sortCount) {
@@ -81,7 +87,10 @@ function setSort (sort, reset, callFind) {
         }
 
         // push the new sort array in the sortCache.sort array
-        self.sortCache.sort.push(sort);
+        if (pushSort) {
+            // only if pushSort is true
+            self.sortCache.sort.push(sort);
+        }
 
         // and emit setOptions:
         // sort, reset: false, callFind: true/false
