@@ -204,6 +204,7 @@ function List(module) {
             .removeClass("hide")
             .addClass(config.options.classes.item)
             .appendTo(container)
+            .data("dataItem", item)
             .show();
 
         for (var i in config.template.binds) {
@@ -707,7 +708,7 @@ function List(module) {
 module.exports = function (module, config) {
 
     var list = new List(module);
-    
+
     for (var i in list) {
         if (!list.hasOwnProperty(i)) return;
         list[i] = module[i] || list[i];
