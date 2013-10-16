@@ -752,6 +752,9 @@ function List(module) {
         // set the new template
         self.config.options.template = templateObj._id;
 
+        // default value for .table
+        templateObj.options.table = templateObj.options.table || {};
+
         // clear sort
         Sort.clear.call(self);
 
@@ -887,7 +890,7 @@ function List(module) {
         }
 
         // get checkboxes from options
-        var checkboxes = self.config.options.checkboxes;
+        var checkboxes = self.config.options.checkboxes || templateObj.options.table.checkboxes;
 
         // chekboxes option is set
         if (checkboxes) {
