@@ -982,8 +982,9 @@ function List(module) {
         var crudObj = {
             t: config.options.template,
             q: {
-                "$in": ids
-            }
+                _id: { "$in": ids }
+            },
+            o: { multi: true }
         };
 
         // remove via crud
