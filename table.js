@@ -974,7 +974,7 @@ function List(module) {
 
         // push each item id in ids
         var ids = [];
-        for (var i = 0; i < checkedItems; ++i) {
+        for (var i = 0; i < checkedItems.length; ++i) {
             ids.push(checkedItems[i]._id);
         }
 
