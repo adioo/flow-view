@@ -528,6 +528,7 @@ function List(module) {
 
         fil = fil || {};
         ops = ops || {};
+        callback = callback || function () {};
 
         oldFilter = JSON.stringify(dbData.filter);
         newFilter = JSON.stringify(fil);
@@ -565,7 +566,7 @@ function List(module) {
         }
 
         for (var key in filter) {
-            if (!filter.hasOwnProperty(i)) return;
+            if (!filter.hasOwnProperty(key)) return;
             data.filter[key] = filter[key];
         }
 
