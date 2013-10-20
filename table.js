@@ -551,11 +551,6 @@ function List(module) {
         var data = {};
         data.options = options;
 
-        // add the configured sorting
-        if (!data.options.sort) {
-            data.options.sort = config.options.sort;
-        }
-
         data.filter = {};
         // merge the configured filters
         if (config.options.filters && typeof config.options.filters === "object") {
