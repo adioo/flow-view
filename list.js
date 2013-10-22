@@ -66,13 +66,13 @@ function List(module) {
         // generate general binds from the config
         var binds = [];
 
-        for (var i in config.controls) {
-            if (!config.controls.hasOwnProperty(i)) return;
+        for (var key in config.controls) {
+            if (!config.controls.hasOwnProperty(key)) continue;
 
-            switch (i) {
+            switch (key) {
                 case "add":
                     binds.push({
-                        target: config.controls[i],
+                        target: config.controls[key],
                         context: ".controls",
                         on: [{
                             name: "click",
@@ -83,7 +83,7 @@ function List(module) {
                     break;
                 case "delete":
                     binds.push({
-                        target: config.controls[i],
+                        target: config.controls[key],
                         context: ".controls",
                         on: [{
                             name: "click",
@@ -105,13 +105,13 @@ function List(module) {
 
             disabledClass = pagination.controls.disable;
 
-            for (var i in pagination.controls) {
-                if (!pagination.controls.hasOwnProperty(i)) return;
+            for (var key in pagination.controls) {
+                if (!pagination.controls.hasOwnProperty(key)) continue;
 
-                switch (i) {
+                switch (key) {
 
                     case "next":
-                        $(pagination.controls[i]).on("click", function () {
+                        $(pagination.controls[key]).on("click", function () {
                             var clickedElem = $(this);
 
                             if (clickedElem.hasClass(disabledClass) || clickedElem.prop(disabledClass)) {
@@ -124,7 +124,7 @@ function List(module) {
                         break;
 
                     case "previous":
-                        $(pagination.controls[i]).on("click", function () {
+                        $(pagination.controls[key]).on("click", function () {
                             var clickedElem = $(this);
 
                             if (clickedElem.hasClass(disabledClass) || clickedElem.prop(disabledClass)) {
@@ -164,16 +164,16 @@ function List(module) {
         }
 
         // run the internal binds
-        for (var i in binds) {
-            if (!binds.hasOwnProperty(i)) return;
+        for (var i = 0; i < binds.length; ++i) {
             Bind.call(self, binds[i]);
         }
 
         // run the binds
-        for (var i in config.binds) {
-            if (!config.binds.hasOwnProperty(i)) return;
-            Bind.call(self, config.binds[i]);
-        }
+        if (config.binds) {
+            for (var i = 0; i < config.binds.length; ++i) {
+                Bind.call(self, config.binds[i]);
+            }
+	    }
 
         Events.call(self, config);
 
@@ -207,11 +207,12 @@ function List(module) {
             .data("dataItem", item)
             .show();
 
-        for (var i in config.template.binds) {
-            if (!config.template.binds.hasOwnProperty(i)) return;
-            var bindObj = config.template.binds[i];
-            bindObj.context = newItem;
-            Bind.call(self, bindObj, item);
+        if (config.template.binds) {
+            for (var i = 0; i < config.template.binds.length; ++i) {
+                var bindObj = config.template.binds[i];
+                bindObj.context = newItem;
+                Bind.call(self, bindObj, item);
+            }
         }
 
         newItem.attr("id", item[config.options.id]);
@@ -364,9 +365,9 @@ function List(module) {
             }
         }
 
-        for (var i in pagination.dom.pages) {
-            if (!pagination.dom.pages.hasOwnProperty(i)) return;
-            $(numbersConfig.classes.before).before(pagination.dom.pages[i]);
+        for (var key in pagination.dom.pages) {
+            if (!pagination.dom.pages.hasOwnProperty(key)) continue;
+            $(numbersConfig.classes.before).before(pagination.dom.pages[key]);
         }
     }
 
@@ -461,15 +462,15 @@ function List(module) {
         data.filter = {};
         // merge the configured filters
         if (config.options.filters && typeof config.options.filters === "object") {
-            for (var i in config.options.filters) {
-                if (!config.options.filters.hasOwnProperty(i)) return;
-                data.filter[i] = (config.options.filters || {})[i];
+            for (var key in config.options.filters) {
+                if (!config.options.filters.hasOwnProperty(key)) continue;
+                data.filter[key] = (config.options.filters || {})[key];
             }
         }
 
-        for (var i in filter) {
-            if (!filter.hasOwnProperty(i)) return;
-            data.filter[i] = filter[i];
+        for (var key in filter) {
+            if (!filter.hasOwnProperty(key)) continue;
+            data.filter[key] = filter[key];
         }
 
         if (oldFilter !== newFilter && pagination) {
@@ -496,7 +497,7 @@ function List(module) {
         };
 
         for (var key in config.options.filter) {
-            if (!config.options.filter.hasOwnProperty(key)) return;
+            if (!config.options.filter.hasOwnProperty(key)) continue;
             crudObj.q[key] = config.options.filter[key];
         }
 
@@ -709,9 +710,9 @@ module.exports = function (module, config) {
 
     var list = new List(module);
 
-    for (var i in list) {
-        if (!list.hasOwnProperty(i)) return;
-        list[i] = module[i] || list[i];
+    for (var key in list) {
+        if (!list.hasOwnProperty(key)) continue;
+        list[key] = module[key] || list[key];
     }
 
     list = Object.extend(list, module);
