@@ -14,4 +14,3 @@ module.exports = function (config) {
     List(this, config);
 };
 
-return module; });

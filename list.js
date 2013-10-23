@@ -1,4 +1,3 @@
-M.wrap('github/IonicaBizau/bind-list-crud/dev/list.js', function (require, module, exports) {
 var Bind = require("github/jillix/bind");
 var Events = require("github/jillix/events");
 
@@ -721,5 +720,3 @@ module.exports = function (module, config) {
     return list;
 };
 
-
-return module; });
