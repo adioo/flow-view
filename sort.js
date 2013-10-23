@@ -1,5 +1,3 @@
-M.wrap('github/IonicaBizau/bind-table-crud/dev/sort.js', function (require, module, exports) {
-
 
 function init (module, config) {
     var self = module;
@@ -132,4 +130,3 @@ module.exports = {
     setSort: setSort
 };
 
-return module; });

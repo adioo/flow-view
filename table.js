@@ -1,4 +1,3 @@
-M.wrap('github/IonicaBizau/bind-table-crud/dev/table.js', function (require, module, exports) {
 var Bind = require("github/jillix/bind");
 var Events = require("github/jillix/events");
 var Sort = require("./sort");
@@ -131,13 +130,13 @@ function List(module) {
         // generate general binds from the config
         var binds = [];
 
-        for (var i in config.controls) {
-            if (!config.controls.hasOwnProperty(i)) return;
+        for (var key in config.controls) {
+            if (!config.controls.hasOwnProperty(key)) continue;
 
-            switch (i) {
+            switch (key) {
                 case "add":
                     binds.push({
-                        target: config.controls[i],
+                        target: config.controls[key],
                         context: ".controls",
                         on: [{
                             name: "click",
@@ -148,7 +147,7 @@ function List(module) {
                     break;
                 case "delete":
                     binds.push({
-                        target: config.controls[i],
+                        target: config.controls[key],
                         context: ".controls",
                         on: [{
                             name: "click",
@@ -170,13 +169,13 @@ function List(module) {
 
             disabledClass = pagination.controls.disable;
 
-            for (var i in pagination.controls) {
-                if (!pagination.controls.hasOwnProperty(i)) return;
+            for (var key in pagination.controls) {
+                if (!pagination.controls.hasOwnProperty(key)) continue;
 
-                switch (i) {
+                switch (key) {
 
                     case "next":
-                        $(pagination.controls[i]).on("click", function () {
+                        $(pagination.controls[key]).on("click", function () {
                             var clickedElem = $(this);
 
                             if (clickedElem.hasClass(disabledClass) || clickedElem.prop(disabledClass)) {
@@ -189,7 +188,7 @@ function List(module) {
                         break;
 
                     case "previous":
-                        $(pagination.controls[i]).on("click", function () {
+                        $(pagination.controls[key]).on("click", function () {
                             var clickedElem = $(this);
 
                             if (clickedElem.hasClass(disabledClass) || clickedElem.prop(disabledClass)) {
@@ -555,13 +554,13 @@ function List(module) {
         // merge the configured filters
         if (config.options.filters && typeof config.options.filters === "object") {
             for (var filter in config.options.filters) {
-                if (!config.options.filters.hasOwnProperty(filter)) return;
+                if (!config.options.filters.hasOwnProperty(filter)) continue;
                 data.filter[filter] = (config.options.filters || {})[filter];
             }
         }
 
         for (var key in filter) {
-            if (!filter.hasOwnProperty(key)) return;
+            if (!filter.hasOwnProperty(key)) continue;
             data.filter[key] = filter[key];
         }
 
@@ -779,7 +778,7 @@ function List(module) {
         var orderedFields = [];
 
         for (var key in templObj) {
-            if (!templObj.hasOwnProperty(key)) return;
+            if (!templObj.hasOwnProperty(key)) continue;
 
             // do not display core properties
             if (self.config.options.noLinks) {
@@ -1097,7 +1096,7 @@ function List(module) {
         var res = {};
         (function recurse(obj, current) {
           for (var key in obj) {
-            if (!obj.hasOwnProperty(key)) return;
+            if (!obj.hasOwnProperty(key)) continue;
 
             var value = obj[key];
             var newKey = (current ? current + "." + key : key);  // joined key with dot
@@ -1385,7 +1384,7 @@ module.exports = function (module, config) {
     var list = new List(module);
 
     for (var func in list) {
-        if (!list.hasOwnProperty(func)) return;
+        if (!list.hasOwnProperty(func)) continue;
         list[func] = module[func] || list[func];
     }
 
@@ -1395,4 +1394,3 @@ module.exports = function (module, config) {
     return list;
 };
 
-return module; });
