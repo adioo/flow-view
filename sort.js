@@ -1,4 +1,3 @@
-
 function init (module, config) {
     var self = module;
 
@@ -90,9 +89,18 @@ function setSort (sort, reset, callFind) {
             self.sortCache.sort.push(sort);
         }
 
+        // create a sort cache clone
+        var sCacheClone = JSON.parse(JSON.stringify(self.sortCache));
+
+        // if no-sort, don't send any sort (empty) array
+        if (!pushSort) {
+            // set undefined for sort clone
+            sCacheClone.sort = undefined;
+        }
+
         // and emit setOptions:
         // sort, reset: false, callFind: true/false
-        self.emit("setOptions", self.sortCache, false, callFind);
+        self.emit("setOptions", sCacheClone, false, callFind);
     }
 }
 
@@ -129,4 +137,3 @@ module.exports = {
     setSortCount: setSortCount,
     setSort: setSort
 };
-
