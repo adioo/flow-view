@@ -599,7 +599,10 @@ function List(module) {
     function renderItemsFromResult (err, data) {
 
         if (err) {
-            clearList();
+            // don't clear list if there is a filter error
+            if (err.message !== "FILTER_IS_BUSY") {
+                clearList();
+            }
             self.clearList = false;
             return;
         }
@@ -1393,4 +1396,3 @@ module.exports = function (module, config) {
 
     return list;
 };
-
