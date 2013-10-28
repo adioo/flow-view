@@ -1341,7 +1341,7 @@ function List(module) {
         pagination.dom.pages = [];
     }
 
-    return {
+    var moduleMethods = {
         init: init,
         read: read,
         renderItemsFromResult: renderItemsFromResult,
@@ -1382,6 +1382,14 @@ function List(module) {
         show: show,
         hide: hide
     };
+
+    // create listen interface
+    for (var method in moduleMethods) {
+        if (!moduleMethods.hasOwnProperty(method)) continue;
+        module.on(method, moduleMethods[method]);
+    }
+
+    return moduleMethods;
 }
 
 module.exports = function (module, config) {
