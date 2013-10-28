@@ -1354,6 +1354,8 @@ function List(module) {
         selectPrev: selectPrev,
         selectItem: selectItem,
 
+        clearList: clearList,
+
         focusNext: focusNext,
         focusPrev: focusPrev,
         focusItem: focusItem,
