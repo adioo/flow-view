@@ -1351,6 +1351,8 @@ function List(module) {
         selectPrev: selectPrev,
         selectItem: selectItem,
 
+        clearList: clearList,
+
         focusNext: focusNext,
         focusPrev: focusPrev,
         focusItem: focusItem,
@@ -1393,4 +1395,3 @@ module.exports = function (module, config) {
 
     return list;
 };
-
