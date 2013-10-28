@@ -1384,9 +1384,27 @@ function List(module) {
     };
 
     // create listen interface
-    for (var method in moduleMethods) {
-        if (!moduleMethods.hasOwnProperty(method)) continue;
-        module.on(method, moduleMethods[method]);
+    for (var meth in moduleMethods) {
+        if (!moduleMethods.hasOwnProperty(meth)) continue;
+        (function (method) {
+            module.on(method, function () {
+
+                var args = Array.prototype.slice.call(arguments, 0);
+                var callback = args[args.length - 1];
+
+                var argsWithoutCallback = [];
+                for (var i = 0; i < args.length; ++i) {
+                    if (typeof args[i] === "function") continue;
+                    argsWithoutCallback.push(args[i]);
+                }
+
+                var result = moduleMethods[method].apply(this, argsWithoutCallback);
+
+                if (typeof callback === "function") {
+                    callback(result);
+                }
+            });
+        })(meth);
     }
 
     return moduleMethods;
