@@ -293,6 +293,7 @@ function List(module) {
     }
 
     function renderSelector(item) {
+        if (!item) { return; }
         var newItem = $(template).clone();
         newItem
             .removeClass("template")
