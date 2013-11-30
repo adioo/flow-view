@@ -1130,6 +1130,7 @@ function List(module) {
         if (dataItem instanceof jQuery) {
             dataItem = getDataItem(dataItem);
             selectItem(dataItem);
+            return;
         }
 
         var selectedClass = config.options.classes.selected;
