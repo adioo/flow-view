@@ -1,0 +1,22 @@
+{
+  "name": "jlx-layout",
+  "version": "0.0.1",
+  "description": "Basic layout module",
+  "main": "layout.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jillix/jlx-layout.git"
+  },
+  "mono": {
+    "dependencies": ["/layout.js"]
+  },
+  "keywords": [
+    "layout",
+    "mono"
+  ],
+  "author": "jillix",
+  "bugs": {
+    "url": "https://github.com/jillix/jlx-layout/issues"
+  },
+  "homepage": "https://github.com/jillix/jlx-layout"
+}
