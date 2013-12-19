@@ -1,6 +1,6 @@
 {
   "name": "jlx-layout",
-  "version": "0.0.1",
+  "version": "v0.0.2",
   "description": "Basic layout module",
   "main": "layout.js",
   "repository": {
