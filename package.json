@@ -1,0 +1,29 @@
+{
+  "name": "bind-list-crud",
+  "version": "0.0.0",
+  "description": "CRUD Version of bind-list module",
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/IonicaBizau/bind-list-crud.git"
+  },
+  "mono": {
+    "dependencies": [
+        "/main.js",
+        "/list.js",
+        "github/jillix/bind/v0.2.0",
+        "github/jillix/events/v0.1.7",
+        "http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"
+    ],
+    "operations": []
+  },
+  "keywords": [
+    "list",
+    "bind"
+  ],
+  "author": "Ionică Bizău",
+  "bugs": {
+    "url": "https://github.com/IonicaBizau/bind-list-crud/issues"
+  },
+  "homepage": "https://github.com/IonicaBizau/bind-list-crud"
+}
