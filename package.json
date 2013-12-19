@@ -1,0 +1,30 @@
+{
+  "name": "bind-table-crud",
+  "version": "0.0.0",
+  "description": "Bind-table module for CRUD.",
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/IonicaBizau/bind-table-crud.git"
+  },
+  "mono": {
+    "dependencies": [
+        "/main.js",
+        "/table.js",
+        "/sort.js",
+        "github/jillix/bind/v0.2.0",
+        "github/jillix/events/v0.1.7",
+        "http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"
+    ],
+    "operations": []
+  },
+  "keywords": [
+    "table",
+    "crud"
+  ],
+  "author": "Ionică Bizău",
+  "bugs": {
+    "url": "https://github.com/IonicaBizau/bind-table-crud/issues"
+  },
+  "homepage": "https://github.com/IonicaBizau/bind-table-crud"
+}
