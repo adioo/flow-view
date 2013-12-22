@@ -1,3 +1,4 @@
+M.wrap('github/IonicaBizau/bind-list-crud/v0.1.1/list.js', function (require, module, exports) {
 var Bind = require("github/jillix/bind");
 var Events = require("github/jillix/events");
 
@@ -550,7 +551,7 @@ function List(module) {
     function createItem(itemData) {
 
         var crudObj = {
-            t: config.options.type,
+            t: config.options.template,
             d: itemData
         };
 
@@ -570,7 +571,7 @@ function List(module) {
         query[config.options.id] = [itemData[config.options.id]];
 
         var crudObj = {
-            t: config.options.type,
+            t: config.options.template,
             q: query
         };
 
@@ -605,7 +606,7 @@ function List(module) {
         filter.data[config.options.id] = ids;
 
         var crudObj = {
-            t: config.options.type,
+            t: config.options.template,
             q: filter
         };
 
@@ -688,7 +689,7 @@ function List(module) {
     }
 
     function setTemplate (template) {
-        config.template = template.toString();
+        config.options.template = template.toString();
     }
 
     return {
@@ -732,3 +733,5 @@ module.exports = function (module, config) {
     return list;
 };
 
+
+return module; });
