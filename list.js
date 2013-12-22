@@ -687,19 +687,31 @@ function List(module) {
         pagination.dom.pages = [];
     }
 
+    function setTemplate (template) {
+        config.template = template.toString();
+    }
+
     return {
         init: init,
         read: read,
+
         renderItemsFromResult: renderItemsFromResult,
+
         createItem: createItem,
         removeItem: removeItem,
+
         removeSelected: removeSelected,
+
         deselect: deselect,
         selectItem: selectItem,
+
         goToNextPage: goToNextPage,
         goToPrevPage: goToPrevPage,
         showPage: showPage,
         emptyPagination: emptyPagination,
+
+        setTemplate: setTemplate
+
         show: show,
         hide: hide
     };
