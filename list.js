@@ -198,6 +198,15 @@ function List(module) {
     }
 
     function renderSelector(item) {
+
+        if (!item) { return; }
+        if (item.constructor.name === "Array") {
+            for (var i = 0; i < item.length; ++i) {
+                renderSelector(item[i]);
+            }
+            return;
+        }
+
         var newItem = $(template).clone();
         newItem
             .removeClass("template")
