@@ -576,7 +576,9 @@ function List(module) {
 
     function _sendRemove(itemData) {
         var query = {};
-        query[config.options.id] = [itemData[config.options.id]];
+        query[config.options.id] = {
+            "$in": [itemData[config.options.id]]
+        };
 
         var crudObj = {
             t: config.options.template,
