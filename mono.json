@@ -1,0 +1,12 @@
+{
+    "source": "github",
+    "owner": "IonicaBizau",
+    "name": "bind-list-crud",
+    "dependencies": [
+        "/main.js",
+        "/list.js",
+        "github/jillix/bind/v0.2.0",
+        "github/jillix/events/v0.1.7"
+    ],
+    "operations": []
+}
