@@ -710,7 +710,7 @@ function List(module) {
         showPage: showPage,
         emptyPagination: emptyPagination,
 
-        setTemplate: setTemplate
+        setTemplate: setTemplate,
 
         show: show,
         hide: hide
