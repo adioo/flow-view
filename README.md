@@ -7,6 +7,10 @@ No datasources needed.
 
 ### Change Log
 
+#### v0.1.4
+ - Added `itemsReneder` event that is emited after the items are rendered.
+ - `callback` argument in `createItem` function
+
 #### v0.1.3
  - Fixed the deleting query
 

@@ -558,7 +558,7 @@ function List(module) {
         self.emit("itemsRendered", data);
     }
 
-    function createItem(itemData) {
+    function createItem(itemData, callback) {
 
         var crudObj = {
             t: config.options.template,
@@ -566,6 +566,9 @@ function List(module) {
         };
 
         self.emit("insert", crudObj, function(err, data) {
+            if (callback) {
+                return callback(err, data);
+            }
             if (err) { return; }
             if (!pagination) {
                 render.call(self, data);
