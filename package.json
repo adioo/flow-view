@@ -7,9 +7,9 @@
     "type": "git",
     "url": "git://github.com/jillix/jlx-layout.git"
   },
-  "dependencies": [
+  "dependencies": {
     "hello-world": "*"
-  ],
+  },
   "keywords": [
     "layout",
     "mono"
