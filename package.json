@@ -7,9 +7,9 @@
     "type": "git",
     "url": "git://github.com/jillix/jlx-layout.git"
   },
-  "mono": {
-    "dependencies": ["/layout.js"]
-  },
+  "dependencies": [
+    "hello-world": "*"
+  ],
   "keywords": [
     "layout",
     "mono"
@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/jillix/jlx-layout/issues"
   },
-  "homepage": "https://github.com/jillix/jlx-layout"
+  "homepage": "https://github.com/jillix/jlx-layout",
+  "mono": {
+    "dependencies": ["/layout.js"]
+  }
 }
