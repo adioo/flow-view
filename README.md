@@ -7,6 +7,9 @@ No datasources needed.
 
 ### Change Log
 
+#### v0.1.6
+ - Added `updateItem` function
+
 #### v0.1.5
  - Events v0.1.8 and Bind v0.2.1
 

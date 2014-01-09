@@ -579,6 +579,23 @@ function List(module) {
         });
     }
 
+    /*
+     *  This functions updates an item in the database via CRUD
+     *
+     * */
+    function updateItem(query, updateObj, callback) {
+
+        // create the crud object
+        var crudObj = {
+            t: config.options.template,
+            q: query || {},
+            d: updateObj
+        };
+
+        // send the crud object to crud
+        self.emit("update", crudObj, callback);
+    }
+
     function _sendRemove(itemData) {
         var query = {};
         query[config.options.id] = {
@@ -714,6 +731,7 @@ function List(module) {
         renderItemsFromResult: renderItemsFromResult,
 
         createItem: createItem,
+        updateItem: updateItem,
         removeItem: removeItem,
 
         removeSelected: removeSelected,
