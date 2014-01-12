@@ -1,13 +1,13 @@
 M.wrap('github/jillix/jlx-layout/v0.0.1/layout.js', function (require, module, exports) {
 
+var Crud = require('github/jillix/jlx-crud/v0.0.1/crud');
 var View = require('github/jillix/jlx-view/v0.0.1/view');
 
 var config = {
     "title": "Mono Dev",
     "view": {
-        "src": "viewTemplateId",
         "views": [{
-            "id": "",
+            "id": "viewId",
             "to": "body"
         }]
         /*
@@ -32,7 +32,10 @@ var config = {
             }
         */
     },
-    //"query": {},
+    "source": "sourceId",
+    /*"read": {
+        "q": {}
+    },*/
     "data": [
         {title: 'Rendered with jlx-view', text: 'jlx-view binds content dynamically to a html snippet'},
         {title: 'Rendered with jlx-view', text: 'jlx-view binds content dynamically to a html snippet'},
@@ -52,14 +55,21 @@ function setupView (err, view) {
     self.views.push(view);
     
     // read data from server
-    if (config.query) {
-        /* TODO get data with crud
-        crud.read(config.query, function (err, data) {
+    if (self.crud && config.read) {
+        self.crud.read(config.read, function (err, data) {
+            
+            if (err) {
+                return;
+            }
+            
+            // set data
+            if (data) {
+                view.data = data;
+            }
             
             // render html
             view.render();
-            
-        });*/
+        });
     
     // set data
     } else {
@@ -92,12 +102,17 @@ function init () {
     }
     
     // init view
-    if (config.view && config.view.src && config.view.views) {
+    if (config.view && config.view.views) {
         
         self.views = [];
         
         // init view module
-        var V = View(config.view.src, self);
+        var V = View(self);
+        
+        // get crud instance
+        if (config.source) {
+            self.crud = Crud(self)(config.source);
+        }
         
         // emit ready when all views are loaded
         var count = 0;
