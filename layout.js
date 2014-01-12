@@ -10,29 +10,29 @@ var config = {
             "id": "",
             "to": "body"
         }]
+        /*
+            // custom code
+            M.custom = {
+                view: {
+                    addCount: function (data) {
+                        this.count = this.count || 0;
+                        data.title = data.title + ' ' + (++this.count);
+                        return data;
+                    },
+                    resetCount: function (html) {
+                        this.count = 0;
+                    }
+                }
+            };
+            
+            // view config
+            "on": {
+                "data": "M.custom.view.addCount",
+                "done": "M.custom.view.resetCount"
+            }
+        */
     },
     //"query": {},
-    /*
-        // custom code
-        M.custom = {
-            view: {
-                addCount: function (data) {
-                    this.count = this.count || 0;
-                    data.title = data.title + ' ' + (++this.count);
-                    return data;
-                },
-                resetCount: function (html) {
-                    this.count = 0;
-                }
-            }
-        };
-        
-        // view config
-        "on": {
-            "data": "M.custom.view.addCount",
-            "done": "M.custom.view.resetCount"
-        }
-    */
     "data": [
         {title: 'Rendered with jlx-view', text: 'jlx-view binds content dynamically to a html snippet'},
         {title: 'Rendered with jlx-view', text: 'jlx-view binds content dynamically to a html snippet'},
@@ -70,9 +70,9 @@ function setupView (err, view) {
         }
         
         // append custom handlers
-        if (config.on) {
-            for (var event in config.on) {
-                view.on[event] = Object.path(config.on[event]);
+        if (config.view.on) {
+            for (var event in config.view.on) {
+                view.on[event] = Object.path(config.view.on[event]);
             }
         }
         

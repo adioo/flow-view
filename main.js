@@ -4,6 +4,7 @@ var M = process.mono;
 var crud = require(M.config.paths.MODULE_ROOT + 'github/jillix/jlx-crud/v0.0.1/main');
 
 // get html snipptets (ws)
+// TODO move this to jlx-view
 function html (err, data) {
     var self = this;
     
