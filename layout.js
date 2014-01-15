@@ -37,9 +37,9 @@ var config = {
         "q": {}
     },*/
     "data": [
-        {title: 'Rendered with jlx-view', text: 'jlx-view binds content dynamically to a html snippet'},
-        {title: 'Rendered with jlx-view', text: 'jlx-view binds content dynamically to a html snippet'},
-        {title: 'Rendered with jlx-view', text: 'jlx-view binds content dynamically to a html snippet'}
+        {title: 'Rendered with jlx-view', text: 'jlx-view binds content dynamically to a html snippet', 'test.dot.notation': 'this.is.a.dot.notation.field'},
+        {title: 'Rendered with jlx-view', text: 'jlx-view binds content dynamically to a html snippet', 'test.dot.notation': 'this.is.a.dot.notation.field'},
+        {title: 'Rendered with jlx-view', text: 'jlx-view binds content dynamically to a html snippet', 'test.dot.notation': 'this.is.a.dot.notation.field'}
     ]
 };
 
@@ -53,6 +53,13 @@ function setupView (err, view) {
     
     // save view
     self.views.push(view);
+    
+    // append custom handlers
+    if (config.view.on) {
+        for (var event in config.view.on) {
+            view.on[event] = Object.path(config.view.on[event]);
+        }
+    }
     
     // read data from server
     if (self.crud && config.read) {
@@ -79,13 +86,6 @@ function setupView (err, view) {
             view.data = config.data;
         }
         
-        // append custom handlers
-        if (config.view.on) {
-            for (var event in config.view.on) {
-                view.on[event] = Object.path(config.view.on[event]);
-            }
-        }
-        
         // render html and append it to the dom
         view.render();
         self.emit('view', null, view);
@@ -103,17 +103,17 @@ function init () {
     
     // init view
     if (config.view && config.view.views) {
-        
+
         self.views = [];
-        
+
         // init view module
         var V = View(self);
-        
+
         // get crud instance
         if (config.source) {
             self.crud = Crud(self)(config.source);
         }
-        
+
         // emit ready when all views are loaded
         var count = 0;
         var viewCounter = function (err, view) {
@@ -122,12 +122,12 @@ function init () {
             }
         };
         self.on('view', viewCounter);
-        
+
         // load views
         for (var i = 0; i < config.view.views.length; ++i) {
             V(config.view.views[i], setupView);
         }
-        
+
     } else {
         self.emit('ready');
     }
