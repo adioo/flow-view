@@ -42,6 +42,8 @@ function ready (err, bind) {
         
         // render
         bind.render();
+        //bind.state('/test/url/#hashendoch/?a=b');
+        bind.state();
         self.emit('ready');
     }
 }
