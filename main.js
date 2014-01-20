@@ -1,7 +1,7 @@
 var fs = require('fs');
 var M = process.mono;
 
-var Crud = require(M.config.paths.MODULE_ROOT + 'github/jillix/jlx-crud/v0.0.1/main');
+var Crud = require(M.config.paths.MODULE_ROOT + 'github/jillix/bind/v0.0.1/server/crud');
 
 // get html snipptets (ws)
 // TODO move this to jlx-view
