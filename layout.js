@@ -1,97 +1,134 @@
-M.wrap('github/jillix/jlx-layout/v0.0.1/layout.js', function (require, module, exports) {
+M.wrap('github/jillix/layout/v0.0.1/layout.js', function (require, module, exports) {
 
 var Bind = require('github/jillix/bind/v0.0.1/bind');
 
-function ready (err, bind) {
-    var self = this;
-    var config = self.mono.config;
-    
-    if (err) {
-        return self.emit('error', err);
-    }
-    
-    // append custom handlers
-    if (config.on) {
-        for (var event in config.on) {
-            bind.on[event] = Object.path(config.view.on[event]);
+/*
+    // custom code
+    M.custom = {
+        bind: {
+            addCount: function (data) {
+                this.count = this.count || 0;
+                data.title = data.title + ' ' + (++this.count);
+                return data;
+            },
+            resetCount: function (html) {
+                this.count = 0;
+            }
         }
-    }
-    
-    // set data
-    if (config.data) {
-        bind.data = config.data;
-    }
-    
-    // read data
-    if (config.read) {
-        bind.read(config.read, function (err, data) {
-            
-            if (err) {
-                return;
+    };
+*/
+
+var config = {
+    "title": "Mono Dev",
+    "crud": "dataTemplateId",
+    "view": {
+        "html": 'html/layout.html',
+        "css": ['css/style.css'],
+        "on": {
+            "data": "M.custom.bind.addCount",
+            "view": "M.custom.bind.resetCount"
+        }
+    },
+    "to": "body",
+    "data": [
+        {title: 'Rendered with bind', text: 'Bind binds content dynamically to a html snippet', 'test': {'dot': {'notation': 'deep value'}}},
+        {title: 'Rendered with bind', text: 'Bind binds content dynamically to a html snippet', 'test': {'dot': {'notation': 'deep value'}}},
+        {title: 'Rendered with bind', text: 'Bind binds content dynamically to a html snippet', 'test': {'dot': {'notation': 'deep value'}}}
+    ],
+    "states": {
+        // url: /de/articles/shoesCatId/menCatId/sportCatId
+        "articles": {
+            'bind.states.initArticleList': {
+                "css": {'#selector': {/*css*/}},
+                "title": -1
             }
-            
-            if (data) {
-                bind.data = data;
+        },
+        // url: /article/articleId
+        "article": {
+            'bind.states.initArticleDetail': {
+                "css": {'#selector': {/*css*/}},
+                "id": -1
             }
-            
-            // render
-            bind.render();
-            self.emit('ready');
-        });
-    } else {
-        
-        // render
-        bind.render();
-        //bind.state('/test/url/#hashendoch/?a=b');
-        bind.state();
-        self.emit('ready');
-    }
-}
+        }
+    },
+    /*
+    set default data
+    set default crud configs
+    set events and handlers
+    "read": {
+        "q": {}
+    },*/
+    
+};
 
 function init () {
     var self = this;
-    var config = self.mono.config = {
-        "title": "Mono Dev",
-        "bind": "bindId",
-        "to": "body",
-        "data": [
-            {title: 'Rendered with bind', text: 'Bind binds content dynamically to a html snippet', 'test': {'dot': {'notation': 'deep value'}}},
-            {title: 'Rendered with bind', text: 'Bind binds content dynamically to a html snippet', 'test': {'dot': {'notation': 'deep value'}}},
-            {title: 'Rendered with bind', text: 'Bind binds content dynamically to a html snippet', 'test': {'dot': {'notation': 'deep value'}}}
-        ],
-        /*"read": {
-            "q": {}
-        },*/
-        /*
-            // custom code
-            M.custom = {
-                bind: {
-                    addCount: function (data) {
-                        this.count = this.count || 0;
-                        data.title = data.title + ' ' + (++this.count);
-                        return data;
-                    },
-                    resetCount: function (html) {
-                        this.count = 0;
-                    }
-                }
-            };
-            
-            // bind config
-            "on": {
-                "data": "M.custom.bind.addCount",
-                "done": "M.custom.bind.resetCount"
-            }
-        */
-    } || self.mono.config;
+    
+    //config = self.mono.config;
     
     // set document title
     if (config.title) {
         document.title = config.title;
     }
     
-    if (config.bind && config.to) {
-        Bind(self)(config.bind, config.to, ready);
+    // init bind
+    Bind(self);
+    
+    // init crud
+    if (config.crud) {
+        self.crud = self.bind.crud(config.crud);
+    }
+    
+    // init state
+    if (config.states) {
+        self.state = self.bind.state(config.states);
+    }
+    
+    // init view
+    if (config.view) {
+        self.bind.view(config.view, function (err, view) {
+            
+            if (err) {
+                // TODO handle errors
+                return;
+            }
+            
+            self.view = view;
+            
+            // save dom target on view
+            if (config.to) {
+                view.dom = document.querySelector(config.to);
+            }
+            
+            // set data
+            if (config.data) {
+                view.data = config.data;
+            }
+            
+            // read data
+            if (config.read) {
+                view.read(config.read, function (err, data) {
+                    
+                    if (err) {
+                        return;
+                    }
+                    
+                    if (data) {
+                        view.data = data;
+                    }
+                    
+                    // render
+                    view.render();
+                    self.emit('ready');
+                });
+            } else {
+                // render
+                view.render();
+                //view.state('/test/url');
+                //view.state();
+                self.emit('ready');
+            }
+        });
     } else {
         self.emit('ready');
     }
