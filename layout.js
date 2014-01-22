@@ -16,62 +16,6 @@ M.custom = {
     }
 };
 
-var config = {
-    "title": "Mono Dev",
-    "crud": "dataTemplateId",
-    "view": {
-        "html": 'html/layout.html',
-        "css": ['css/style.css'],
-        "on": {
-            "data": "M.custom.bind.addCount",
-            "html": "M.custom.bind.resetCount"
-        }
-    },
-    "to": "body",
-    "states": {
-        "/": {
-            "stateHandler": {
-                "modules": ['miid'],
-                "css": {
-                    "h1": {
-                        "backgroundColor": "#fff",
-                        "color": "#000"
-                    }
-                },
-                data: [
-                    {title: 'Rendered with bind', text: 'Bind binds content dynamically to a html snippet', 'test': {'dot': {'notation': 'deep value'}}},
-                    {title: 'Rendered with bind', text: 'Bind binds content dynamically to a html snippet', 'test': {'dot': {'notation': 'deep value'}}},
-                    {title: 'Rendered with bind', text: 'Bind binds content dynamically to a html snippet', 'test': {'dot': {'notation': 'deep value'}}},
-                ]
-                /*
-                "read": {
-                    "q": {}
-                }
-                */
-            }
-        },
-        // url: /de/articles/shoesCatId/menCatId/sportCatId
-        "/articles": {
-            "stateHandler": {
-                "modules": ['miid'],
-                "css": {
-                    "h1": {
-                        "backgroundColor": "#000",
-                        "color": "#fff"
-                    }
-                },
-                data: [
-                    {title: 'New Articles', text: 'buy now and save $100 !!!', 'test': {'dot': {'notation': 'deep value'}}},
-                    {title: 'New Articles', text: 'buy now and save $100 !!!', 'test': {'dot': {'notation': 'deep value'}}},
-                    {title: 'New Articles', text: 'buy now and save $100 !!!', 'test': {'dot': {'notation': 'deep value'}}},
-                    {title: 'New Articles', text: 'buy now and save $100 !!!', 'test': {'dot': {'notation': 'deep value'}}},
-                    {title: 'New Articles', text: 'buy now and save $100 !!!', 'test': {'dot': {'notation': 'deep value'}}}
-                ]
-            }
-        }
-    }
-};
-
 function stateHandler (config) {
     var self = this;
     
@@ -97,10 +41,9 @@ function stateHandler (config) {
 
 function init () {
     var self = this;
-    
-    //config = self.mono.config;
-    
     self.stateHandler = stateHandler;
+    
+    config = self.mono.config.data;
     
     // set document title
     if (config.title) {
