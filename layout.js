@@ -2,21 +2,19 @@ M.wrap('github/jillix/layout/v0.0.1/layout.js', function (require, module, expor
 
 var Bind = require('github/jillix/bind/v0.0.1/bind');
 
-/*
-    // custom code
-    M.custom = {
-        bind: {
-            addCount: function (data) {
-                this.count = this.count || 0;
-                data.title = data.title + ' ' + (++this.count);
-                return data;
-            },
-            resetCount: function (html) {
-                this.count = 0;
-            }
+// custom code
+M.custom = {
+    bind: {
+        addCount: function (data) {
+            this.count = this.count || 0;
+            data.custom = ++this.count;
+            return data;
+        },
+        resetCount: function (html) {
+            this.count = 0;
         }
-    };
-*/
+    }
+};
 
 var config = {
     "title": "Mono Dev",
@@ -26,45 +24,83 @@ var config = {
         "css": ['css/style.css'],
         "on": {
             "data": "M.custom.bind.addCount",
-            "view": "M.custom.bind.resetCount"
+            "html": "M.custom.bind.resetCount"
         }
     },
     "to": "body",
-    "data": [
-        {title: 'Rendered with bind', text: 'Bind binds content dynamically to a html snippet', 'test': {'dot': {'notation': 'deep value'}}},
-        {title: 'Rendered with bind', text: 'Bind binds content dynamically to a html snippet', 'test': {'dot': {'notation': 'deep value'}}},
-        {title: 'Rendered with bind', text: 'Bind binds content dynamically to a html snippet', 'test': {'dot': {'notation': 'deep value'}}}
-    ],
     "states": {
-        // url: /de/articles/shoesCatId/menCatId/sportCatId
-        "articles": {
-            'bind.states.initArticleList': {
-                "css": {'#selector': {/*css*/}},
-                "title": -1
+        "/": {
+            "stateHandler": {
+                "modules": ['miid'],
+                "css": {
+                    "h1": {
+                        "backgroundColor": "#fff",
+                        "color": "#000"
+                    }
+                },
+                data: [
+                    {title: 'Rendered with bind', text: 'Bind binds content dynamically to a html snippet', 'test': {'dot': {'notation': 'deep value'}}},
+                    {title: 'Rendered with bind', text: 'Bind binds content dynamically to a html snippet', 'test': {'dot': {'notation': 'deep value'}}},
+                    {title: 'Rendered with bind', text: 'Bind binds content dynamically to a html snippet', 'test': {'dot': {'notation': 'deep value'}}},
+                ]
+                /*
+                "read": {
+                    "q": {}
+                }
+                */
             }
         },
-        // url: /article/articleId
-        "article": {
-            'bind.states.initArticleDetail': {
-                "css": {'#selector': {/*css*/}},
-                "id": -1
+        // url: /de/articles/shoesCatId/menCatId/sportCatId
+        "/articles": {
+            "stateHandler": {
+                "modules": ['miid'],
+                "css": {
+                    "h1": {
+                        "backgroundColor": "#000",
+                        "color": "#fff"
+                    }
+                },
+                data: [
+                    {title: 'New Articles', text: 'buy now and save $100 !!!', 'test': {'dot': {'notation': 'deep value'}}},
+                    {title: 'New Articles', text: 'buy now and save $100 !!!', 'test': {'dot': {'notation': 'deep value'}}},
+                    {title: 'New Articles', text: 'buy now and save $100 !!!', 'test': {'dot': {'notation': 'deep value'}}},
+                    {title: 'New Articles', text: 'buy now and save $100 !!!', 'test': {'dot': {'notation': 'deep value'}}},
+                    {title: 'New Articles', text: 'buy now and save $100 !!!', 'test': {'dot': {'notation': 'deep value'}}}
+                ]
             }
         }
-    },
-    /*
-    set default data
-    set default crud configs
-    set events and handlers
-    "read": {
-        "q": {}
-    },*/
-    
+    }
 };
+
+function stateHandler (config) {
+    var self = this;
+    
+    if (self.view) {
+        
+        if (config.data) {
+            self.view.render(config.data);
+        }
+        
+        // set css
+        if (config.css) {
+            for (var selector in config.css) {
+                var elm = self.view.dom.querySelector(selector);
+                if (elm) {
+                    for (var style in config.css[selector]) {
+                        elm.style[style] = config.css[selector][style];
+                    }
+                }
+            }
+        }
+    }
+}
 
 function init () {
     var self = this;
     
     //config = self.mono.config;
+    
+    self.stateHandler = stateHandler;
     
     // set document title
     if (config.title) {
@@ -72,21 +108,24 @@ function init () {
     }
     
     // init bind
-    Bind(self);
+    var B = Bind(self);//.setup(config);
     
     // init crud
     if (config.crud) {
-        self.crud = self.bind.crud(config.crud);
+        self.crud = B.crud(config.crud);
     }
     
     // init state
     if (config.states) {
-        self.state = self.bind.state(config.states);
+        self.state = B.state(config.states);
+        self.on('ready', function () {
+            self.state.set();
+        });
     }
     
     // init view
     if (config.view) {
-        self.bind.view(config.view, function (err, view) {
+        B.view(config.view, function (err, view) {
             
             if (err) {
                 // TODO handle errors
@@ -117,15 +156,21 @@ function init () {
                         view.data = data;
                     }
                     
-                    // render
-                    view.render();
                     self.emit('ready');
                 });
             } else {
-                // render
-                view.render();
-                //view.state('/test/url');
-                //view.state();
+                
+                // TEST NAVIGATION
+                view.on.done = function (view) {
+                    view.dom.querySelector('h1').addEventListener('click', function () {
+                        if (window.location.pathname === '/') {
+                            self.state.set('/articles');
+                        } else {
+                            self.state.set('/');
+                        }
+                    }, false);
+                };
+                
                 self.emit('ready');
             }
         });
