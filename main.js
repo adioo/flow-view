@@ -1,36 +1,8 @@
-var fs = require('fs');
 var M = process.mono;
-
-var Crud = require(M.config.paths.MODULE_ROOT + 'github/jillix/bind/v0.0.1/server/crud');
-
-// get html snipptets (ws)
-// TODO move this to jlx-view
-function html (err, data) {
-    var self = this;
-    
-    if (!data) {
-        return self.emit('html', 'No path given');
-    }
-    
-    var file = M.config.paths.TEMPLATE_ROOT + data.replace(/[^a-z0-9\/\.\-_]|\.\.\//gi, "");
-    fs.readFile(file, {encoding: 'utf8'}, function (err, data) {
-        
-        if (err) {
-            return self.emit('html', 'File not found');
-        }
-        
-        self.emit('html', null, data);
-    });
-}
+var Bind = require(M.config.paths.MODULE_ROOT + 'github/jillix/bind/v0.0.1/server/bind');
 
 function init (config) {
-    var self = this;
-    
-    // init crud
-    Crud(self);
-    
-    self.on('getHtml', html);
-    //self.on('read', crud.read);
+    Bind(this);
 }
 
 module.exports = init;
