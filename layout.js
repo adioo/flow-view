@@ -61,6 +61,7 @@ function init () {
     // init state
     if (config.states) {
         self.state = B.state(config.states);
+        // set an empty state is the same like: state.set(location.pathname);
         self.on('ready', function () {
             self.state.set();
         });
