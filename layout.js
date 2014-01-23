@@ -51,76 +51,17 @@ function init () {
     }
     
     // init bind
-    var B = Bind(self);//.setup(config);
-    
-    // init crud
-    if (config.crud) {
-        self.crud = B.crud(config.crud);
-    }
-    
-    // init state
-    if (config.states) {
-        self.state = B.state(config.states);
+    Bind(self).load(config, function (err, B) {
+        
+        if (err) {
+            // TODO do something on error
+            return;
+        }
+        
         // set an empty state is the same like: state.set(location.pathname);
-        self.on('ready', function () {
-            self.state.set();
-        });
-    }
-    
-    // init view
-    if (config.view) {
-        B.view(config.view, function (err, view) {
-            
-            if (err) {
-                // TODO handle errors
-                return;
-            }
-            
-            self.view = view;
-            
-            // save dom target on view
-            if (config.to) {
-                view.dom = document.querySelector(config.to);
-            }
-            
-            // set data
-            if (config.data) {
-                view.data = config.data;
-            }
-            
-            // read data
-            if (config.read) {
-                view.read(config.read, function (err, data) {
-                    
-                    if (err) {
-                        return;
-                    }
-                    
-                    if (data) {
-                        view.data = data;
-                    }
-                    
-                    self.emit('ready');
-                });
-            } else {
-                
-                // TEST NAVIGATION
-                view.on.done = function (view) {
-                    view.dom.querySelector('h1').addEventListener('click', function () {
-                        if (window.location.pathname === '/') {
-                            self.state.set('/articles');
-                        } else {
-                            self.state.set('/');
-                        }
-                    }, false);
-                };
-                
-                self.emit('ready');
-            }
-        });
-    } else {
+        B.state.set();
         self.emit('ready');
-    }
+    });
 }
 
 module.exports = init;
