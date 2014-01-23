@@ -17,18 +17,18 @@ M.custom = {
 };
 
 function stateHandler (config) {
-    var self = this;
+    var bind = this.bind;
     
-    if (self.view) {
+    if (bind.view) {
         
         if (config.data) {
-            self.view.render(config.data);
+            bind.view.render(config.data);
         }
         
         // set css
         if (config.css) {
             for (var selector in config.css) {
-                var elm = self.view.dom.querySelector(selector);
+                var elm = bind.view.dom.querySelector(selector);
                 if (elm) {
                     for (var style in config.css[selector]) {
                         elm.style[style] = config.css[selector][style];
@@ -51,15 +51,18 @@ function init () {
     }
     
     // init bind
-    Bind(self).load(config, function (err, B) {
+    Bind(self).load(config.bind, function (err, bind) {
         
         if (err) {
             // TODO do something on error
             return;
         }
         
+        // save bind instance
+        self.bind = bind;
+        
         // set an empty state is the same like: state.set(location.pathname);
-        B.state.set();
+        bind.state.set();
         self.emit('ready');
     });
 }
