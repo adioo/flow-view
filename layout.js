@@ -2,22 +2,14 @@ M.wrap('github/jillix/layout/v0.0.1/layout.js', function (require, module, expor
 
 var Bind = require('github/jillix/bind/v0.0.1/bind');
 
-// custom code
-M.custom = {
-    bind: {
-        addCount: function (data) {
-            this.count = this.count || 0;
-            data.custom = ++this.count;
-            return data;
-        },
-        resetCount: function (html) {
-            this.count = 0;
-        }
-    }
-};
-
 function stateHandler (config) {
     var bind = this.bind;
+    
+    if (config.modules) {
+        for (var i = 0; i < config.modules.length; ++i) {
+            M(config.modules[i]);
+        }
+    }
     
     if (bind.view) {
         
@@ -28,7 +20,7 @@ function stateHandler (config) {
         // set css
         if (config.css) {
             for (var selector in config.css) {
-                var elm = bind.view.dom.querySelector(selector);
+                var elm = document.querySelector(selector);
                 if (elm) {
                     for (var style in config.css[selector]) {
                         elm.style[style] = config.css[selector][style];
@@ -41,7 +33,9 @@ function stateHandler (config) {
 
 function init () {
     var self = this;
-    self.stateHandler = stateHandler;
+    
+    // handle states
+    self.handler = stateHandler;
     
     config = self.mono.config.data;
     
