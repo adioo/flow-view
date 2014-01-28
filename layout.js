@@ -13,9 +13,7 @@ function stateHandler (config) {
     
     if (bind.view) {
         
-        if (config.data) {
-            bind.view.render(config.data);
-        }
+        bind.view.render(config.data);
         
         // set css
         if (config.css) {
@@ -56,7 +54,7 @@ function init () {
         self.bind = bind;
         
         // set an empty state is the same like: state.set(location.pathname);
-        bind.state.set();
+        bind.state.emit();
         self.emit('ready');
     });
 }
