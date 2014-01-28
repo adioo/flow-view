@@ -19,19 +19,19 @@ function init () {
             bind.view.on.done = function (view) {
                 var elms = bind.view.dom.querySelectorAll('li');
                 elms[0].addEventListener('click', function () {
-                    bind.state.set('/editor');
+                    bind.state.emit('/editor');
                 }, false);
                 elms[1].addEventListener('click', function () {
-                    bind.state.set('/list');
+                    bind.state.emit('/list');
                 }, false);
                 elms[2].addEventListener('click', function () {
-                    bind.state.set('/list');
+                    bind.state.emit('/list');
                 }, false);
                 elms[3].addEventListener('click', function () {
-                    bind.state.set('/list');
+                    bind.state.emit('/list');
                 }, false);
                 elms[4].addEventListener('click', function () {
-                    bind.state.set('/list');
+                    bind.state.emit('/listt');
                 }, false);
             };
         }
