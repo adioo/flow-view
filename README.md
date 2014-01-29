@@ -1,4 +1,4 @@
-jlx-layout
+layout
 ==========
 
 Basic layout module
