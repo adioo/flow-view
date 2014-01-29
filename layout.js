@@ -46,6 +46,30 @@ function init () {
         // render html
         if (bind.view) {
             bind.view.render();
+            
+            // TEST NAVIGATION
+            var elms = bind.view.dom.querySelectorAll('.navbar-collapse li');
+            var home = bind.view.dom.querySelector('.navbar-brand');
+            
+            home.addEventListener('click', function () {
+                bind.state.emit('/');
+            }, false);
+            
+            elms[0].addEventListener('click', function () {
+                bind.state.emit('/editor');
+            }, false);
+            elms[1].addEventListener('click', function () {
+                bind.state.emit('/list');
+            }, false);
+            elms[2].addEventListener('click', function () {
+                bind.state.emit('/list');
+            }, false);
+            elms[3].addEventListener('click', function () {
+                bind.state.emit('/list');
+            }, false);
+            elms[4].addEventListener('click', function () {
+                bind.state.emit('/list');
+            }, false);
         }
         
         // emit an empty state is the same like: state.emit(location.pathname);
