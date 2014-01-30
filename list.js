@@ -68,11 +68,12 @@ var dbData = {
         }
     ],
     "roles": [
-        {"name": "admin"},
-        {"name": "user"}
+        {"_id": "djsu73hf7bd8b0b5bbbbaaa", "name": "admin"},
+        {"_id": "djsu73hf7bdadwf4g584e80", "name": "user"}
     ],
     "instances": [
         {
+            "_id": "djsu73hf7bd8b0b50f584e80",
             "module": "github/jillix/layout/v0.0.1",
             "miid": "start",
             "roles": ["52cd737d7bd8b0b50f584e80"],
@@ -89,6 +90,7 @@ var dbData = {
             }
         },
         {
+            "_id": "djsu73hf7bd8budjs82jfe80",
             "module": "github/jillix/list/v0.0.1",
             "miid": "navigation",
             "roles": ["52cd737d7bd8b0b50f584e80"],
@@ -100,6 +102,7 @@ var dbData = {
             }
         },
         {
+            "_id": "djsu73hf7bd8b0b5dh90g84k",
             "module": "github/jillix/list/v0.0.1",
             "miid": "list",
             "roles": ["52cd737d7bd8b0b50f584e80"],
@@ -115,6 +118,7 @@ var dbData = {
             }
         },
         {
+            "_id": "djsu73hf7boakn3ufs284e80",
             "module": "github/jillix/editor/v0.0.1",
             "miid": "editor",
             "roles": ["52cd737d7bd8b0b50f584e80"],
@@ -316,6 +320,15 @@ function load () {
         if (self.item) {
             self.item.view.setTemplate(htmls.rows);
             self.item.view.render(dbData[template]);
+            
+            var rows = self.item.view.dom.querySelectorAll('tr');
+            for (var i = 0; i < rows.length; ++i) {
+                rows[i].addEventListener('click', (function (data) {
+                    return function () {
+                        self.item.state.emit('/editor/' + template + '/' + data._id);
+                    };
+                })(dbData[template][i]), false);
+            }
         }
     }
 }
