@@ -56,19 +56,19 @@ function init () {
             }, false);
             
             elms[0].addEventListener('click', function () {
-                bind.state.emit('/editor');
+                bind.state.emit('/editor/application/appId');
             }, false);
             elms[1].addEventListener('click', function () {
-                bind.state.emit('/list');
+                bind.state.emit('/table/modules');
             }, false);
             elms[2].addEventListener('click', function () {
-                bind.state.emit('/list');
+                bind.state.emit('/table/instances');
             }, false);
             elms[3].addEventListener('click', function () {
-                bind.state.emit('/list');
+                bind.state.emit('/table/binds');
             }, false);
             elms[4].addEventListener('click', function () {
-                bind.state.emit('/list');
+                bind.state.emit('/table/roles');
             }, false);
         }
         
