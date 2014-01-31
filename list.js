@@ -2,282 +2,6 @@ M.wrap('github/jillix/list/v0.0.1/list.js', function (require, module, exports) 
 
 var Bind = require('github/jillix/bind/v0.0.1/bind');
 
-// TODO handle errors
-// TODO get data from db
-var dbData = {
-    "modules": [
-        {
-            "_id": "github/jillix/bind/v0.0.1",
-            "source": "github",
-            "owner": "jillix",
-            "name": "bind",
-            "version": "v0.0.1",
-            "main": "server/bind.js",
-            "dependencies": [
-                "./bind.js",
-                "./state.js",
-                "./view.js",
-                "./crud.js"
-            ]
-        },
-        {
-            "_id": "github/jillix/layout/v0.0.1",
-            "source": "github",
-            "owner": "jillix",
-            "name": "layout",
-            "version": "v0.0.1",
-            "main": "main.js",
-            "dependencies": [
-                "./layout.js",
-                "github/jillix/bind/v0.0.1/bind.js",
-                "github/jillix/bind/v0.0.1/state.js",
-                "github/jillix/bind/v0.0.1/view.js",
-                "github/jillix/bind/v0.0.1/crud.js",
-                "//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"
-            ]
-        },
-        {
-            "_id": "github/jillix/list/v0.0.1",
-            "source": "github",
-            "owner": "jillix",
-            "name": "list",
-            "version": "v0.0.1",
-            "main": "server/list.js",
-            "dependencies": [
-                "./list.js",
-                "github/jillix/bind/v0.0.1/bind.js",
-                "github/jillix/bind/v0.0.1/state.js",
-                "github/jillix/bind/v0.0.1/view.js",
-                "github/jillix/bind/v0.0.1/crud.js"
-            ]
-        },
-        {
-            "_id": "github/jillix/editor/v0.0.1",
-            "source": "github",
-            "owner": "jillix",
-            "name": "editor",
-            "version": "v0.0.1",
-            "main": "server/editor.js",
-            "dependencies": [
-                "./editor.js",
-                "github/jillix/bind/v0.0.1/bind.js",
-                "github/jillix/bind/v0.0.1/state.js",
-                "github/jillix/bind/v0.0.1/view.js",
-                "github/jillix/bind/v0.0.1/crud.js"
-            ]
-        }
-    ],
-    "roles": [
-        {"_id": "djsu73hf7bd8b0b5bbbbaaa", "name": "admin"},
-        {"_id": "djsu73hf7bdadwf4g584e80", "name": "user"}
-    ],
-    "instances": [
-        {
-            "_id": "djsu73hf7bd8b0b50f584e80",
-            "module": "github/jillix/layout/v0.0.1",
-            "miid": "start",
-            "roles": ["52cd737d7bd8b0b50f584e80"],
-            "client": {
-                "modules": ["navigation", "list", "editor"],
-                "events": ["getHtml", "read", "bindLoad"],
-                "data": {
-                    "title": "Mono Admin",
-                    "bind": "startBind"
-                }
-            },
-            "server": {
-                "events": ["html", "data", "bindConfig"]
-            }
-        },
-        {
-            "_id": "djsu73hf7bd8budjs82jfe80",
-            "module": "github/jillix/list/v0.0.1",
-            "miid": "navigation",
-            "roles": ["52cd737d7bd8b0b50f584e80"],
-            "client": {
-                "events": ["getHtml", "read", "bindLoad"]
-            },
-            "server": {
-                "events": ["html", "data", "bindConfig"]
-            }
-        },
-        {
-            "_id": "djsu73hf7bd8b0b5dh90g84k",
-            "module": "github/jillix/list/v0.0.1",
-            "miid": "list",
-            "roles": ["52cd737d7bd8b0b50f584e80"],
-            "client": {
-                "events": ["getHtml", "read", "bindLoad"],
-                "data": {
-                    "bind": "listBind",
-                    "items": "itemsBind"
-                }
-            },
-            "server": {
-                "events": ["html", "data", "bindConfig"]
-            }
-        },
-        {
-            "_id": "djsu73hf7boakn3ufs284e80",
-            "module": "github/jillix/editor/v0.0.1",
-            "miid": "editor",
-            "roles": ["52cd737d7bd8b0b50f584e80"],
-            "client": {
-                "events": ["getHtml", "read", "bindLoad"],
-                "data": {
-                    "bind": "editorBind"
-                }
-            },
-            "server": {
-                "events": ["html", "data", "bindConfig"]
-            }
-        }
-    ],
-    "binds": [
-        {
-            "_id": "startBind",
-            "crud": "dataTemplateId",
-            "view": {
-                "html": "layout.html",
-                //"css": ["//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css", "//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css"],
-                "css": ["/css/bootstrap.min.css", "/css/bootstrap-theme.min.css"]
-                /*"on": {
-                    "data": "M.custom.bind.addCount",
-                    "html": "M.custom.bind.resetCount"
-                }*/
-            },
-            "to": "body",
-            "notFound": "/404",
-            "states": {
-                "/": {
-                    "page": [{
-                        "#home": {"display": "block"},
-                        "#list": {"display": "none"},
-                        "#editor": {"display": "none"},
-                        "#notFound": {"display": "none"}
-                    }]
-                },
-                "/list": {
-                    "page": [{
-                        "#home": {"display": "none"},
-                        "#list": {"display": "block"},
-                        "#editor": {"display": "none"},
-                        "#notFound": {"display": "none"}
-                    }]
-                },
-                "/editor": {
-                    "page": [{
-                        "#home": {"display": "none"},
-                        "#list": {"display": "none"},
-                        "#editor": {"display": "block"},
-                        "#notFound": {"display": "none"}
-                    }]
-                },
-                "/404": {
-                    "page": [{
-                        "#home": {"display": "none"},
-                        "#list": {"display": "none"},
-                        "#editor": {"display": "none"},
-                        "#notFound": {"display": "block"}
-                    }]
-                }
-            }
-        },
-        {
-            "_id": "listBind",
-            "crud": "dataTemplateId",
-            "view": {
-                "html": "list.html"
-            },
-            "to": "#list",
-            "states": {
-                "/list": {
-                    "state": []
-                }
-            }
-        },
-        {
-            "_id": "itemBind",
-            "crud": "dataTemplateId",
-            "view": {
-                "html": "item.html"
-            },
-            "to": "#items",
-            "states": {
-                "/list": {
-                    "load": []
-                }
-            }
-        },
-        {
-            "_id": "editorBind",
-            "crud": "dataTemplateId",
-            "view": {
-                "html": "editor.html",
-                "css": ["editor.css"]
-            },
-            "to": "#editor",
-            "states": {
-                "/editor": {
-                    "load": []
-                }
-            }
-        }
-    ]
-};
-var templates = {
-    "modules": {
-        "schema": {
-            "_id": {},
-            "source": {},
-            "owner": {},
-            "name": {},
-            "version": {},
-            "main": {},
-            "dependencies": [{}]
-        }
-    },
-    "roles": {
-        "schema": {
-            "name": {}
-        }
-    },
-    "instances": {
-        "schema": {
-            "module": {},
-            "miid": {},
-            "roles": [{}],
-            "client": {
-                "modules": [{}],
-                "events": [{}],
-                "scripts": [{}],
-                "data": {}
-            },
-            "server": {
-                "events": [{}],
-                "data": {}
-            }
-        }
-    },
-    "binds": {
-        "schema": {
-            "_id": {},
-            "crud": {},
-            "view": {
-                "html": {},
-                "css": [{}],
-                "on": {
-                    "data": {},
-                    "html": {}
-                }
-            },
-            "to": {},
-            "notFound": {},
-            "states": {}
-        }
-    }
-};
-
 function createTemplates (schema) {
     
     // create headers and rows
@@ -296,48 +20,87 @@ function createTemplates (schema) {
     return columns;
 }
 
+function clickRowHander (state, source, id) {
+    return function () {
+        state.emit('/editor/' + source + '/' + id);
+    };
+}
+
 function load () {
     var self = this;
-    var template = location.pathname.split('/')[2];
-    
-    // render title
-    if (self.title) {
-        self.title.view.render([{title: template}]);
-    }
     
     // render header
-    if (templates[template] && dbData[template]) {
+    if (self.model) {
         
-        var htmls = createTemplates(templates[template].schema);
-        
-        // render header
-        if (self.head) {
-            self.head.view.setTemplate(htmls.headers);
-            self.head.view.render();
+        // render title
+        if (self.title) {
+            self.title.view.render([{title: self.model.name}]);
         }
         
         // render items
         if (self.item) {
-            self.item.view.setTemplate(htmls.rows);
-            self.item.view.render(dbData[template]);
-            
-            var rows = self.item.view.dom.querySelectorAll('tr');
-            for (var i = 0; i < rows.length; ++i) {
-                rows[i].addEventListener('click', (function (data) {
-                    return function () {
-                        self.item.state.emit('/editor/' + template + '/' + data._id);
-                    };
-                })(dbData[template][i]), false);
-            }
+            self.item.crud.read({s: 'schemas', q: {_id: self.model.schema}}, function (err, schema) {
+                
+                if (err || !schema || !schema[0]) {
+                    return;
+                }
+                
+                var templates = createTemplates(schema[0].fields);
+                
+                // render header
+                if (self.head) {
+                    self.head.view.setTemplate(templates.headers);
+                    self.head.view.render();
+                }
+                
+                self.item.view.setTemplate(templates.rows);
+                self.item.crud.read({s: self.model._id, q: {}, o: {}}, function (err, data) {
+                    
+                    if (err || !data) {
+                        data = [err] || ['no data'];
+                    }
+                    
+                    self.item.view.render(data);
+                    
+                    // add clicks to rows
+                    var rows = self.item.view.dom.querySelectorAll('tr');
+                    for (var i = 0; i < rows.length; ++i) {
+                        rows[i].addEventListener('click', clickRowHander(self.item.state, self.model._id, data[i]._id), false);
+                    }
+                });
+            });
+        }
+    } else {
+        // reset rows and header
+        if (self.title) {
+            self.title.view.render([{}]);
+        }
+        
+        if (self.item) {
+            self.item.view.setTemplate('');
+            self.item.view.render([{}]);
+        }
+        
+        if (self.title) {
+            self.head.view.setTemplate('');
+            self.head.view.render([{}]);
         }
     }
+}
+
+function setModel (model) {
+    this.model = model;
 }
 
 function init () {
     var self = this;
     var config = self.mono.config.data;
     
+    // state handler
     self.load = load;
+    
+    // listen to model event
+    self.on('model', setModel);
     
     // init bind
     if (config && config.layout) {
@@ -361,6 +124,8 @@ function init () {
                 var handler = function (err) {
                     if (++count === 3) {
                         layout.state.emit();
+                        
+                        // TODO get model from url on init
                         self.emit('ready');
                     }
                 };
