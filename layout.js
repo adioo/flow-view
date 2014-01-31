@@ -48,28 +48,44 @@ function init () {
             bind.view.render();
             
             // TEST NAVIGATION
-            var elms = bind.view.dom.querySelectorAll('.navbar-collapse li');
-            var home = bind.view.dom.querySelector('.navbar-brand');
-            
-            home.addEventListener('click', function () {
-                bind.state.emit('/');
-            }, false);
-            
-            elms[0].addEventListener('click', function () {
-                bind.state.emit('/editor/application/appId');
-            }, false);
-            elms[1].addEventListener('click', function () {
-                bind.state.emit('/table/modules');
-            }, false);
-            elms[2].addEventListener('click', function () {
-                bind.state.emit('/table/instances');
-            }, false);
-            elms[3].addEventListener('click', function () {
-                bind.state.emit('/table/binds');
-            }, false);
-            elms[4].addEventListener('click', function () {
-                bind.state.emit('/table/roles');
-            }, false);
+            bind.crud.read({q: {}, s: 'models'}, function (err, models) {
+                
+                var elms = bind.view.dom.querySelectorAll('#nav li');
+                var home = bind.view.dom.querySelector('.navbar-brand');
+                
+                home.addEventListener('click', function () {
+                    bind.state.emit('/');
+                }, false);
+                
+                elms[0].addEventListener('click', function () {
+                    self.pushAll('model', models[0]);
+                    bind.state.emit('/editor/application/52a357298eb3ce0b18000001');
+                }, false);
+                elms[1].addEventListener('click', function () {
+                    self.pushAll('model', models[1]);
+                    bind.state.emit('/table/modules');
+                }, false);
+                elms[2].addEventListener('click', function () {
+                    self.pushAll('model', models[2]);
+                    bind.state.emit('/table/roles');
+                }, false);
+                elms[3].addEventListener('click', function () {
+                    self.pushAll('model', models[3]);
+                    bind.state.emit('/table/instances');
+                }, false);
+                elms[4].addEventListener('click', function () {
+                    self.pushAll('model', models[4]);
+                    bind.state.emit('/table/views');
+                }, false);
+                elms[5].addEventListener('click', function () {
+                    self.pushAll('model', models[5]);
+                    bind.state.emit('/table/models');
+                }, false);
+                elms[6].addEventListener('click', function () {
+                    self.pushAll('model', models[6]);
+                    bind.state.emit('/table/schemas');
+                }, false);
+            });
         }
         
         // emit an empty state is the same like: state.emit(location.pathname);
