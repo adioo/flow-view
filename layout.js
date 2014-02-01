@@ -1,12 +1,12 @@
 M.wrap('github/jillix/layout/v0.0.1/layout.js', function (require, module, exports) {
 
-var Bind = require('github/jillix/bind/v0.0.1/bind');
+var View = require('github/jillix/view/v0.0.1/view');
 
 // TODO plug a css3 animation library here
 function page (config) {
     // set css
     if (config) {
-        var bind = this.bind;
+        var view = this.view;
         
         for (var selector in config) {
             var elm = document.querySelector(selector);
@@ -32,64 +32,58 @@ function init () {
         document.title = config.title;
     }
     
-    // init bind
-    Bind(self).load(config.bind, function (err, bind) {
+    // init view
+    View(self).load(config.view, function (err, view) {
         
         if (err) {
             // TODO do something on error
             return;
         }
         
-        // save bind instance
-        self.bind = bind;
+        // save view instance
+        self.view = view;
         
-        // render html
-        if (bind.view) {
-            bind.view.render();
+        // render template
+        if (view.template) {
+            view.template.render();
             
             // TEST NAVIGATION
-            bind.crud.read({q: {}, s: 'models'}, function (err, models) {
-                
-                var elms = bind.view.dom.querySelectorAll('#nav li');
-                var home = bind.view.dom.querySelector('.navbar-brand');
-                
-                home.addEventListener('click', function () {
-                    bind.state.emit('/');
-                }, false);
-                
-                elms[0].addEventListener('click', function () {
-                    self.pushAll('model', models[0]);
-                    bind.state.emit('/editor/application/52a357298eb3ce0b18000001');
-                }, false);
-                elms[1].addEventListener('click', function () {
-                    self.pushAll('model', models[1]);
-                    bind.state.emit('/table/modules');
-                }, false);
-                elms[2].addEventListener('click', function () {
-                    self.pushAll('model', models[2]);
-                    bind.state.emit('/table/roles');
-                }, false);
-                elms[3].addEventListener('click', function () {
-                    self.pushAll('model', models[3]);
-                    bind.state.emit('/table/instances');
-                }, false);
-                elms[4].addEventListener('click', function () {
-                    self.pushAll('model', models[4]);
-                    bind.state.emit('/table/views');
-                }, false);
-                elms[5].addEventListener('click', function () {
-                    self.pushAll('model', models[5]);
-                    bind.state.emit('/table/models');
-                }, false);
-                elms[6].addEventListener('click', function () {
-                    self.pushAll('model', models[6]);
-                    bind.state.emit('/table/schemas');
-                }, false);
+            view.model('models', function (err, model) {
+                model.read({q: {}}, function (err, models) {
+                    var elms = view.template.dom.querySelectorAll('#nav li');
+                    var home = view.template.dom.querySelector('.navbar-brand');
+                    
+                    home.addEventListener('click', function () {
+                        view.state.emit('/');
+                    }, false);
+                    
+                    elms[0].addEventListener('click', function () {
+                        view.state.emit('/editor/applications/52a357298eb3ce0b18000001');
+                    }, false);
+                    elms[1].addEventListener('click', function () {
+                        view.state.emit('/table/modules');
+                    }, false);
+                    elms[2].addEventListener('click', function () {
+                        view.state.emit('/table/roles');
+                    }, false);
+                    elms[3].addEventListener('click', function () {
+                        view.state.emit('/table/instances');
+                    }, false);
+                    elms[4].addEventListener('click', function () {
+                        view.state.emit('/table/views');
+                    }, false);
+                    elms[5].addEventListener('click', function () {
+                        view.state.emit('/table/models');
+                    }, false);
+                    elms[6].addEventListener('click', function () {
+                        view.state.emit('/table/schemas');
+                    }, false);
+                });
             });
         }
         
         // emit an empty state is the same like: state.emit(location.pathname);
-        bind.state.emit();
+        view.state.emit();
         self.emit('ready');
     });
 }

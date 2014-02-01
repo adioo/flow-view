@@ -2,7 +2,7 @@
   "name": "layout",
   "version": "v0.0.1",
   "description": "Basic layout module",
-  "main": "main.js",
+  "main": "server/layout.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/jillix/layout.git"
@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/jillix/layout",
   "mono": {
-    "dependencies": ["/layout.js", "github/jillix/bind/v0.0.1"]
+    "dependencies": ["/layout.js", "github/jillix/view/v0.0.1"]
   }
 }
