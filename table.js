@@ -29,6 +29,11 @@ function clickRowHander (state, source, id) {
 function load () {
     var self = this;
     
+    // state can be emitted before the view is ready
+    if (!self.item) {
+        return;
+    }
+    
     // render items
     self.item.model(getModelFromUrl(), function (err, model) {
         
