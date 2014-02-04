@@ -46,40 +46,6 @@ function init () {
         // render template
         if (view.template) {
             view.template.render();
-            
-            // TEST NAVIGATION
-            view.model('models', function (err, model) {
-                model.read({q: {}}, function (err, models) {
-                    var elms = view.template.dom.querySelectorAll('#nav li');
-                    var home = view.template.dom.querySelector('.navbar-brand');
-                    
-                    home.addEventListener('click', function () {
-                        view.state.emit('/');
-                    }, false);
-                    
-                    elms[0].addEventListener('click', function () {
-                        view.state.emit('/editor/applications/52a357298eb3ce0b18000001');
-                    }, false);
-                    elms[1].addEventListener('click', function () {
-                        view.state.emit('/table/modules');
-                    }, false);
-                    elms[2].addEventListener('click', function () {
-                        view.state.emit('/table/roles');
-                    }, false);
-                    elms[3].addEventListener('click', function () {
-                        view.state.emit('/table/instances');
-                    }, false);
-                    elms[4].addEventListener('click', function () {
-                        view.state.emit('/table/views');
-                    }, false);
-                    elms[5].addEventListener('click', function () {
-                        view.state.emit('/table/models');
-                    }, false);
-                    elms[6].addEventListener('click', function () {
-                        view.state.emit('/table/schemas');
-                    }, false);
-                });
-            });
         }
         
         // emit an empty state is the same like: state.emit(location.pathname);
