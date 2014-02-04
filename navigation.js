@@ -41,6 +41,8 @@ function init () {
                     $('[data-nav]', self.layout.dom).on('click', function() {
                         item.state.emit('/table/' + $(this).attr('data-nav'));
                     });
+
+                    item.state.emit();
                 });
             });
         });
