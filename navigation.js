@@ -37,6 +37,10 @@ function init () {
             item.model('models', function (err, model) {
                 model.read({q: {}}, function (err, models) {
                     item.template.render(models);
+
+                    $('[data-nav]', self.layout.dom).on('click', function() {
+                        item.state.emit('/table/' + $(this).attr('data-nav'));
+                    });
                 });
             });
         });
@@ -57,6 +61,9 @@ function activate () {
         return;
     }
 
-    $('[data-nav="' + match[1] + '"]', self.layout.dom).addClass('active');
+    $('[data-nav="' + match[1] + '"]', self.layout.dom).parent().addClass('active');
 }
 
+module.exports = init;
+
+return module; });
