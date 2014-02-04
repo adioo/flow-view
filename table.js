@@ -76,7 +76,9 @@ function load (stateConf) {
  
         //add click to create button
         var create = self.mono.config.data.create;
-        $(create).addEventListener('click', self.emit('state', stateConf.createAction + self.model.name + '/new' );
+        $(create).on('click', function () {
+            self.item.state.emit(stateConf.createAction + self.model.name + '/new');
+        });
     });
 }
 
