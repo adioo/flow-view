@@ -26,7 +26,7 @@ function clickRowHander (state, source, id) {
     };
 }
 
-function load () {
+function load (stateConf) {
     var self = this;
     
     // state can be emitted before the view is ready
@@ -73,6 +73,10 @@ function load () {
                 }
             });
         }
+ 
+        //add click to create button
+        var create = self.mono.config.data.create;
+        $(create).addEventListener('click', self.emit('state', stateConf.createAction + self.model.name + '/new' );
     });
 }
 
