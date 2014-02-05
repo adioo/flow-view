@@ -14,17 +14,21 @@ function page (config, page) {
         var oldState = $(self.mono.config.data.selector + "[active]");
         var newState = $("#" + page.page);
 
-        var inAnimation = config.animations.inAnimation;
+        var inAnimation = config.animations.inAnimation.effect;
         var outAnimation = oldState.attr("active");
-
-        console.log(inAnimation, outAnimation);
+        var outDuration = oldState.attr("duration");
+        var outDelay = oldState.attr("delay");
 
         oldState.removeAttr("active");
-        newState.attr("active", config.animations.outAnimation);
+        newState.attr("active", config.animations.outAnimation.effect);
+        newState.attr("duration", config.animations.outAnimation.duration);
+        newState.attr("delay", config.animations.outAnimation.delay);
         
         $(self.mono.config.data.selector).hide();
 
         if (oldState.length === 0) {
+            newState.css("-webkit-animation-duration", config.animations.inAnimation.duration);
+            newState.css("-webkit-animation-delay", config.animations.inAnimation.delay);
             newState.addClass("animated " + inAnimation);
             newState.show();
         } else {
@@ -32,10 +36,14 @@ function page (config, page) {
             oldState.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
                 oldState.hide();
                 oldState.removeClass("animated " + inAnimation + " " + outAnimation);
+                newState.css("-webkit-animation-duration", config.animations.inAnimation.duration);
+                newState.css("-webkit-animation-delay", config.animations.inAnimation.delay);
                 newState.addClass("animated " + inAnimation);
                 newState.show();
                 
             });
+            oldState.css("-webkit-animation-duration", outDuration);
+            oldState.css("-webkit-animation-delay", outDelay);
             oldState.addClass("animated " + outAnimation);
             oldState.show();
         }
