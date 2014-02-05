@@ -3,27 +3,48 @@ M.wrap('github/jillix/layout/v0.0.1/layout.js', function (require, module, expor
 var View = require('github/jillix/view/v0.0.1/view');
 
 // TODO plug a css3 animation library here
-function page (config) {
-    // set css
+function page (config, page) {
+
+    var self = this;
+
+    // animations
     if (config) {
         var view = this.view;
+
+        var oldState = $(self.mono.config.data.selector + "[active]");
+        var newState = $("#" + page.page);
+
+        var inAnimation = config.animations.inAnimation;
+        var outAnimation = oldState.attr("active");
+
+        console.log(inAnimation, outAnimation);
+
+        oldState.removeAttr("active");
+        newState.attr("active", config.animations.outAnimation);
         
-        for (var selector in config) {
-            var elm = document.querySelector(selector);
-            if (elm) {
-                for (var style in config[selector]) {
-                    elm.style[style] = config[selector][style];
-                }
-            }
+        $(self.mono.config.data.selector).hide();
+
+        if (oldState.length === 0) {
+            newState.addClass("animated " + inAnimation);
+            newState.show();
+        } else {
+            
+            oldState.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
+                oldState.hide();
+                oldState.removeClass("animated " + inAnimation + " " + outAnimation);
+                newState.addClass("animated " + inAnimation);
+                newState.show();
+                
+            });
+            oldState.addClass("animated " + outAnimation);
+            oldState.show();
         }
+
     }
 }
 
 function init () {
     var self = this;
-    
-    // state handler to handle css in pages
-    self.page = page;
     
     config = self.mono.config.data;
     
@@ -31,6 +52,9 @@ function init () {
     if (config.title) {
         document.title = config.title;
     }
+
+    // state handler to handle css in pages
+    self.page = page;
     
     // init view
     View(self).load(config.view, function (err, view) {
@@ -39,7 +63,7 @@ function init () {
             // TODO do something on error
             return;
         }
-        
+
         // save view instance
         self.view = view;
         
