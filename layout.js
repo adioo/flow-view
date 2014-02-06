@@ -3,7 +3,7 @@ M.wrap('github/jillix/layout/v0.0.1/layout.js', function (require, module, expor
 var View = require('github/jillix/view/v0.0.1/view');
 
 // TODO plug a css3 animation library here
-function page (config, page) {
+function page (state, config, page) {
 
     var self = this;
 
