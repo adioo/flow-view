@@ -4,13 +4,20 @@ var View = require('github/jillix/view/v0.0.1/view');
 
 function init () {
     var self = this;
+    var config = self.mono.config.data;
+    var view = View(self);
+
+    if (!config) {
+        return;
+    }
 
     // state handler
     self.activate = activate;
-
-    var config = self.mono.config.data;
-
-    var view = View(self);
+    // set base
+    self.baseLength = config.baseLength || 0;
+    if (self.baseLength < 0) {
+        self.baseLength = 0;
+    }
 
     // init layout view
     view.load(config.layout, function (err, layout) {
@@ -41,15 +48,29 @@ function init () {
                     return;
                 }
                 item.template.render(data);
-
-                $('[data-nav]', self.layout.dom).on('click', function() {
-                    item.state.emit($(this).attr('data-nav'));
-                });
+                
+                // add change state handler to nav items
+                if (self.layout && self.layout.template && self.layout.template.dom) {
+                    $('[data-nav]', self.layout.template.dom).on('click', function() {
+                        changeState.call(self, item, $(this).attr('data-nav'));
+                    });
+                }
 
                 item.state.emit();
             });
         });
     });
+}
+
+function changeState (view, data) {
+    var self = this;
+
+    // compute the new state
+    var base = location.pathname.split('/').slice(0, self.baseLength + 1).join('/') + '/';
+    var newState = data[0] === '/' ? base.substr(1) + data : base + data;
+
+    // emit the new state
+    view.state.emit(newState);
 }
 
 function loadModel (config, item, callback) {
