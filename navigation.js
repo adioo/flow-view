@@ -34,36 +34,56 @@ function init () {
                 return;
             }
 
-            item.model('models', function (err, model) {
-                model.read({q: {}}, function (err, models) {
-                    item.template.render(models);
+            loadModel(config, item, function(err, data) {
+            
+                if (err) {
+                    // TODO do something on error
+                    return;
+                }
+                item.template.render(data);
 
-                    $('[data-nav]', self.layout.dom).on('click', function() {
-                        item.state.emit('/table/' + $(this).attr('data-nav'));
-                    });
-
-                    item.state.emit();
+                $('[data-nav]', self.layout.dom).on('click', function() {
+                    item.state.emit($(this).attr('data-nav'));
                 });
+
+                item.state.emit();
             });
         });
     });
 }
 
-function activate () {
+function loadModel (config, item, callback) {
+
+    switch (typeof config.model) {
+
+        // model by name
+        case 'string':
+            item.model(config.model, function (err, model) {
+                model.read({q: {}}, function (err, data) {
+                    callback(err, data);
+                });
+            });
+            return;
+
+        // model data
+        case 'object':
+            callback(null, config.model);
+            return;
+
+        default:
+            callback('Invalid navigation model');
+            return;
+    }
+}
+
+function activate (state) {
     var self = this;
 
     // remove the active class
     $('.active', self.layout.dom).removeClass('active');
 
-    // search for the nre active element
-    var path = window.location.pathname;
-    var match = path.match(self.mono.config.data.pattern);
-
-    if (!match) {
-        return;
-    }
-
-    $('[data-nav="' + match[1] + '"]', self.layout.dom).parent().addClass('active');
+    // add the active class to the active navigation tab
+    $('[data-nav="' + state.name + '"]', self.layout.dom).parent().addClass('active');
 }
 
 module.exports = init;
