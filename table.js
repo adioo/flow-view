@@ -35,8 +35,8 @@ function load (state, stateConf) {
     }
 
     // render items
-    self.item.model(getModelFromUrl(), function (err, model) {
-
+    self.item.model(getModelFromUrl(self.mono.config.data.pattern), function (err, model) {
+        
         if (err || !model) {
             return;
         }
@@ -118,8 +118,13 @@ function load (state, stateConf) {
     });
 }
 
-function getModelFromUrl (model) {
-    return location.pathname.split('/')[2];
+function getModelFromUrl (pattern) {
+    var match = location.pathname.match(pattern);
+    if (match && match[1]) {
+        return match[1];
+    }
+
+    return;
 }
 
 function init () {
@@ -151,7 +156,7 @@ function init () {
                 var count = 0;
                 var handler = function (err) {
                     if (++count === 3) {
-                        self.layout.model(getModelFromUrl(), function (err, model) {
+                        self.layout.model(getModelFromUrl(config.pattern), function (err, model) {
 
                             if (!err) {
                                 layout.state.emit();
