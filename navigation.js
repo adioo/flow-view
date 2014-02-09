@@ -47,7 +47,15 @@ function init () {
                     // TODO do something on error
                     return;
                 }
+                
                 item.template.render(data);
+                
+                // add change state handler to the brand (bootstrap)
+                if (config.brand) {
+                    $('.navbar-brand').on('click', function () {
+                        changeState.call(self, item, config.brand);
+                    });
+                }
                 
                 // add change state handler to nav items
                 if (self.layout && self.layout.template && self.layout.template.dom) {
