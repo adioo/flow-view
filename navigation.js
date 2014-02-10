@@ -109,10 +109,10 @@ function activate (state) {
     var self = this;
 
     // remove the active class
-    $('.active', self.layout.dom).removeClass('active');
+    $('.active', self.layout.template.dom).removeClass('active');
 
     // add the active class to the active navigation tab
-    $('[data-nav="' + state.name + '"]', self.layout.dom).parent().addClass('active');
+    $('[data-nav="' + state.name + '"]', self.layout.template.dom).parent().addClass('active');
 }
 
 module.exports = init;
