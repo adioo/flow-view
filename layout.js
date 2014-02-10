@@ -10,8 +10,7 @@ function page (state, target, options) {
     }
 
     var self = this;
-    var view = this.view;
-    var pages = $(self.mono.config.data.pages);
+    var pages = $(self.mono.config.data.pages, self.view.template.dom);
     var targetPage = $(target);
     
     options = options || {};
@@ -111,17 +110,19 @@ function init () {
     View(self).load(config.view, function (err, view) {
         
         if (err) {
-            // TODO do something on error
-            return;
+            return console.log('[layout: ' + err.toString() + ']');
         }
-
+        
+        // check if template has dom
+        if (!view.template || !view.template.dom) {
+            return console.error('[layout: no dom available]');
+        }
+        
         // save view instance
         self.view = view;
         
         // render template
-        if (view.template) {
-            view.template.render();
-        }
+        view.template.render();
         
         // emit an empty state is the same like: state.emit(location.pathname);
         view.state.emit();
