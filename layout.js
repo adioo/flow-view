@@ -2,68 +2,36 @@ M.wrap('github/jillix/layout/v0.0.1/layout.js', function (require, module, expor
 
 var View = require('github/jillix/view/v0.0.1/view');
 
-// TODO plug a css3 animation library here
 function page (state, target, options) {
-
+    
+    // return when no target page is given
     if (!target) {
         return;
     }
 
     var self = this;
-    options = options || {};
-
     var view = this.view;
-
-    var oldState = $(self.mono.config.data.pages);
-    var newState = $(target);
-
-    oldState.hide();
-
+    var pages = $(self.mono.config.data.pages);
+    var targetPage = $(target);
+    
+    options = options || {};
+    
+    // load page modules
     if (options.modules) {
         for (var i = 0; i < options.modules.length; ++i) {
             M(options.modules[i]);
         }
     }
 
-    newState.show();
+    // TODO plug a css3 animation library here
+    // hide all pages
+    pages.hide();
+    // show requested page
+    targetPage.show();
 }
 
-function init () {
-    var self = this;
-    
-    config = self.mono.config.data;
-    
-    // set document title
-    if (config.title) {
-        document.title = config.title;
-    }
-
-    // state handler to handle css in pages
-    self.page = page;
-    
-    // init view
-    View(self).load(config.view, function (err, view) {
-        
-        if (err) {
-            // TODO do something on error
-            return;
-        }
-
-        // save view instance
-        self.view = view;
-        
-        // render template
-        if (view.template) {
-            view.template.render();
-        }
-        
-        // emit an empty state is the same like: state.emit(location.pathname);
-        view.state.emit();
-        self.emit('ready');
-    });
-}
-
-function animate () {
+// animate page transitions
+function animate (config) {
 
     if (options.animate) {
         // getting the in animation
@@ -124,6 +92,41 @@ function animate () {
             }
         }
     }
+}
+
+function init () {
+    var self = this;
+    
+    config = self.mono.config.data;
+    
+    // set document title
+    if (config.title) {
+        document.title = config.title;
+    }
+
+    // state handler to handle css in pages
+    self.page = page;
+    
+    // init view
+    View(self).load(config.view, function (err, view) {
+        
+        if (err) {
+            // TODO do something on error
+            return;
+        }
+
+        // save view instance
+        self.view = view;
+        
+        // render template
+        if (view.template) {
+            view.template.render();
+        }
+        
+        // emit an empty state is the same like: state.emit(location.pathname);
+        view.state.emit();
+        self.emit('ready');
+    });
 }
 
 module.exports = init;
