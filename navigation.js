@@ -2,83 +2,42 @@ M.wrap('github/jillix/navigation/v0.0.1/navigation.js', function (require, modul
 
 var View = require('github/jillix/view/v0.0.1/view');
 
-function init () {
-    var self = this;
-    var config = self.mono.config.data;
-    var view = View(self);
-
-    if (!config) {
-        return;
-    }
-
-    // state handler
-    self.activate = activate;
-    // set base
-    self.baseLength = config.baseLength || 0;
-    if (self.baseLength < 0) {
-        self.baseLength = 0;
-    }
-
-    // init layout view
-    view.load(config.layout, function (err, layout) {
-
-        if (err) {
-            // TODO do something on error
-            return;
-        }
-
-        if (layout.template) {
-            layout.template.render();
-        }
-
-        self.layout = layout;
-
-        // init item view
-        view.load(config.item, function (err, item) {
-
-            if (err) {
-                // TODO do something on error
-                return;
-            }
-
-            loadModel(config, item, function(err, data) {
-            
-                if (err) {
-                    // TODO do something on error
-                    return;
-                }
-                
-                item.template.render(data);
-                
-                // add change state handler to the brand (bootstrap)
-                if (config.brand) {
-                    $('.navbar-brand').on('click', function () {
-                        changeState.call(self, item, config.brand);
-                    });
-                }
-                
-                // add change state handler to nav items
-                if (self.layout && self.layout.template && self.layout.template.dom) {
-                    $('[data-nav]', self.layout.template.dom).on('click', function() {
-                        changeState.call(self, item, $(this).attr('data-nav'));
-                    });
-                }
-
-                item.state.emit();
-            });
-        });
-    });
+// emit dom states
+function domStateHandler (self, view, state) {
+    return function () {
+        // save current active dom elm
+        self.active = this;
+        
+        // change state
+        changeState.call(self, view, state);
+    };
 }
 
-function changeState (view, data) {
+function changeState (view, state) {
     var self = this;
-
+    
+    if (state === '/') {
+        state = '';
+    }
+    
     // compute the new state
     var base = location.pathname.split('/').slice(0, self.baseLength + 1).join('/') + '/';
-    var newState = data[0] === '/' ? base.substr(1) + data : base + data;
+    var newState = state[0] === '/' ? base.substr(1) + state : base + state;
 
     // emit the new state
     view.state.emit(newState);
+}
+
+function activate (state) {
+    var self = this;
+
+    // remove the active class
+    $('.active', self.layout.template.dom).removeClass('active');
+
+    // add the active class to the active navigation tab
+    if (self.active) {
+        $(self.active).addClass('active');
+    }
 }
 
 function loadModel (config, item, callback) {
@@ -105,14 +64,92 @@ function loadModel (config, item, callback) {
     }
 }
 
-function activate (state) {
+function init () {
     var self = this;
+    var config = self.mono.config.data;
+    var V = View(self);
 
-    // remove the active class
-    $('.active', self.layout.template.dom).removeClass('active');
+    if (!config) {
+        return console.log('[nav: no config available]');
+    }
 
-    // add the active class to the active navigation tab
-    $('[data-nav="' + state.name + '"]', self.layout.template.dom).parent().addClass('active');
+    // state handler
+    self.activate = activate;
+    
+    // set base
+    self.baseLength = config.baseLength || 0;
+    if (self.baseLength < 0) {
+        self.baseLength = 0;
+    }
+
+    // init layout view
+    V.load(config.layout, function (err, layout) {
+
+        if (err) {
+            return console.log('[nav: ' + err.toString() + ']');
+        }
+        
+        // return when no dom is available
+        if (!layout.template && layout.template.dom) {
+            return console.log('[nav: no dom available]');
+        }
+        
+        self.layout = layout;
+        
+        // render html
+        layout.template.render();
+        
+        // init item view
+        V.load(config.item, function (err, item) {
+
+            if (err) {
+                return console.log('[nav: ' + err.toString() + ']');
+            }
+            
+            // return when no dom is available
+            if (!item.template && item.template.dom) {
+                return console.log('[nav item: no dom available]');
+            }
+
+            loadModel(config, item, function(err, data) {
+            
+                if (err) {
+                    return console.log('[nav: ' + err.toString() + ']');
+                }
+                
+                self.item = item;
+                
+                // check if stateKey exists
+                if (!data[0] || typeof data[0][config.stateKey] === 'undefined') {
+                    return;
+                }
+                
+                // render items
+                item.template.render(data);
+                
+                // add change state handler to nav items
+                var i = 0;
+                var items = $('li', item.template.dom);
+                for (i = 0; i < items.length; ++i) {
+                    var $item = $(items[i]);
+                    $(items[i]).on('click', domStateHandler(self, item, data[i][config.stateKey]));
+                }
+                
+                // emit state events on dom elms
+                if (config.domStates) {
+                    for (i = 0; i < config.domStates.length; ++i) {
+                        // get element
+                        var elm = $(config.domStates[i].selector, layout.template.dom);
+                        if (elm) {
+                            elm.on(config.domStates[i].event, domStateHandler(self, item, config.domStates[i].state));
+                        }
+                    }
+                }
+                
+                item.state.emit();
+            });
+        });
+    });
 }
 
 module.exports = init;
