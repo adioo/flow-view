@@ -14,7 +14,7 @@ function page (state, target, options) {
 
     var view = this.view;
 
-    var oldState = $(self.mono.config.data.selector);
+    var oldState = $(self.mono.config.data.pages);
     var newState = $(target);
 
     oldState.hide();
@@ -65,17 +65,11 @@ function init () {
 
 function animate () {
 
-    if (options.animations) {
+    if (options.animate) {
         // getting the in animation
-        if (!options.animations.inAnimation || options.animations.inAnimation === "none") {
-            var inAnimation = "fadeIn";
-            var inDuration = "0s";
-            var inDelay = "0s";
-        } else {
-            var inAnimation = options.animations.inAnimation.effect;
-            var inDuration = options.animations.inAnimation.duration || ".5s";
-            var inDelay = options.animations.inAnimation.delay || "0s";
-        }
+        var inAnimation = options.animate.in === 'string' ? options.animate.in : (options.animate.in.effect || "fadeIn");
+        var inDuration = options.animate.in.duration || "0s";
+        var inDelay = options.animate.in.delay || "0s";
 
         // getting the current out animation
         var outAnimation = oldState.attr("active");
@@ -87,14 +81,14 @@ function animate () {
         oldState.removeAttr("delay");
 
         // setting the future out animation
-        if (!options.animations.outAnimation || options.animations.outAnimation === "none") {
+        if (!options.animate.outAnimation || options.animate.outAnimation === "none") {
             newState.attr("active", "fadeOut");
             newState.attr("duration", "0s");
             newState.attr("delay", "0s");
         } else {
-            newState.attr("active", options.animations.outAnimation.effect);
-            newState.attr("duration", options.animations.outAnimation.duration || ".5s");
-            newState.attr("delay", options.animations.outAnimation.delay || "0s");
+            newState.attr("active", options.animate.outAnimation.effect);
+            newState.attr("duration", options.animate.outAnimation.duration || ".5s");
+            newState.attr("delay", options.animate.outAnimation.delay || "0s");
         }
 
         // hiding all elements
