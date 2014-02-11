@@ -70,7 +70,7 @@ function init () {
     var V = View(self);
 
     if (!config) {
-        return console.log('[nav: no config available]');
+        return console.error('[nav: no config available]');
     }
 
     // state handler
@@ -81,17 +81,24 @@ function init () {
     if (self.baseLength < 0) {
         self.baseLength = 0;
     }
-
+    
+    // get current active
+    var active = null;
+    if (config.pattern) {
+        active = location.pathname.match(new RegExp(config.pattern));
+        active = active ? active[1] : null;
+    }
+    
     // init layout view
     V.load(config.layout, function (err, layout) {
 
         if (err) {
-            return console.log('[nav: ' + err.toString() + ']');
+            return console.error('[nav: ' + err.toString() + ']');
         }
         
         // return when no dom is available
         if (!layout.template && layout.template.dom) {
-            return console.log('[nav: no dom available]');
+            return console.error('[nav: no dom available]');
         }
         
         self.layout = layout;
@@ -103,18 +110,18 @@ function init () {
         V.load(config.item, function (err, item) {
 
             if (err) {
-                return console.log('[nav: ' + err.toString() + ']');
+                return console.error('[nav: ' + err.toString() + ']');
             }
             
             // return when no dom is available
             if (!item.template && item.template.dom) {
-                return console.log('[nav item: no dom available]');
+                return console.error('[nav item: no dom available]');
             }
 
             loadModel(config, item, function(err, data) {
             
                 if (err) {
-                    return console.log('[nav: ' + err.toString() + ']');
+                    return console.error('[nav: ' + err.toString() + ']');
                 }
                 
                 self.item = item;
@@ -132,6 +139,12 @@ function init () {
                 var items = $('li', item.template.dom);
                 for (i = 0; i < items.length; ++i) {
                     var $item = $(items[i]);
+                    
+                    // save active item if found in the url
+                    if (data[i][config.stateKey] === active) {
+                        self.active = $item;
+                    }
+                    
                     $(items[i]).on('click', domStateHandler(self, item, data[i][config.stateKey]));
                 }
                 
@@ -141,6 +154,12 @@ function init () {
                         // get element
                         var elm = $(config.domStates[i].selector, layout.template.dom);
                         if (elm) {
+                            
+                            // save active item if found in the url
+                            if (config.domStates[i].state === active){
+                                self.active = elm;
+                            }
+                            
                             elm.on(config.domStates[i].event, domStateHandler(self, item, config.domStates[i].state));
                         }
                     }
