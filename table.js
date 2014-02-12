@@ -123,7 +123,6 @@ function init () {
                         self.layout.model(getModelFromUrl(config.pattern), function (err, model) {
                             
                             if (!err) {
-                                
                                 layout.state.emit();
                             }
                             
@@ -139,6 +138,7 @@ function init () {
                         handler(err);
                     });
                 } else {
+                    self.title = V.template();
                     handler();
                 }
                 
@@ -149,6 +149,7 @@ function init () {
                         handler(err);
                     });
                 } else {
+                    self.head = V.template();
                     handler();
                 }
                 
@@ -159,6 +160,7 @@ function init () {
                         handler(err);
                     });
                 } else {
+                    self.item = V.template();
                     handler();
                 }
             }
