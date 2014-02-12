@@ -16,16 +16,12 @@ function domStateHandler (self, view, state) {
 function changeState (view, state) {
     var self = this;
     
-    if (state === '/') {
-        state = '';
-    }
-    
     // compute the new state
-    var base = location.pathname.split('/').slice(0, self.baseLength + 1).join('/') + '/';
-    var newState = state[0] === '/' ? base.substr(1) + state : base + state;
-
+    state = state.replace(/^\//, '');
+    state = location.pathname.split('/').slice(0, self.baseLength + 1).join('/') + '/' + state;
+    
     // emit the new state
-    view.state.emit(newState);
+    view.state.emit(state);
 }
 
 function activate (state) {
