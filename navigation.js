@@ -4,28 +4,30 @@ var View = require('github/jillix/view/v0.0.1/view');
 
 // emit dom states
 function domStateHandler (self, view, state) {
-    return function () {
-        // save current active dom elm
-        self.active = this;
-        
-        // change state
-        changeState.call(self, view, state);
-    };
-}
-
-function changeState (view, state) {
-    var self = this;
     
     // compute the new state
     state = self.base + state.replace(/^\//, '');
     
-    // emit the new state
-    view.state.emit(state);
+    return function () {
+        // save current active dom elm
+        self.active = this;
+        
+        // emit the new state
+        view.state.emit(state);
+    };
 }
 
 function activate (state) {
     var self = this;
-
+    
+    // set active when state is emitted from popstate
+    if (self.pattern && state.popstate) {
+        var active = getActiveNameFromUrl(self.pattern);
+        if (self.items[active]) {
+            self.active = self.items[active];
+        }
+    }
+    
     // remove the active class
     $('.active', self.layout.template.dom).removeClass('active');
 
@@ -59,6 +61,19 @@ function loadModel (config, item, callback) {
     }
 }
 
+function getActiveNameFromUrl (pattern) {
+    var active;
+    var path = location.pathname;
+    if (path === self.base) {
+        active = '/';
+    } else {
+        active = path.match(new RegExp(pattern));
+        active = active ? active[1] : null;
+    }
+    
+    return active;
+}
+
 function init () {
     var self = this;
     var config = self.mono.config.data;
@@ -72,22 +87,17 @@ function init () {
     self.activate = activate;
     
     // set base
-    self.baseLength = config.baseLength || 0;
-    if (self.baseLength < 0) {
-        self.baseLength = 0;
+    config.baseLength = config.baseLength || 0;
+    if (config.baseLength < 0) {
+        config.baseLength = 0;
     }
-    self.base = location.pathname.split('/').slice(0, self.baseLength + 1).join('/') + '/';
+    self.base = location.pathname.split('/').slice(0, config.baseLength + 1).join('/') + '/';
     
     // get current active
     var active = null;
     if (config.pattern) {
-        var path = location.pathname;
-        if (path === self.base) {
-            active = '/';
-        } else {
-            active = path.match(new RegExp(config.pattern));
-            active = active ? active[1] : null;
-        }
+        self.pattern = config.pattern;
+        active = getActiveNameFromUrl(config.pattern);
     }
     
     // init layout view
@@ -138,15 +148,20 @@ function init () {
                 // add change state handler to nav items
                 var i = 0;
                 var items = $('li', item.template.dom);
+                self.items = {};
+                
                 for (i = 0; i < items.length; ++i) {
                     var $item = $(items[i]);
+                    
+                    // save state item
+                    self.items[data[i][config.stateKey]] = $item;
                     
                     // save active item if found in the url
                     if (data[i][config.stateKey] === active) {
                         self.active = $item;
                     }
                     
-                    $(items[i]).on('click', domStateHandler(self, item, data[i][config.stateKey]));
+                    $item.on('click', domStateHandler(self, item, data[i][config.stateKey]));
                 }
                 
                 // emit state events on dom elms
@@ -155,6 +170,9 @@ function init () {
                         // get element
                         var elm = $(config.domStates[i].selector, layout.template.dom);
                         if (elm) {
+                            
+                            // save state items
+                            self.items[config.domStates[i].state] = elm;
                             
                             // save active item if found in the url
                             if (config.domStates[i].state === active){
