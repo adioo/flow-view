@@ -17,8 +17,7 @@ function changeState (view, state) {
     var self = this;
     
     // compute the new state
-    state = state.replace(/^\//, '');
-    state = location.pathname.split('/').slice(0, self.baseLength + 1).join('/') + '/' + state;
+    state = self.base + state.replace(/^\//, '');
     
     // emit the new state
     view.state.emit(state);
@@ -77,12 +76,18 @@ function init () {
     if (self.baseLength < 0) {
         self.baseLength = 0;
     }
+    self.base = location.pathname.split('/').slice(0, self.baseLength + 1).join('/') + '/';
     
     // get current active
     var active = null;
     if (config.pattern) {
-        active = location.pathname.match(new RegExp(config.pattern));
-        active = active ? active[1] : null;
+        var path = location.pathname;
+        if (path === self.base) {
+            active = '/';
+        } else {
+            active = path.match(new RegExp(config.pattern));
+            active = active ? active[1] : null;
+        }
     }
     
     // init layout view
