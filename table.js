@@ -22,7 +22,7 @@ function createTemplates (schema) {
 
 function clickRowHander (state, source, id) {
     return function () {
-        //state.emit('/editor/' + source + '/' + id);
+        state.emit(id + '/');
     };
 }
 
@@ -191,6 +191,7 @@ function init () {
                 } else {
                     self.item = {
                         model: V.model,
+                        state: V.state(),
                         template: V.template({
                             to: 'tbody',
                             in: self.layout.template.dom
