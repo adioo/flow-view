@@ -22,7 +22,7 @@ function createTemplates (schema) {
 
 function clickRowHander (state, source, id) {
     return function () {
-        state.emit('/editor/' + source + '/' + id);
+        //state.emit('/editor/' + source + '/' + id);
     };
 }
 
@@ -30,15 +30,30 @@ function load (stateConf) {
     var self = this;
     
     // state can be emitted before the view is ready
-    if (!self.item) {
+    if (!self.item || !self.head) {
         return;
     }
     
     // render items
-    self.item.model(getModelFromUrl(self.mono.config.data.pattern), function (err, model) {
+    var modelName = getModelFromUrl(self.pattern);
+    if (!modelName) {
+        return;
+    }
+    
+    // reset headers
+    if (self.head.template.dom) {
+        self.head.template.dom.innerHTML = '';
+    }
+    
+    // reset items
+    if (self.item.template.dom) {
+        self.item.template.dom.innerHTML = '';
+    }
+    
+    self.item.model(modelName, function (err, model) {
         
         if (err || !model) {
-            return;
+            return console.error('[table: ' + (err ? err.toString() : 'No model found.') + ']');
         }
         
         self.model = model;
@@ -51,33 +66,24 @@ function load (stateConf) {
         var templates = createTemplates(model.schema);
         
         // render header
-        if (self.head) {
-            self.head.template.set(templates.headers);
-            self.head.template.render();
-        }
+        self.head.template.set(templates.headers);
+        self.head.template.render();
         
-        if (self.item) {
-            self.item.template.set(templates.rows);
-            model.read({q: {}, o: {}}, function (err, data) {
-                
-                if (err || !data) {
-                    data = [err] || ['no data'];
-                }
-                
-                self.item.template.render(data);
-                
-                // add clicks to rows
-                var rows = self.item.template.dom.querySelectorAll('tr');
-                for (var i = 0; i < rows.length; ++i) {
-                    rows[i].addEventListener('click', clickRowHander(self.item.state, self.model.name, data[i]._id), false);
-                }
-            });
-        }
- 
-        //add click to create button
-        var create = self.mono.config.data.create;
-        $(create).on('click', function () {
-            self.item.state.emit(stateConf.createAction + self.model.name + '/new');
+        // render items
+        self.item.template.set(templates.rows);
+        model.read({q: {}, o: {}}, function (err, data) {
+            
+            if (err || !data) {
+                data = [err] || ['no data'];
+            }
+            
+            self.item.template.render(data);
+            
+            // add clicks to rows
+            var rows = self.item.template.dom.getElementsByTagName('tr');
+            for (var i = 0; i < rows.length; ++i) {
+                rows[i].addEventListener('click', clickRowHander(self.item.state, self.model.name, data[i]._id), false);
+            }
         });
     });
 }
@@ -97,6 +103,11 @@ function init () {
     
     // state handler
     self.load = load;
+    
+    // create regexp pattern
+    if (config.pattern) {
+        self.pattern = new RegExp(config.pattern);
+    }
     
     // init view
     if (config && config.layout) {
@@ -120,9 +131,22 @@ function init () {
                 var count = 0;
                 var handler = function (err) {
                     if (++count === 3) {
-                        self.layout.model(getModelFromUrl(config.pattern), function (err, model) {
+                        
+                        var modelName = getModelFromUrl(config.pattern);
+                        if (!modelName) {
+                            return self.emit('ready');
+                        }
+                        
+                        self.layout.model(modelName, function (err, model) {
                             
                             if (!err) {
+                                
+                                //add click to create button
+                                var create = config.create;
+                                $(create).on('click', function () {
+                                    self.item.state.emit(stateConf.createAction + self.model.name);
+                                });
+                                
                                 layout.state.emit();
                             }
                             
@@ -138,7 +162,6 @@ function init () {
                         handler(err);
                     });
                 } else {
-                    self.title = V.template();
                     handler();
                 }
                 
@@ -149,7 +172,13 @@ function init () {
                         handler(err);
                     });
                 } else {
-                    self.head = V.template();
+                    self.head = {
+                        model: V.model,
+                        template: V.template({
+                            to: 'thead',
+                            in: self.layout.template.dom
+                        })
+                    };
                     handler();
                 }
                 
@@ -160,7 +189,13 @@ function init () {
                         handler(err);
                     });
                 } else {
-                    self.item = V.template();
+                    self.item = {
+                        model: V.model,
+                        template: V.template({
+                            to: 'tbody',
+                            in: self.layout.template.dom
+                        })
+                    };
                     handler();
                 }
             }
