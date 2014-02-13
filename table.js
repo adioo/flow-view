@@ -20,9 +20,9 @@ function createTemplates (schema) {
     return columns;
 }
 
-function clickRowHander (state, source, id) {
+function clickRowHander (state, id) {
     return function () {
-        state.emit(id + '/');
+        state.emit(location.pathname + id + '/');
     };
 }
 
@@ -82,7 +82,7 @@ function load (stateConf) {
             // add clicks to rows
             var rows = self.item.template.dom.getElementsByTagName('tr');
             for (var i = 0; i < rows.length; ++i) {
-                rows[i].addEventListener('click', clickRowHander(self.item.state, self.model.name, data[i]._id), false);
+                rows[i].addEventListener('click', clickRowHander(self.item.state, data[i]._id), false);
             }
         });
     });
@@ -143,9 +143,7 @@ function init () {
                                 
                                 //add click to create button
                                 var create = config.create;
-                                $(create).on('click', function () {
-                                    self.item.state.emit(stateConf.createAction + self.model.name);
-                                });
+                                $(create).on('click', clickRowHander(self.item.state, 'new'));
                                 
                                 layout.state.emit();
                             }
