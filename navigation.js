@@ -22,7 +22,7 @@ function activate (state) {
     
     // set active when state is emitted from popstate
     if (self.pattern && state.popstate) {
-        var active = getActiveNameFromUrl(self.pattern);
+        var active = state.url === self.base ? '/' : getActiveNameFromUrl(self.pattern);
         if (self.items[active]) {
             self.active = self.items[active];
         }
