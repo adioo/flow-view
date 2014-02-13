@@ -8,12 +8,12 @@ function page (state, target, options) {
     if (!target) {
         return;
     }
-
-    var self = this;
-    var pages = $(self.mono.config.data.pages, self.view.template.dom);
-    var targetPage = $(target);
     
     options = options || {};
+    
+    var self = this;
+    var pages = $(options.page || self.mono.config.data.pages, self.view.template.dom);
+    var targetPage = $(target);
     
     // load page modules
     if (options.modules) {
