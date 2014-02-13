@@ -44,7 +44,7 @@ function loadModel (config, item, callback) {
         // model by name
         case 'string':
             item.model(config.model, function (err, model) {
-                model.read({q: {}}, function (err, data) {
+                model.read({q: config.query || {}}, function (err, data) {
                     callback(err, data);
                 });
             });
@@ -98,6 +98,11 @@ function init () {
     if (config.pattern) {
         self.pattern = config.pattern;
         active = getActiveNameFromUrl(config.pattern);
+    }
+    
+    // parse query
+    if (config.query) {
+        config.query = JSON.parse(config.query);
     }
     
     // init layout view
