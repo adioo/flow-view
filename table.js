@@ -26,7 +26,7 @@ function clickRowHander (state, id) {
     };
 }
 
-function load (stateConf) {
+function load (modelName) {
     var self = this;
     
     // state can be emitted before the view is ready
@@ -35,7 +35,7 @@ function load (stateConf) {
     }
     
     // render items
-    var modelName = getModelFromUrl(self.pattern);
+    modelName = modelName || getModelFromUrl(self.pattern);
     if (!modelName) {
         return;
     }
