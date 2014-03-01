@@ -3,17 +3,38 @@ M.wrap('github/jillix/navigation/v0.0.1/navigation.js', function (require, modul
 var View = require('github/jillix/view/v0.0.1/view');
 
 // emit dom states
-function domStateHandler (self, view, state) {
+function domStateHandler (self, view, config) {
+    
+    var state;
+    
+    // set default setActive value to true
+    if (config.setActive === undefined) {
+        config.setActive = true;
+    }
     
     // compute the new state
-    state = self.base + state.replace(/^\//, '');
+    if (config[self.config.stateKey]) {
+        state = self.base + config[self.config.stateKey].replace(/^\//, '');
+    }
     
     return function () {
+        
         // save current active dom elm
-        self.active = this;
+        if (config.setActive) {
+            self.active = this;
+        }
         
         // emit the new state
-        view.state.emit(state);
+        if (state) {
+            view.state.emit(state);
+        }
+        
+        // emit events
+        if (config.emit) {
+            for (var i = 0; i < config.emit.length; ++i) {
+                self.push(config.emit[i].inst || self.mono.name, config.emit[i].name, config.emit[i].args || []);
+            }
+        }
     };
 }
 
@@ -83,6 +104,8 @@ function init () {
         return console.error('[nav: no config available]');
     }
 
+    self.config = config;
+    
     // state handler
     self.activate = activate;
     
@@ -166,7 +189,7 @@ function init () {
                         self.active = $item;
                     }
                     
-                    $item.on('click', domStateHandler(self, item, data[i][config.stateKey]));
+                    $item.on('click', domStateHandler(self, item, data[i]));
                 }
                 
                 // emit state events on dom elms
@@ -184,7 +207,7 @@ function init () {
                                 self.active = elm;
                             }
                             
-                            elm.on(config.domStates[i].event, domStateHandler(self, item, config.domStates[i].state));
+                            elm.on(config.domStates[i].event, domStateHandler(self, item, config.domStates[i]));
                         }
                     }
                 }
