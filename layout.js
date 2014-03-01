@@ -12,7 +12,7 @@ function page (state, target, options) {
     options = options || {};
     
     var self = this;
-    var pages = $(options.page || self.mono.config.data.pages, self.view.template.dom);
+    var pages = $(options.page || self.pageSelector, self.view.template.dom);
     var targetPage = $(target);
     
     // load page modules
@@ -95,6 +95,7 @@ function animate (config) {
 
 function init () {
     var self = this;
+    var pageName = '_page_' + self.mono.name;
     
     config = self.mono.config.data;
     
@@ -102,9 +103,12 @@ function init () {
     if (config.title) {
         document.title = config.title;
     }
-
-    // state handler to handle css in pages
+    
+    // attach state handler to instance
     self.page = page;
+    
+    // state handler to handle css in pages
+    self.pageSelector = '.' + pageName;
     
     // init view
     View(self).load(config.view, function (err, view) {
@@ -122,7 +126,7 @@ function init () {
         self.view = view;
         
         // render template
-        view.template.render();
+        view.template.render([{page: pageName}]);
         
         // emit an empty state is the same like: state.emit(location.pathname);
         view.state.emit();
