@@ -114,7 +114,7 @@ function init () {
     View(self).load(config.view, function (err, view) {
         
         if (err) {
-            return console.log('[layout: ' + err.toString() + ']');
+            return console.error('[layout: ' + err.toString() + ']');
         }
         
         // check if template has dom
