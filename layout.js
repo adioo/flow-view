@@ -23,6 +23,7 @@ function page (state, target, options) {
     }
 
     // TODO plug a css3 animation library here
+    // TODO handle not found pages in the layout module instead of the view/state module
     // hide all pages
     pages.hide();
     // show requested page
