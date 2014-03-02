@@ -12,8 +12,13 @@ function page (state, target, options) {
     options = options || {};
     
     var self = this;
-    var pages = $(options.page || self.pageSelector, self.view.template.dom);
-    var targetPage = $(target);
+    var pages = options.page ? $(options.page, self.view.template.dom) : self.pages;
+    var targetPage = $(target, self.view.template.dom);
+    
+    // hide not found
+    if (self.notFound) {
+        self.notFound.hide();
+    }
     
     // load page modules
     if (options.modules) {
@@ -23,11 +28,17 @@ function page (state, target, options) {
     }
 
     // TODO plug a css3 animation library here
-    // TODO handle not found pages in the layout module instead of the view/state module
-    // hide all pages
-    pages.hide();
+    
     // show requested page
     targetPage.show();
+}
+
+// not found handler
+function stateHandler () {
+    var self = this;
+    
+    self.pages.hide();
+    self.notFound.show();
 }
 
 // animate page transitions
@@ -128,6 +139,23 @@ function init () {
         
         // render template
         view.template.render([{page: pageName}]);
+        
+        // get pages dom refs
+        self.pages = $(self.pageSelector, self.view.template.dom);
+        
+        // hide all pages in init state
+        self.pages.hide();
+        
+        // handle not found
+        self.notFound = $(config.notFound, self.view.template.dom);
+        if (self.notFound) {
+            
+            // attach default state handler
+            self.view.state.onstate = stateHandler;
+            
+            // show not found page
+            self.notFound.show();
+        }
         
         // emit an empty state is the same like: state.emit(location.pathname);
         view.state.emit();
