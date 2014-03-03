@@ -3,15 +3,18 @@ M.wrap('github/jillix/layout/v0.0.1/layout.js', function (require, module, expor
 var View = require('github/jillix/view/v0.0.1/view');
 
 function page (state, target, options) {
+    var self = this;
     
     // return when no target page is given
     if (!target) {
         return;
     }
     
+    // clear timeout
+    self._state = true;
+    
     options = options || {};
     
-    var self = this;
     var targetPage = $(target, self.view.template.dom);
     
     // hide not found
@@ -25,6 +28,8 @@ function page (state, target, options) {
             M(options.modules[i]);
         }
     }
+    
+    self.pages.hide();
     
     // animate page transition
     if (options.animate) {
@@ -43,8 +48,12 @@ function page (state, target, options) {
 function stateHandler () {
     var self = this;
     
-    self.pages.hide();
-    self.notFound.show();
+    if (!self._state) {
+        self.pages.hide();
+        self.notFound.show();
+    }
+    
+    self._state = false;
 }
 
 // animate page transitions
@@ -175,11 +184,11 @@ function init () {
         self.notFound = $(config.notFound, self.view.template.dom);
         if (self.notFound) {
             
-            // attach default state handler
-            self.view.state.onstate = stateHandler;
+            // attach after state handler
+            self.view.state.after = stateHandler;
             
             // show not found page
-            self.notFound.show();
+            self.notFound.hide();
         }
         
         // emit initial state if no sub modules are loaded
@@ -196,4 +205,3 @@ module.exports = init;
 return module;
 
 });
-
