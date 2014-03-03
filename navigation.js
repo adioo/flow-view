@@ -106,9 +106,6 @@ function init () {
 
     self.config = config;
     
-    // state handler
-    self.activate = activate;
-    
     // set base
     config.baseLength = config.baseLength || 0;
     if (config.baseLength < 0) {
@@ -162,6 +159,9 @@ function init () {
                 if (err) {
                     return console.error('[nav: ' + err.toString() + ']');
                 }
+                
+                // add activate item handler to state
+                item.state.after = activate;
                 
                 self.item = item;
                 
