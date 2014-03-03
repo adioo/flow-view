@@ -12,7 +12,6 @@ function page (state, target, options) {
     options = options || {};
     
     var self = this;
-    var pages = options.page ? $(options.page, self.view.template.dom) : self.pages;
     var targetPage = $(target, self.view.template.dom);
     
     // hide not found
@@ -26,11 +25,18 @@ function page (state, target, options) {
             M(options.modules[i]);
         }
     }
-
-    // TODO plug a css3 animation library here
+    
+    // animate page transition
+    if (options.animate) {
+        animate.call(self, self.current, targetPage, options.animate);
     
     // show requested page
-    targetPage.show();
+    } else {
+        targetPage.show();
+    }
+    
+    // set new current
+    self.current = targetPage;
 }
 
 // not found handler
@@ -42,64 +48,75 @@ function stateHandler () {
 }
 
 // animate page transitions
-function animate (config) {
-
-    if (options.animate) {
-        // getting the in animation
-        var inAnimation = options.animate.in === 'string' ? options.animate.in : (options.animate.in.effect || "fadeIn");
-        var inDuration = options.animate.in.duration || "0s";
-        var inDelay = options.animate.in.delay || "0s";
-
-        // getting the current out animation
-        var outAnimation = oldState.attr("active");
-        var outDuration = oldState.attr("duration");
-        var outDelay = oldState.attr("delay");
-
-        oldState.removeAttr("active");
-        oldState.removeAttr("duration");
-        oldState.removeAttr("delay");
-
-        // setting the future out animation
-        if (!options.animate.outAnimation || options.animate.outAnimation === "none") {
-            newState.attr("active", "fadeOut");
-            newState.attr("duration", "0s");
-            newState.attr("delay", "0s");
-        } else {
-            newState.attr("active", options.animate.outAnimation.effect);
-            newState.attr("duration", options.animate.outAnimation.duration || ".5s");
-            newState.attr("delay", options.animate.outAnimation.delay || "0s");
-        }
-
-        // hiding all elements
-        $(self.mono.config.data.selector).hide();
-
-        // there is no old state (the first time a page is loaded)
-        if (oldState.length === 0) {
-            newState.css("-webkit-animation-duration", inDuration);
-            newState.css("-webkit-animation-delay", inDelay);
-            newState.addClass("animated " + inAnimation);
-            newState.show();
-        } else {
-            if (outDuration === "0s") {
-                newState.removeClass("animated " + inAnimation + " " + outAnimation);
-                newState.css("-webkit-animation-duration", inDuration);
-                newState.css("-webkit-animation-delay", inDelay);
-                newState.addClass("animated " + inAnimation);
-                newState.show();
+function animate (from, to, config) {
+    var self = this;
+    
+    if ((!config.from && !config.to) || (!from && !to)) {
+        return;
+    }
+    
+    var i, elm;
+    
+    /*if (from && config.from) {
+        for (i = 0; i < config.from.length; ++i) {
+            
+            // get element
+            elm = config.from[i].elm ? $(config.from[i].elm, from) : from;
+            
+            // handle show/hide
+            if (config.from[i].fx === 'show' || config.from[i].fx === 'hide') {
+                elm[config.from[i].fx]();
+            
+            // handle animateion
             } else {
-                // out animation is done
-                oldState.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
-                    oldState.hide();
-                    oldState.removeClass("animated " + inAnimation + " " + outAnimation);
-                    newState.css("-webkit-animation-duration", inDuration);
-                    newState.css("-webkit-animation-delay", inDelay);
-                    newState.addClass("animated " + inAnimation);
-                    newState.show();
-                });
-                oldState.css("-webkit-animation-duration", outDuration);
-                oldState.css("-webkit-animation-delay", outDelay);
-                oldState.addClass("animated " + outAnimation);
-                oldState.show();
+                
+                // set timing
+                if (config.from[i].dd) {
+                    elm.css("-webkit-animation-duration", config.from[i].dd[0]);
+                    elm.css("-webkit-animation-delay", config.from[i].dd[1]);
+                }
+                
+                elm.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', (function (config, elm) {
+                    return function () {
+                        elm.hide();
+                        console.log('from animation "' + config.fx + '" done. duration: ' + config.dd[0] + ', delay: ' + config.dd[1]);
+                    };
+                })(config.from[i], elm));
+                
+                // start animation
+                elm.addClass('animated ' + config.from[i].fx);
+            }
+        }
+    }*/
+    
+    if (to && config.to) {
+        for (i = 0; i < config.to.length; ++i) {
+            
+            // get element
+            elm = config.to[i].elm ? $(config.to[i].elm, to) : to;
+            
+            // handle show/hide
+            if (config.to[i].fx === 'show' || config.to[i].fx === 'hide') {
+                elm[config.to[i].fx]();
+            
+            // handle animateion
+            } else {
+                
+                // set timing
+                if (config.to[i].dd) {
+                    elm.css("-webkit-animation-duration", config.to[i].dd[0]);
+                    elm.css("-webkit-animation-delay", config.to[i].dd[1]);
+                }
+                
+                elm.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', (function (config, elm) {
+                    return function () {
+                        console.log('to animation "' + config.fx + '" done. duration: ' + config.dd[0] + ', delay: ' + config.dd[1]);
+                    };
+                })(config.to[i], elm));
+                
+                // start animation
+                elm.addClass('animated ' + config.to[i].fx);
+                elm.show();
             }
         }
     }
@@ -108,6 +125,7 @@ function animate (config) {
 function init () {
     var self = this;
     var pageName = '_page_' + self.mono.name;
+    var subModules = self.mono.config.modules;
     
     config = self.mono.config.data;
     
@@ -122,6 +140,13 @@ function init () {
     // state handler to handle css in pages
     self.pageSelector = '.' + pageName;
     
+    // emit initial state after sub modules are loaded
+    if (subModules) {
+        self.on('subReady', function () {
+            self.view.state.emit();
+        });
+    }
+    
     // init view
     View(self).load(config.view, function (err, view) {
         
@@ -134,11 +159,11 @@ function init () {
             return console.error('[layout: no dom available]');
         }
         
-        // save view instance
-        self.view = view;
-        
         // render template
         view.template.render([{page: pageName}]);
+        
+        // save view instance
+        self.view = view;
         
         // get pages dom refs
         self.pages = $(self.pageSelector, self.view.template.dom);
@@ -157,8 +182,11 @@ function init () {
             self.notFound.show();
         }
         
-        // emit an empty state is the same like: state.emit(location.pathname);
-        view.state.emit();
+        // emit initial state if no sub modules are loaded
+        if (!subModules) {
+            self.view.state.emit();
+        }
+        
         self.emit('ready');
     });
 }
