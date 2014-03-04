@@ -117,11 +117,11 @@ function animate (from, to, config) {
                     elm.css("-webkit-animation-delay", config.to[i].dd[1]);
                 }
                 
-                elm.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', (function (config, elm) {
+                /*elm.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', (function (config, elm) {
                     return function () {
-                        //console.log('to animation "' + config.fx + '" done. duration: ' + config.dd[0] + ', delay: ' + config.dd[1]);
+                        console.log('to animation "' + config.fx + '" done. duration: ' + config.dd[0] + ', delay: ' + config.dd[1]);
                     };
-                })(config.to[i], elm));
+                })(config.to[i], elm));*/
                 
                 // start animation
                 elm.addClass('animated ' + config.to[i].fx);
