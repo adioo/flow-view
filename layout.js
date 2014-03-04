@@ -119,7 +119,7 @@ function animate (from, to, config) {
                 
                 elm.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', (function (config, elm) {
                     return function () {
-                        console.log('to animation "' + config.fx + '" done. duration: ' + config.dd[0] + ', delay: ' + config.dd[1]);
+                        //console.log('to animation "' + config.fx + '" done. duration: ' + config.dd[0] + ', delay: ' + config.dd[1]);
                     };
                 })(config.to[i], elm));
                 
