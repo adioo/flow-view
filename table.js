@@ -29,7 +29,7 @@ function clickRowHander (state, id) {
 function load (stateConf) {
     var self = this;
     
-    // state can be emitted before the view is ready
+    // state can't be emitted before the view is ready
     if (!self.item || !self.head) {
         return;
     }
@@ -63,7 +63,7 @@ function load (stateConf) {
             self.title.template.render([{title: model.name}]);
         }
         
-        var templates = createTemplates(model.schema);
+        var templates = createTemplates(model.fields);
         
         // render header
         self.head.template.set(templates.headers);
