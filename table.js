@@ -26,7 +26,7 @@ function clickRowHander (state, id) {
     };
 }
 
-function load (modelName) {
+function load (state, modelName) {
     var self = this;
     
     // state can't be emitted before the view is ready
