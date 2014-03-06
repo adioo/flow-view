@@ -9,6 +9,9 @@ Bind-table module for CRUD.
 ### dev
  - fixed the recursive `selectItem` method
 
+### v0.1.7
+ - Upgrade to Events v0.1.8 and Bind v0.2.1
+
 ### v0.1.6
  - don't render the item if it's `null`, `undefined` etc.
 
