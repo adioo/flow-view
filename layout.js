@@ -136,7 +136,7 @@ function init () {
     var pageName = '_page_' + self.mono.name;
     var subModules = self.mono.config.modules;
     
-    config = self.mono.config.data;
+    var config = self.mono.config.data;
     
     // set document title
     if (config.title) {
