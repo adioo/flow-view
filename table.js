@@ -26,7 +26,7 @@ function clickRowHander (state, id) {
     };
 }
 
-function load (state, modelName) {
+function load (state, modelData) {
     var self = this;
     
     // state can't be emitted before the view is ready
@@ -35,8 +35,13 @@ function load (state, modelName) {
     }
     
     // render items
-    modelName = modelName || getModelFromUrl(self.pattern);
-    if (!modelName) {
+    if (modelData) {
+        modelData = {model: modelData};
+    } else {
+        modelData = getDataFromUrl(self.pattern, self.map);
+    }
+    
+    if (!modelData) {
         return;
     }
     
@@ -50,7 +55,7 @@ function load (state, modelName) {
         self.item.template.dom.innerHTML = '';
     }
     
-    self.item.model(modelName, function (err, model) {
+    self.item.model(modelData, function (err, model) {
         
         if (err || !model) {
             return console.error('[table: ' + (err ? err.toString() : 'No model found.') + ']');
@@ -88,13 +93,24 @@ function load (state, modelName) {
     });
 }
 
-function getModelFromUrl (pattern) {
+function getDataFromUrl (pattern, map) {
     var match = location.pathname.match(pattern);
-    if (match && match[1]) {
-        return match[1];
+    var output = {};
+    
+    if (!match) {
+        return;
     }
-
-    return;
+    
+    // create output
+    for (var key in map) {
+        if (map[key] instanceof Array) {
+            output[key] = map[key][0] + match[map[key][1]] + (map[key][2] || '');
+        } else {
+            output[key] = match[map[key]];
+        }
+    }
+    
+    return output;
 }
 
 function init () {
@@ -107,6 +123,11 @@ function init () {
     // create regexp pattern
     if (config.pattern) {
         self.pattern = new RegExp(config.pattern);
+    }
+    
+    // define map for regexp match
+    if (config.map) {
+        self.map = config.map;
     }
     
     // init view
@@ -132,12 +153,12 @@ function init () {
                 var handler = function (err) {
                     if (++count === 3) {
                         
-                        var modelName = getModelFromUrl(config.pattern);
-                        if (!modelName) {
+                        var urlData = getDataFromUrl(config.pattern, config.map);
+                        if (!urlData || !urlData.model) {
                             return self.emit('ready');
                         }
                         
-                        self.layout.model(modelName, function (err, model) {
+                        self.layout.model(urlData, function (err, model) {
                             
                             if (!err) {
                                 
