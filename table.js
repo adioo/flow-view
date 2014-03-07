@@ -36,13 +36,13 @@ function load (state, modelData) {
     
     // render items
     if (modelData) {
-        modelData = {model: modelData};
+        modelData = {name: modelData};
     } else {
         modelData = getDataFromUrl(self.pattern, self.map);
     }
     
     if (!modelData) {
-        return;
+        return console.error('[table: ' + 'No info to fetch model.]');
     }
     
     // reset headers
@@ -137,7 +137,7 @@ function init () {
         V.load(config.layout, function (err, layout) {
             
             if (err) {
-                return;
+                return console.error(err);
             }
             
             // save view instance
