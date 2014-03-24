@@ -2,7 +2,7 @@ M.wrap('github/jillix/layout/v0.0.1/layout.js', function (require, module, expor
 
 var View = require('github/jillix/view/v0.0.1/view');
 
-function page (state, target, options) {
+function page (target, options, state) {
     var self = this;
     
     // return when no target page is given
@@ -10,7 +10,7 @@ function page (state, target, options) {
         return;
     }
     
-    // clear timeout
+    // state found
     self._state = true;
     
     options = options || {};
@@ -44,8 +44,10 @@ function page (state, target, options) {
     self.current = targetPage;
 }
 
+
+
 // not found handler
-function stateHandler () {
+function notFoundHandler () {
     var self = this;
     
     if (!self._state) {
@@ -143,18 +145,8 @@ function init () {
         document.title = config.title;
     }
     
-    // attach state handler to instance
-    self.page = page;
-    
     // state handler to handle css in pages
     self.pageSelector = '.' + pageName;
-    
-    // emit initial state after sub modules are loaded
-    if (subModules) {
-        self.on('subReady', function () {
-            self.view.state.emit();
-        });
-    }
     
     // init view
     View(self).load(config.view, function (err, view) {
@@ -181,21 +173,12 @@ function init () {
         self.pages.hide();
         
         // handle not found
-        self.notFound = $(config.notFound, self.view.template.dom);
-        if (self.notFound) {
-            
-            // attach after state handler
-            self.view.state.after = stateHandler;
-            
-            // show not found page
-            self.notFound.hide();
+        if ((self.notFound = $(config.notFound, self.view.template.dom))) {
+            self.on('route', notFoundHandler);
         }
         
-        // emit initial state if no sub modules are loaded
-        if (!subModules) {
-            self.view.state.emit();
-        }
-        
+        // attach state handler to instance
+        self.page = page;
         self.emit('ready');
     });
 }
