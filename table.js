@@ -20,9 +20,9 @@ function createTemplates (schema) {
     return columns;
 }
 
-function clickRowHander (state, id) {
+function clickRowHander (self, id) {
     return function () {
-        state.emit(location.pathname + id + '/');
+        self.route(location.pathname + id + '/');
     };
 }
 
@@ -87,7 +87,7 @@ function load (state, modelData) {
             // add clicks to rows
             var rows = self.item.template.dom.getElementsByTagName('tr');
             for (var i = 0; i < rows.length; ++i) {
-                rows[i].addEventListener('click', clickRowHander(self.item.state, data[i]._id), false);
+                rows[i].addEventListener('click', clickRowHander(self, data[i]._id), false);
             }
         });
     });
@@ -164,9 +164,7 @@ function init () {
                                 
                                 //add click to create button
                                 var create = config.create;
-                                $(create).on('click', clickRowHander(self.item.state, 'new'));
-                                
-                                layout.state.emit();
+                                $(create).on('click', clickRowHander(self, 'new'));
                             }
                             
                             self.emit('ready');
@@ -210,7 +208,6 @@ function init () {
                 } else {
                     self.item = {
                         model: V.model,
-                        state: V.state(),
                         template: V.template({
                             to: 'tbody',
                             in: self.layout.template.dom
