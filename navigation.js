@@ -26,7 +26,7 @@ function domStateHandler (self, view, config) {
         
         // emit the new state
         if (state) {
-            view.state.emit(state);
+            self.route(state);
         }
         
         // emit events
@@ -160,9 +160,6 @@ function init () {
                     return console.error('[nav: ' + err.toString() + ']');
                 }
                 
-                // add activate item handler to state
-                item.state.after = activate;
-                
                 self.item = item;
                 
                 // check if stateKey exists
@@ -212,7 +209,9 @@ function init () {
                     }
                 }
                 
-                item.state.emit();
+                // add activate item handler to state
+                self.on('route', activate);
+                self.emit('ready');
             });
         });
     });
