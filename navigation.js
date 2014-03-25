@@ -164,7 +164,7 @@ function init () {
                 
                 // check if stateKey exists
                 if (!data[0] || typeof data[0][config.stateKey] === 'undefined') {
-                    return;
+                     return console.error('[nav: No url key found]');
                 }
                 
                 // render items
