@@ -44,8 +44,6 @@ function page (target, options, state) {
     self.current = targetPage;
 }
 
-
-
 // not found handler
 function notFoundHandler () {
     var self = this;
@@ -145,6 +143,9 @@ function init () {
         document.title = config.title;
     }
     
+    // attach state handler to instance
+    self.page = page;
+    
     // state handler to handle css in pages
     self.pageSelector = '.' + pageName;
     
@@ -177,8 +178,6 @@ function init () {
             self.on('route', notFoundHandler);
         }
         
-        // attach state handler to instance
-        self.page = page;
         self.emit('ready');
     });
 }
