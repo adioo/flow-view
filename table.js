@@ -154,7 +154,7 @@ function init () {
                     if (++count === 3) {
                         
                         var urlData = getDataFromUrl(config.pattern, config.map);
-                        if (!urlData || !urlData.model) {
+                        if (!urlData || !urlData.name) {
                             return self.emit('ready');
                         }
                         
