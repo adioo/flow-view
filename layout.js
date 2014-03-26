@@ -2,7 +2,7 @@ M.wrap('github/jillix/layout/v0.0.1/layout.js', function (require, module, expor
 
 var View = require('github/jillix/view/v0.0.1/view');
 
-function page (target, options, state) {
+function page (state, target, options) {
     var self = this;
     
     // return when no target page is given
