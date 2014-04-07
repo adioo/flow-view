@@ -15,8 +15,6 @@ function page (state, target, options) {
     
     options = options || {};
     
-    var targetPage = $(target, self.view.template.dom);
-    
     // hide not found
     if (self.notFound) {
         self.notFound.hide();
@@ -31,22 +29,25 @@ function page (state, target, options) {
     
     self.pages.hide();
     
+    var targetPage = $(target, self.view.template.dom);
+    
     // animate page transition
     if (options.animate) {
-        animate.call(self, self.current, targetPage, options.animate);
+        animate.call(self, targetPage, options.animate);
     
     // show requested page
     } else {
         targetPage.show();
     }
-    
-    // set new current
-    self.current = targetPage;
 }
 
 // not found handler
-function notFoundHandler () {
+function notFoundHandler (state) {
     var self = this;
+    
+    if (self._url === state.url) {
+        return;
+    }
     
     if (!self._state) {
         self.pages.hide();
@@ -57,85 +58,56 @@ function notFoundHandler () {
 }
 
 // animate page transitions
-function animate (from, to, config) {
+function animate (elm, config) {
     var self = this;
     
-    if ((!config.from && !config.to) || (!from && !to)) {
+    if (!elm || !config) {
         return;
     }
     
-    var i, elm;
-    
-    /*if (from && config.from) {
-        for (i = 0; i < config.from.length; ++i) {
+    for (var i = 0; i < config.length; ++i) {
+        
+        // get element
+        elm = config[i].elm ? $(config[i].elm, elm) : elm;
+        
+        // handle show/hide
+        if (config[i].fx === 'show' || config[i].fx === 'hide') {
+            elm[config[i].fx]();
+        
+        // handle animateion
+        } else {
             
-            // get element
-            elm = config.from[i].elm ? $(config.from[i].elm, from) : from;
-            
-            // handle show/hide
-            if (config.from[i].fx === 'show' || config.from[i].fx === 'hide') {
-                elm[config.from[i].fx]();
-            
-            // handle animateion
-            } else {
-                
-                // set timing
-                if (config.from[i].dd) {
-                    elm.css("-webkit-animation-duration", config.from[i].dd[0]);
-                    elm.css("-webkit-animation-delay", config.from[i].dd[1]);
-                }
-                
-                elm.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', (function (config, elm) {
-                    return function () {
-                        elm.hide();
-                        console.log('from animation "' + config.fx + '" done. duration: ' + config.dd[0] + ', delay: ' + config.dd[1]);
-                    };
-                })(config.from[i], elm));
-                
-                // start animation
-                elm.addClass('animated ' + config.from[i].fx);
+            // set timing
+            if (config[i].dd) {
+                elm.css("-webkit-animation-duration", config[i].dd[0]);
+                elm.css("-webkit-animation-delay", config[i].dd[1]);
             }
-        }
-    }*/
-    
-    if (to && config.to) {
-        for (i = 0; i < config.to.length; ++i) {
             
-            // get element
-            elm = config.to[i].elm ? $(config.to[i].elm, to) : to;
+            var animate_class = 'animated ' + config[i].fx;
             
-            // handle show/hide
-            if (config.to[i].fx === 'show' || config.to[i].fx === 'hide') {
-                elm[config.to[i].fx]();
+            // animation end handler
+            elm.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', animation_end_handler(elm, animate_class));
             
-            // handle animateion
-            } else {
-                
-                // set timing
-                if (config.to[i].dd) {
-                    elm.css("-webkit-animation-duration", config.to[i].dd[0]);
-                    elm.css("-webkit-animation-delay", config.to[i].dd[1]);
-                }
-                
-                /*elm.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', (function (config, elm) {
-                    return function () {
-                        console.log('to animation "' + config.fx + '" done. duration: ' + config.dd[0] + ', delay: ' + config.dd[1]);
-                    };
-                })(config.to[i], elm));*/
-                
-                // start animation
-                elm.addClass('animated ' + config.to[i].fx);
-                elm.show();
-            }
+            // start animation
+            elm.addClass(animate_class);
+            elm.show();
         }
     }
+}
+
+function animation_end_handler (elm, animate_class) {
+    return function () {
+        elm.removeClass(animate_class);
+    }; 
+}
+
+function localChange () {
+    // TODO fetch data and render template
 }
 
 function init () {
     var self = this;
     var pageName = '_page_' + self.mono.name;
-    var subModules = self.mono.config.modules;
-    
     var config = self.mono.config.data;
     
     // set document title
@@ -148,6 +120,9 @@ function init () {
     
     // state handler to handle css in pages
     self.pageSelector = '.' + pageName;
+    
+    // TODO on i18n
+    self.on('i18n', localChange);
     
     // init view
     View(self).load(config.view, function (err, view) {
