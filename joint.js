@@ -4,7 +4,7 @@ function init () {
     var self = this;
     
     var config = self.mono.config.data;
-    var module = M.path(config.module);
+    var module = self.path(config.module);
     
     if (typeof module === 'function') {
         module.call(self, config.config);
