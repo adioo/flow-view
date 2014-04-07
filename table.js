@@ -34,14 +34,8 @@ function load (state, modelData) {
         return;
     }
     
-    // render items
-    if (modelData) {
-        modelData = {name: modelData};
-    } else {
-        modelData = getDataFromUrl(self.pattern, self.map);
-    }
-    
-    if (!modelData) {
+    state.map = modelData ? {name: modelData} : state.map;
+    if (!state.map) {
         return console.error('[table: ' + 'No info to fetch model.]');
     }
     
@@ -55,7 +49,27 @@ function load (state, modelData) {
         self.item.template.dom.innerHTML = '';
     }
     
-    self.item.model(modelData, function (err, model) {
+    /*self.view(viewName, function (err, view) {
+        
+        // read and render data
+        view.read({}, function (err) {
+            
+            // add clicks to rows
+            var rows = self.item.template.dom.getElementsByTagName('tr');
+            for (var i = 0; i < rows.length; ++i) {
+                rows[i].addEventListener('click', clickRowHander(self, data[i]._id), false);
+            }
+        });
+        
+        // render table header
+        self.header.template(view.flat);
+        
+        // render a title
+        self.title.render(view.label);
+    });*/
+    
+    // TODO fetch view
+    self.item.model(state.map, function (err, model) {
         
         if (err || !model) {
             return console.error('[table: ' + (err ? err.toString() : 'No model found.') + ']');
@@ -119,16 +133,6 @@ function init () {
     
     // state handler
     self.load = load;
-    
-    // create regexp pattern
-    if (config.pattern) {
-        self.pattern = new RegExp(config.pattern);
-    }
-    
-    // define map for regexp match
-    if (config.map) {
-        self.map = config.map;
-    }
     
     // init view
     if (config && config.layout) {
