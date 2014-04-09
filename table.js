@@ -1,17 +1,23 @@
-var Bind = require("github/jillix/bind");
-var Events = require("github/jillix/events");
-var Sort = require("./sort");
+// dependencies
+var Bind = require ("github/jillix/bind")
+  , Events = require ("github/jillix/events")
+  , Sort = require ("./sort")
+  ;
 
-function List(module) {
+/**
+ *  Bind-table CRUD
+ *  Bind-table module for CRUD.
+ *
+ */
+function Table (module) {
 
-    var self;
-    var config;
-    var container;
-    var template;
-    var pagination;
-    var paginationNumbers = false;
-    var page = 1;
-    var needsTabindex = false;
+    // global variables
+    var self
+      , config
+      , container
+      , template
+      , needsTabindex = false
+      ;
 
     function unflattenObject (flat) {
         var result = {};
@@ -54,31 +60,6 @@ function List(module) {
         if (config.options.tabindex) {
             needsTabindex = true;
         }
-
-        /*
-        config.options.pagination = config.options.pagination || {};
-
-        if (JSON.stringify(config.options.pagination) !== "{}") {
-            pagination = config.options.pagination;
-        }
-
-        config.options.pagination.numbers = config.options.pagination.numbers || {};
-
-        if (JSON.stringify(config.options.pagination.numbers) !== "{}") {
-            paginationNumbers = true;
-        }
-
-        config.options.pagination.controls = config.options.pagination.controls || {};
-        config.options.pagination.classes = config.options.pagination.classes || {};
-
-        config.options.pagination.numbers.options = config.options.pagination.numbers.options || {}
-        config.options.pagination.numbers.classes = config.options.pagination.numbers.classes || {};
-        config.options.pagination.numbers.keywords = config.options.pagination.numbers.keywords || {};
-
-        if (pagination) {
-            pagination = config.options.pagination;
-        }
-        */
 
         var optClasses = config.options.classes || {}
         optClasses.item = optClasses.item || "item";
@@ -181,75 +162,6 @@ function List(module) {
             }
         }
 
-        if (pagination) {
-
-            // Build DOM references
-            pagination.dom = {};
-            pagination.dom.container = $(pagination.container);
-            pagination.dom.next = $(pagination.controls.next);
-            pagination.dom.previous = $(pagination.controls.previous);
-            pagination.dom.pages = [];
-
-            disabledClass = pagination.controls.disable;
-
-            for (var key in pagination.controls) {
-                if (!pagination.controls.hasOwnProperty(key)) continue;
-
-                switch (key) {
-
-                    case "next":
-                        $(pagination.controls[key]).on("click", function () {
-                            var clickedElem = $(this);
-
-                            if (clickedElem.hasClass(disabledClass) || clickedElem.prop(disabledClass)) {
-                                return false;
-                            }
-
-                            goToNextPage();
-                            return false;
-                        });
-                        break;
-
-                    case "previous":
-                        $(pagination.controls[key]).on("click", function () {
-                            var clickedElem = $(this);
-
-                            if (clickedElem.hasClass(disabledClass) || clickedElem.prop(disabledClass)) {
-                                return false;
-                            }
-
-                            goToPrevPage();
-                            return false;
-                        });
-                        break;
-                }
-            }
-
-            if (paginationNumbers) {
-
-                $(self.dom).on("click", "." + pagination.numbers.classes.item, function() {
-
-                    if ($(this).hasClass("active")) {
-                        return false;
-                    }
-
-                    var pageNumber = parseInt($(this).attr("data-page"));
-
-                    if (!pageNumber) {
-                        return;
-                    }
-
-                    page = pageNumber;
-
-                    showPage(pageNumber, dbData.filter, dbData.options);
-
-                    if (!pagination.hash) {
-                        return false;
-                    }
-                });
-            }
-        }
-
         // run the internal binds
         for (var i = 0; i < binds.length; ++i) {
             Bind.call(self, binds[i]);
@@ -344,196 +256,6 @@ function List(module) {
     }
 
     // ********************************
-    // Pagination functions ***********
-    // ********************************
-    var disabledClass;
-
-    function setDisabled(filter, options) {
-
-        var data = {
-            "filter": filter,
-            "options": options,
-            "size": pagination.size
-        };
-
-        getPages(data, function(err, pagesNr) {
-            if (err) { return; }
-
-            // the the pagination only when at least 2 pages
-            if (pagesNr > 1) {
-                pagination.dom.container.show();
-            } else {
-                pagination.dom.container.hide();
-            }
-
-            if (paginationNumbers) {
-                buildPaginationNumbers(pagesNr);
-            }
-
-            var controls = pagination.controls;
-            var disableClass = pagination.classes.disable;
-            var disableAttr = pagination.controls.disable;
-
-            if (page <= 1) {
-                $(controls.previous).attr(disableAttr, "");
-                $(controls.previous).addClass(disableClass);
-            }
-            else {
-                $(controls.previous).removeAttr(disableAttr);
-                $(controls.previous).removeClass(disableClass);
-            }
-
-            if (page >= pagesNr) {
-                $(controls.next).attr(disableAttr, "");
-                $(controls.next).addClass(disabledClass, "");
-            }
-            else {
-                $(controls.next).removeAttr(disableAttr);
-                $(controls.next).removeClass(disableClass);
-            }
-        });
-    }
-
-    function buildPaginationNumbers(numbers) {
-
-        numbers = parseInt(numbers) || 0;
-
-        emptyPagination();
-
-        var numbersConfig = pagination.numbers;
-        var template = numbersConfig.template;
-
-        for (var i = 1; i <= numbers; i++) {
-            var item = $(template).clone().removeClass(template.substring(1)).addClass(numbersConfig.classes.item);
-
-            var html = item[0].outerHTML;
-            html = html.replace(new RegExp(numbersConfig.keywords.pageNumber, "g"), i);
-
-            // if current page add the active class name
-            html = html.replace(new RegExp(numbersConfig.keywords.active, "g"), (page !== i ? "" : numbersConfig.classes.active));
-
-            item = $(html);
-
-            var appendItem = true;
-
-            // if we have options for showing the pages numbers
-            if (!$.isEmptyObject(numbersConfig.options)) {
-                appendItem = false;
-
-                var options = numbersConfig.options;
-
-                // If max is 0, then only Next and Prev buttons are shown.
-                if (options.max) {
-
-                    // Show only the current page
-                    if (options.max === 1 && i === page) {
-                        pagination.dom.pages.push(item);
-                    }
-
-                    // First page ... current
-                    if (options.max === 2) {
-                        if (i === 1) {
-                            pagination.dom.pages.push(item);
-                        }
-
-                        // If is current page
-                        if (i === page) {
-                            // To prevent "« 1 ... 2"
-                            if (i > 2) {
-                                appendDots();
-                            }
-
-                            pagination.dom.pages.push(item);
-                        }
-                    }
-
-
-                    /*
-                        If max is 3:
-                            « 1 ... current ... last »
-                        If max is greather than 3
-                            « 1 ... current - delta --> current --> current + delta ... last »
-                    */
-                    if (options.max >= 3) {
-
-                        // TODO Maybe a more inspired variable name?
-                        var delta = options.max - 3;
-
-                        if (i === 1) {
-                            pagination.dom.pages.push(item);
-
-                            if (page - delta > 2) {
-                                appendDots();
-                            }
-                        }
-
-                        if (i === numbers) {
-                            if (page < numbers - 2 && numbers > delta) {
-                                appendDots();
-                            }
-
-                            pagination.dom.pages.push(item);
-                        }
-
-                        if (i >= page - delta && i <= page + delta) {
-                            pagination.dom.pages.push(item);
-                        }
-                    }
-                }
-            }
-            else {
-                pagination.dom.pages.push(item);
-            }
-        }
-
-        for (var i = 0; i < pagination.dom.pages.length; ++i) {
-            $(numbersConfig.classes.before).before(pagination.dom.pages[i]);
-        }
-    }
-
-    function appendDots() {
-
-        var li = $("<li>");
-        li.addClass(pagination.numbers.classes.item);
-
-        var span = $("<span>");
-        span.text("…");
-
-        li.append(span);
-
-        pagination.dom.pages.push(li);
-    }
-
-    function getPages(data, callback) {
-
-        var query = data.filter || {};
-        var options = data.options || {};
-
-        delete options.limit;
-        delete options.skip;
-
-        var crudObj = {
-            t: config.options.template,
-            q: query,
-            o: options,
-            f: {
-                "$all": 1,
-                "_id": 0
-            }
-        }
-
-        self.emit("find", crudObj, function(err, docs) {
-            if (err) {
-                callback(err);
-                return;
-            }
-
-            var pagesNr = Math.ceil(docs.length / pagination.size);
-            callback(null, pagesNr);
-        });
-    }
-
-    // ********************************
     // Public functions ***************
     // ********************************
 
@@ -561,16 +283,6 @@ function List(module) {
 
         clearList();
 
-        if (pagination) {
-            var size = pagination.size;
-            var skip = (page - 1) * size;
-
-            options.limit = options.size || size;
-            options.skip = options.skip || skip;
-
-            setDisabled(filter, options);
-        }
-
         var data = {};
         data.options = options;
 
@@ -586,19 +298,6 @@ function List(module) {
         for (var key in filter) {
             if (!filter.hasOwnProperty(key)) continue;
             data.filter[key] = filter[key];
-        }
-
-        if (oldFilter !== newFilter && pagination) {
-
-            dbData.filter = data.filter;
-            dbData.options = data.options;
-
-            page = 1;
-
-            oldFilter = newFilter;
-
-            showPage(page, dbData.filter, dbData.options);
-            return;
         }
 
         var query = data.filter || {};
@@ -657,18 +356,6 @@ function List(module) {
             }
         }
 
-        if (pagination) {
-            alert("Pagination not yet implemented using bind-filter... :-(");
-            // TODO
-            // var size = pagination.size;
-            // var skip = (page - 1) * size;
-
-            // options.limit = options.size || size;
-            // options.skip = options.skip || skip;
-
-            // setDisabled(filter, options);
-        }
-
         renderItems(err, data);
     }
 
@@ -717,11 +404,7 @@ function List(module) {
 
             if (err) { return; }
 
-            if (!pagination) {
-                render.call(self, data);
-            } else {
-                showPage(page, dbData.filter, dbData.options);
-            }
+            render.call(self, data);
         });
     }
 
@@ -1199,31 +882,6 @@ function List(module) {
         $(self.dom).parent().hide();
     }
 
-      //////////////////////////////
-     // PAGINATION PUBLIC FUNCTIONS
-    //////////////////////////////
-    function goToNextPage() {
-        showPage(++page, dbData.filter, dbData.options);
-    }
-
-    function goToPrevPage() {
-        showPage(--page, dbData.filter, dbData.options);
-    }
-
-    function showPage(number, filter, options) {
-
-        var size = pagination.size;
-        var skip = (number - 1) * size;
-
-        var fil = JSON.parse(JSON.stringify(filter));
-        var ops = JSON.parse(JSON.stringify(options));
-
-        ops.skip = skip;
-        ops.limit = size;
-
-        read(fil, ops);
-    }
-
     function getSelected (data) {
 
         var $selected = $("." + config.options.classes.item + "." + config.options.classes.selected);
@@ -1256,7 +914,6 @@ function List(module) {
                 return;
             }
 
-            // TODO Next page
             return;
         }
         selectItem($next);
@@ -1269,7 +926,6 @@ function List(module) {
 
         var $selected = getSelected();
         var $prev = $selected.prev();
-        // TODO Prev page
         if (!$prev.length) { return; }
         selectItem($prev);
     }
@@ -1349,11 +1005,6 @@ function List(module) {
         config.options.infiniteScroll.skip = 0;
     }
 
-    function emptyPagination() {
-        $("." + pagination.numbers.classes.item).remove();
-        pagination.dom.pages = [];
-    }
-
     var moduleMethods = {
         init: init,
         read: read,
@@ -1382,12 +1033,8 @@ function List(module) {
         removeItem: removeItem,
         removeSelected: removeSelected,
 
-        goToNextPage: goToNextPage,
-        goToPrevPage: goToPrevPage,
         fetchNext: fetchNext,
         clearSkip: clearSkip,
-        showPage: showPage,
-        emptyPagination: emptyPagination,
 
         showItem: showItem,
         hideItem: hideItem,
@@ -1425,15 +1072,15 @@ function List(module) {
 
 module.exports = function (module, config) {
 
-    var list = new List(module);
+    var table = new Table (module);
 
-    for (var func in list) {
-        if (!list.hasOwnProperty(func)) continue;
-        list[func] = module[func] || list[func];
+    for (var func in table) {
+        if (!table.hasOwnProperty(func)) continue;
+        table[func] = module[func] || table[func];
     }
 
-    list = Object.extend(list, module);
-    list.init(config);
+    table = Object.extend(table, module);
+    table.init(config);
 
     return list;
 };

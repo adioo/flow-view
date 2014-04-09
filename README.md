@@ -9,6 +9,9 @@ Bind-table module for CRUD.
 ### dev
  - fixed the recursive `selectItem` method
 
+### v0.1.8
+ - convert objects to unflatten objects in `refreshItem` method
+
 ### v0.1.7
  - Upgrade to Events v0.1.8 and Bind v0.2.1
 
