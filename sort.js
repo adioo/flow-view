@@ -1,35 +1,52 @@
+/**
+ * Sort init
+ *
+ */
 function init (module, config) {
+
+    // get the module instance
     var self = module;
 
     (function (mod) {
 
+        // set sort cache
         mod.sortCache = { "sort": [] };
         mod.sortCount = 1;
         mod.sortClass = "sort"
         mod.sortSelector = "th span." + mod.sortClass;
 
+        // click handlers on headers
         $(mod.dom).on("click", "th", function (e) {
 
+            // no sort
             if ($(this).attr('data-nosort')) { return; }
 
+            // clicked header
             var $current = $(this);
             $current = $current.find("." + mod.sortClass);
-            var $th = $current.parent();
 
-            var $current = $th.find("." + mod.sortClass + ":visible");
-            var $next = $current.next();
+            // th element
+            var $th = $current.parent()
+              , $current = $th.find("." + mod.sortClass + ":visible")
+              , $next = $current.next()
+              ;
+
+            // change sort icon
             if (!$next.length) { $next = $th.find("." + mod.sortClass).first(); }
 
+            // get sort data
             var sort = $next.data(mod.sortClass);
             if (!sort) { return; }
 
-
+            // get sort cache
             var options = mod.sortCache;
-            var infScroll = mod.config.options.infiniteScroll;
+              , infScroll = mod.config.options.infiniteScroll
+              ;
+
             if (infScroll) {
                 options.limit = infScroll.skip + infScroll.count;
                 options.skip = 0;
-                mod.clearList = true;
+                mod.clearTable = true;
             }
 
             setSort.call(mod, sort, !e.ctrlKey, true);
@@ -38,10 +55,10 @@ function init (module, config) {
     })(self);
 }
 
-/*
+/**
  * Sets the sort and emits "setOptions" sending the sortCache
- * */
-
+ *
+ */
 function setSort (sort, reset, callFind) {
 
     // get self
@@ -104,17 +121,29 @@ function setSort (sort, reset, callFind) {
     }
 }
 
+/**
+ * Clears the sort cache
+ *
+ */
 function clear () {
     var self = this;
     self.sortCache = self.sortCache || {};
     self.sortCache.sort = [];
 }
 
+/**
+ *  Sets the sort count value
+ *
+ */
 function setSortCount (sortCountToSet) {
     var self = this;
     self.sortCount = sortCountToSet;
 }
 
+/**
+ *  Updates the UI elements using sortCache
+ *
+ */
 function updateUI () {
     var self = this;
 
@@ -131,6 +160,7 @@ function updateUI () {
     }
 }
 
+// exports the sort methods
 module.exports = {
     init: init,
     clear: clear,
