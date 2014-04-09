@@ -9,6 +9,7 @@ Bind-table module for CRUD.
 ### dev
  - fixed the recursive `selectItem` method
 
+### v0.1.8
  - convert objects to unflatten objects in `refreshItem` method
  - removed pagination functions
  - replaced `clearList` with `clearTable`
