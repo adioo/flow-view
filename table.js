@@ -251,7 +251,7 @@ function Table (module) {
         newItem.attr("id", item[config.options.id]);
     }
 
-    function clearList() {
+    function clearTable() {
         $("." + config.options.classes.item, container).remove();
     }
 
@@ -259,15 +259,14 @@ function Table (module) {
     // Public functions ***************
     // ********************************
 
-      /////////////////////
-     // LIST FUNCTIONS
-    /////////////////////
+    // table functions
     var dbData = {
-        filter: {},
-        options: {}
-    };
-
-    var oldFilter, newFilter;
+            filter: {}
+          , options: {}
+        }
+      , oldFilter = null
+      , newFilter = null
+      ;
 
     function read(fil, ops, callback) {
 
@@ -281,7 +280,7 @@ function Table (module) {
         var filter = JSON.parse(JSON.stringify(fil));
         var options = JSON.parse(JSON.stringify(ops));
 
-        clearList();
+        clearTable();
 
         var data = {};
         data.options = options;
@@ -322,17 +321,17 @@ function Table (module) {
     function renderItemsFromResult (err, data) {
 
         if (err) {
-            // don't clear list if there is a filter error
+            // don't clear table if there is a filter error
             if (err.message !== "FILTER_IS_BUSY") {
-                clearList();
+                clearTable();
             }
-            self.clearList = false;
+            self.clearTable = false;
             return;
         }
 
-        if (self.clearList || !config.options.infiniteScroll || (config.options.infiniteScroll && !config.options.infiniteScroll.skip)) {
-            clearList();
-            self.clearList = false;
+        if (self.clearTable || !config.options.infiniteScroll || (config.options.infiniteScroll && !config.options.infiniteScroll.skip)) {
+            clearTable();
+            self.clearTable = false;
         }
 
         if (config.options.infiniteScroll) {
@@ -1018,7 +1017,7 @@ function Table (module) {
         selectPrev: selectPrev,
         selectItem: selectItem,
 
-        clearList: clearList,
+        clearTable: clearTable,
 
         focusNext: focusNext,
         focusPrev: focusPrev,
@@ -1082,5 +1081,5 @@ module.exports = function (module, config) {
     table = Object.extend(table, module);
     table.init(config);
 
-    return list;
+    return table;
 };
