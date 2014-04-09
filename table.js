@@ -13,6 +13,29 @@ function List(module) {
     var page = 1;
     var needsTabindex = false;
 
+    function unflattenObject (flat) {
+        var result = {};
+        var parentObj = result;
+
+        var keys = Object.keys(flat);
+        for (var i = 0; i < keys.length; ++i) {
+            var key = keys[i];
+            var subkeys = key.split('.');
+            var last = subkeys.pop();
+
+            for (var ii = 0; ii < subkeys.length; ++ii) {
+                var subkey = subkeys[ii];
+                parentObj[subkey] = typeof parentObj[subkey] === 'undefined' ? {} : parentObj[subkey];
+                parentObj = parentObj[subkey];
+            }
+
+            parentObj[last] = flat[key];
+            parentObj = result;
+        }
+
+        return result;
+    }
+
     function processConfig(config) {
 
         config.binds = config.binds || [];
@@ -1097,27 +1120,15 @@ function List(module) {
             showItem(item);
         }
 
-        var res = {};
-        (function recurse(obj, current) {
-          for (var key in obj) {
-            if (!obj.hasOwnProperty(key)) continue;
-
-            var value = obj[key];
-            var newKey = (current ? current + "." + key : key);  // joined key with dot
-            if(value && typeof value === "object") {
-              recurse(value, newKey);  // it's a nested object, so do it again
-            } else {
-              res[newKey] = value;  // it's not an object, so set the property
-            }
-          }
-        })(item);
+        // make sure that the object is an unflatten one
+        var unflattenItem = unflattenObject (item);
 
         // run the binds
         // TODO Remove `on` handlers
         for (var i = 0; i < config.template.binds.length; ++i) {
             var bindObj = config.template.binds[i];
-            bindObj.context = $("#" + item._id);
-            Bind.call(self, bindObj, item);
+            bindObj.context = $("#" + unflattenItem._id);
+            Bind.call(self, bindObj, unflattenItem);
         }
     }
 
