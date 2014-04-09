@@ -11,6 +11,7 @@ Bind-table module for CRUD.
 
  - convert objects to unflatten objects in `refreshItem` method
  - removed pagination functions
+ - replaced `clearList` with `clearTable`
 
 ### v0.1.7
  - Upgrade to Events v0.1.8 and Bind v0.2.1
