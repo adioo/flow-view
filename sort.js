@@ -39,7 +39,7 @@ function init (module, config) {
             if (!sort) { return; }
 
             // get sort cache
-            var options = mod.sortCache;
+            var options = mod.sortCache
               , infScroll = mod.config.options.infiniteScroll
               ;
 
