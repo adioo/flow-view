@@ -8,6 +8,9 @@ Bind-table module for CRUD.
 
 ### dev
 
+### v0.1.12
+ - Fixed a bug from v0.1.11
+
 ### v0.1.11
  - Emit the unflatten object when the item is refreshed
 

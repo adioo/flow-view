@@ -817,7 +817,7 @@ function Table (module) {
         }
 
         // emit `itemRefresh`
-        self.emit ("itemRefreshed", unflattenObject);
+        self.emit ("itemRefreshed", unflattenItem);
     }
 
     function selectItem (dataItem) {
