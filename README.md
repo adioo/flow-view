@@ -8,6 +8,9 @@ Bind-table module for CRUD.
 
 ### dev
 
+### v0.1.11
+ - Emit the unflatten object when the item is refreshed
+
 ### v0.1.10
  - emit `itemRefreshed` after the item was refreshed
  - update the `dataItem` cache on refresh item
