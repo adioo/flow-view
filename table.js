@@ -805,6 +805,9 @@ function Table (module) {
         // make sure that the object is an unflatten one
         var unflattenItem = unflattenObject (item);
 
+        // update the dataItem cache
+        $("#" + unflattenItem._id).data("dataItem", unflattenItem);
+
         // run the binds
         // TODO Remove `on` handlers
         for (var i = 0; i < config.template.binds.length; ++i) {
@@ -812,6 +815,9 @@ function Table (module) {
             bindObj.context = $("#" + unflattenItem._id);
             Bind.call(self, bindObj, unflattenItem);
         }
+
+        // emit `itemRefresh`
+        self.emit ("itemRefreshed", item);
     }
 
     function selectItem (dataItem) {
