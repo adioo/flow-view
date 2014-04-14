@@ -7,6 +7,8 @@ Bind-table module for CRUD.
 ## Change Log
 
 ### dev
+
+### v0.1.10
  - emit `itemRefreshed` after the item was refreshed
  - update the `dataItem` cache on refresh item
 
