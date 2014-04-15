@@ -29,7 +29,7 @@ function page (state, target, options) {
     
     self.pages.hide();
     
-    var targetPage = $(target, self.view.template.dom);
+    var targetPage = $(target, self.layout.template.dom);
     
     // animate page transition
     if (options.animate) {
@@ -124,9 +124,12 @@ function init () {
     // TODO on i18n
     self.on('i18n', localChange);
     
-    // init view
+    // setup view
+    //View(self);
+    
     View(self).load(config.view, function (err, view) {
-        
+    //self.view(config.view, function (err, view) {
+      
         if (err) {
             return console.error('[layout: ' + err.toString() + ']');
         }
@@ -140,16 +143,16 @@ function init () {
         view.template.render([{page: pageName}]);
         
         // save view instance
-        self.view = view;
+        self.layout = view;
         
         // get pages dom refs
-        self.pages = $(self.pageSelector, self.view.template.dom);
+        self.pages = $(self.pageSelector, self.layout.template.dom);
         
         // hide all pages in init state
         self.pages.hide();
         
         // handle not found
-        if ((self.notFound = $(config.notFound, self.view.template.dom))) {
+        if ((self.notFound = $(config.notFound, self.layout.template.dom))) {
             self.on('route', notFoundHandler);
         }
         
