@@ -8,6 +8,10 @@ Bind-table module for CRUD.
 
 ### dev
 
+### v0.1.13
+ - Upgraded to Events@v0.1.9
+ - Attach methods to self
+
 ### v0.1.12
  - Fixed a bug from v0.1.11
 

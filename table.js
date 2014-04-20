@@ -1048,10 +1048,11 @@ function Table (module) {
         hide: hide
     };
 
-    // create listen interface
+    // create listen interface and attach functions to self
     for (var meth in moduleMethods) {
         if (!moduleMethods.hasOwnProperty(meth)) continue;
         (function (method) {
+            module[method] = moduleMethods[method];
             module.on(method, function () {
 
                 var args = Array.prototype.slice.call(arguments, 0);
