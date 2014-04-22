@@ -889,7 +889,7 @@ function Table (module) {
 
     function getSelected (data) {
 
-        var $selected = $("." + config.options.classes.item + "." + config.options.classes.selected);
+        var $selected = $("." + config.options.classes.item + "." + config.options.classes.selected, self.dom);
 
         if (!data) {
             return $selected;
