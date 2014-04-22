@@ -8,6 +8,9 @@ Bind-table module for CRUD.
 
 ### dev
 
+### v0.1.14
+ - Get selected items from `self.dom`
+
 ### v0.1.13
  - Upgraded to Events@v0.1.9
  - Attach methods to self
