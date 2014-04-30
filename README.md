@@ -8,8 +8,11 @@ Bind-table module for CRUD.
 
 ### dev
 
+### v0.1.16
+ - Updated Events to `v0.1.11` since `v0.1.10` was using a bad version of Utils
+
 ### v0.1.15
- - Updated Bind and Events
+ - Updated Bind to `v0.2.2` and Events to `v0.1.10`
 
 ### v0.1.14
  - Get selected items from `self.dom`
