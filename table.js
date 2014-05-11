@@ -805,19 +805,27 @@ function Table (module) {
         // make sure that the object is an unflatten one
         var unflattenItem = unflattenObject (item);
 
-        // update the dataItem cache
-        $("#" + unflattenItem._id).data("dataItem", unflattenItem);
+        // the item is a new one
+        if (!$("#" + unflattenItem._id).length) {
+            self.read (dbData.filter, dbData.options, function (err, data) {
+                if (err) { return console.error (err); }
+                self.emit ("itemRefreshed", unflattenItem);
+            });
+        } else {
+            // update the dataItem cache
+            $("#" + unflattenItem._id).data("dataItem", unflattenItem);
 
-        // run the binds
-        // TODO Remove `on` handlers
-        for (var i = 0; i < config.template.binds.length; ++i) {
-            var bindObj = config.template.binds[i];
-            bindObj.context = $("#" + unflattenItem._id);
-            Bind.call(self, bindObj, unflattenItem);
+            // run the binds
+            // TODO Remove `on` handlers
+            for (var i = 0; i < config.template.binds.length; ++i) {
+                var bindObj = config.template.binds[i];
+                bindObj.context = $("#" + unflattenItem._id);
+                Bind.call(self, bindObj, unflattenItem);
+            }
+
+            // emit `itemRefresh`
+            self.emit ("itemRefreshed", unflattenItem);
         }
-
-        // emit `itemRefresh`
-        self.emit ("itemRefreshed", unflattenItem);
     }
 
     function selectItem (dataItem) {
