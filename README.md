@@ -8,6 +8,9 @@ Bind-table module for CRUD.
 
 ### dev
 
+### v0.1.17
+ - Refresh the table if the item doesn't exist when running `updateItem`.
+
 ### v0.1.16
  - Updated Events to `v0.1.11` since `v0.1.10` was using a bad version of Utils
 
