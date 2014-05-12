@@ -1,4 +1,5 @@
-M.wrap('github/IonicaBizau/bind-list-crud/v0.1.6/list.js', function (require, module, exports) {
+M.wrap('github/IonicaBizau/bind-list-crud/dev/list.js', function (require, module, exports) {
+
 var Bind = require("github/jillix/bind");
 var Events = require("github/jillix/events");
 
@@ -716,6 +717,22 @@ function List(module) {
         $(self.dom).parent().hide();
     }
 
+    function getSelected (data) {
+
+        var $selected = $("." + config.options.classes.item + "." + config.options.classes.selected, self.dom);
+
+        if (!data) {
+            return $selected;
+        }
+
+        var selectedData = [];
+        $selected.each(function () {
+            selectedData.push($(this).data("dataItem"));
+        });
+
+        return selectedData;
+    }
+
       //////////////////////////////
      // PAGINATION PUBLIC FUNCTIONS
     //////////////////////////////
@@ -764,6 +781,7 @@ function List(module) {
 
         deselect: deselect,
         selectItem: selectItem,
+        getSelected: getSelected,
 
         goToNextPage: goToNextPage,
         goToPrevPage: goToPrevPage,
