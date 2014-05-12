@@ -7,6 +7,12 @@ No datasources needed.
 
 ### Change Log
 
+#### v0.1.7
+ - Added `getSelected` method
+ - Added communication via events
+ - Attach methods to `self`
+ - Fetch item from server when `selectItem` is called and the item is not on the client.
+
 #### v0.1.6
  - Added `updateItem` function
 
