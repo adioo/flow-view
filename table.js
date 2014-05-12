@@ -390,6 +390,8 @@ function Table (module) {
                     selectItem(data[autoselect]);
                 }
         }
+
+        self.emit("itemsRendered", data);
     }
 
     function createItem (itemData) {
