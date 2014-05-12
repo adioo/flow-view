@@ -660,12 +660,37 @@ function List(module) {
             return;
         }
 
+        if (dataItem instanceof jQuery) {
+            dataItem = getDataItem(dataItem);
+            selectItem(dataItem);
+            return;
+        }
+
         var selectedClass = config.options.classes.selected;
 
         switch (config.options.selection) {
 
             case "single":
                 var currentItem = $("#" + dataItem[config.options.id], container);
+
+                if (!currentItem.length) {
+
+                    var crudObj = {
+                        t: config.options.template,
+                        q: query,
+                        o: options
+                    }
+
+                    return self.emit("find", crudObj, function(err, doc) {
+                        if (err) { return console.error (err); }
+                        if (!doc || !doc.length) {
+                            return console.error ("No document found");
+                        }
+                        doc = doc[0];
+                        selectItem (doc);
+                    });
+                }
+
                 if (currentItem.hasClass(selectedClass)) {
                     break;
                 }
