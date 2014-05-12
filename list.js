@@ -1,3 +1,4 @@
+M.wrap('github/IonicaBizau/bind-list-crud/v0.1.6/list.js', function (require, module, exports) {
 var Bind = require("github/jillix/bind");
 var Events = require("github/jillix/events");
 
@@ -724,7 +725,7 @@ function List(module) {
         config.options.template = template.toString();
     }
 
-    return {
+    var moduleMethods = {
         init: init,
         read: read,
 
@@ -749,6 +750,33 @@ function List(module) {
         show: show,
         hide: hide
     };
+
+    // create listen interface and attach functions to self
+    for (var meth in moduleMethods) {
+        if (!moduleMethods.hasOwnProperty(meth)) continue;
+        (function (method) {
+            module[method] = moduleMethods[method];
+            module.on(method, function () {
+
+                var args = Array.prototype.slice.call(arguments, 0);
+                var callback = args[args.length - 1];
+
+                var argsWithoutCallback = [];
+                for (var i = 0; i < args.length; ++i) {
+                    if (typeof args[i] === "function") continue;
+                    argsWithoutCallback.push(args[i]);
+                }
+
+                var result = moduleMethods[method].apply(this, argsWithoutCallback);
+
+                if (typeof callback === "function") {
+                    callback(result);
+                }
+            });
+        })(meth);
+    }
+
+    return moduleMethods;
 }
 
 module.exports = function (module, config) {
@@ -765,3 +793,5 @@ module.exports = function (module, config) {
 
     return list;
 };
+
+return module; });
