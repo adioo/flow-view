@@ -846,6 +846,23 @@ function Table (module) {
 
             case "single":
                 var currentItem = $("#" + dataItem[config.options.id], container);
+                if (!currentItem.length) {
+
+                    var crudObj = {
+                        t: config.options.template,
+                        q: query,
+                        o: options
+                    }
+
+                    return self.emit("find", crudObj, function(err, doc) {
+                        if (err) { return console.error (err); }
+                        if (!doc || !doc.length) {
+                            return console.error ("No document found");
+                        }
+                        doc = doc[0];
+                        selectItem (doc);
+                    });
+                }
                 if (currentItem.hasClass(selectedClass) && config.options.safeSelection) {
                     break;
                 }
