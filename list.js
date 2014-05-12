@@ -1,5 +1,6 @@
 M.wrap('github/IonicaBizau/bind-list-crud/dev/list.js', function (require, module, exports) {
 
+
 var Bind = require("github/jillix/bind");
 var Events = require("github/jillix/events");
 
@@ -185,6 +186,10 @@ function List(module) {
         } else {
             self.emit("ready");
         }
+    }
+
+    function getDataItem (jQueryObject) {
+        return jQueryObject.data("dataItem");
     }
 
     function render(item) {
