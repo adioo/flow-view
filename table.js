@@ -1,3 +1,4 @@
+M.wrap('github/IonicaBizau/bind-table-crud/v0.1.18/table.js', function (require, module, exports) {
 // dependencies
 var Bind = require ("github/jillix/bind")
   , Events = require ("github/jillix/events")
@@ -852,8 +853,7 @@ function Table (module) {
 
                     var crudObj = {
                         t: config.options.template,
-                        q: query,
-                        o: options
+                        q: {_id: dataItem._id}
                     }
 
                     return self.emit("find", crudObj, function(err, doc) {
@@ -1117,3 +1117,5 @@ module.exports = function (module, config) {
 
     return table;
 };
+
+return module; });
