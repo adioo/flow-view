@@ -1,4 +1,3 @@
-M.wrap('github/IonicaBizau/bind-table-crud/v0.1.18/table.js', function (require, module, exports) {
 // dependencies
 var Bind = require ("github/jillix/bind")
   , Events = require ("github/jillix/events")
@@ -862,6 +861,7 @@ function Table (module) {
                             return console.error ("No document found");
                         }
                         doc = doc[0];
+                        renderSelector.call(self, doc);
                         selectItem (doc);
                     });
                 }
@@ -870,8 +870,9 @@ function Table (module) {
                 }
 
                 $("." + selectedClass, container).removeClass(selectedClass);
-                $("#" + dataItem[config.options.id], container).addClass(selectedClass);
-                self.emit("selectionChanged", dataItem);
+                var $thisItem = $("#" + dataItem[config.options.id], container);
+                $thisItem.addClass(selectedClass);
+                self.emit("selectionChanged", $thisItem.data("dataItem"));
                 break;
 
             case "multiple":
@@ -1117,5 +1118,3 @@ module.exports = function (module, config) {
 
     return table;
 };
-
-return module; });
