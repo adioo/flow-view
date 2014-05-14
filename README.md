@@ -8,6 +8,9 @@ Bind-table module for CRUD.
 
 ### dev
 
+### v0.1.19
+ - Fixed `selectItem` method.
+
 ### v0.1.18
  - Added `renderedItems` event
  - Fetch item from server when `selectItem` is called and the item is not on the client.
