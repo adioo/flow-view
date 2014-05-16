@@ -1,7 +1,5 @@
 M.wrap('github/jillix/layout/v0.0.1/layout.js', function (require, module, exports) {
 
-var View = require('github/jillix/view/v0.0.1/view');
-
 function page (state, target, options) {
     var self = this;
     
@@ -20,16 +18,9 @@ function page (state, target, options) {
         self.notFound.hide();
     }
     
-    // load page modules
-    if (options.modules) {
-        for (var i = 0; i < options.modules.length; ++i) {
-            M(options.modules[i]);
-        }
-    }
-    
     self.pages.hide();
     
-    var targetPage = $(target, self.layout.template.dom);
+    var targetPage = $(target, self.layout.dom);
     
     // animate page transition
     if (options.animate) {
@@ -101,8 +92,26 @@ function animation_end_handler (elm, animate_class) {
     }; 
 }
 
-function localChange () {
-    // TODO fetch data and render template
+function localChange (err, locale) {
+    
+    if (err) {
+        return;
+    }
+    
+    // TODO currentLocale != locale
+    
+    // update model with new locale on locale change event
+    self.layout.req({
+        m: 'find',
+        q: {
+            // TODO query
+        }
+    }, function (err, data) {
+        
+        if (err) {
+            console.error(err);
+        }
+    });
 }
 
 function init () {
@@ -121,39 +130,38 @@ function init () {
     // state handler to handle css in pages
     self.pageSelector = '.' + pageName;
     
-    // TODO on i18n
-    self.on('i18n', localChange);
-    
-    // setup view
-    //View(self);
-    
-    View(self).load(config.view, function (err, view) {
-    //self.view(config.view, function (err, view) {
+    // load a view
+    self.view(config.view, function (err, view) {
       
         if (err) {
             return console.error('[layout: ' + err.toString() + ']');
         }
         
         // check if template has dom
-        if (!view.template || !view.template.dom) {
+        if (!view || !view.dom) {
             return console.error('[layout: no dom available]');
         }
         
         // render template
-        view.template.render([{page: pageName}]);
+        view.render([{page: pageName}]);
         
         // save view instance
         self.layout = view;
         
         // get pages dom refs
-        self.pages = $(self.pageSelector, self.layout.template.dom);
+        self.pages = $(self.pageSelector, self.layout.dom);
         
         // hide all pages in init state
         self.pages.hide();
         
         // handle not found
-        if ((self.notFound = $(config.notFound, self.layout.template.dom))) {
+        if ((self.notFound = $(config.notFound, self.layout.dom))) {
             self.on('route', notFoundHandler);
+        }
+        
+        // listen to locale change event
+        if (view.config && view.config.req) {
+            self.on('i18n', localChange);
         }
         
         self.emit('ready');
