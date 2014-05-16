@@ -1,7 +1,5 @@
 M.wrap('github/jillix/table/v0.0.1/table.js', function (require, module, exports) {
 
-var View = require('github/jillix/view/v0.0.1/view');
-
 function createTemplates (schema) {
     
     // create headers and rows
@@ -10,135 +8,111 @@ function createTemplates (schema) {
         rows: '<tr data="">'
     };
     
-    for (var field in schema) {
-        columns.headers += '<th>' + field + '</th>';
-        columns.rows += '<td>{' + field + '}</td>';
+    for (var i = 0; i < schema.length; ++i) {
+        columns.headers += '<th>' + schema[i].label + '</th>';
+        columns.rows += '<td>{' + schema[i].prop + '}</td>';
     }
+    
     columns.headers += '</tr>';
     columns.rows += '</tr>';
     
     return columns;
 }
 
-function clickRowHander (self, id) {
-    return function () {
-        self.route(location.pathname + id + '/');
-    };
+function routeHandler (event, keys, separator) {
+    var self = this;
+    
+    // create route path
+    var path = location.pathname;
+    for (var i = 0, value; i < keys.length; ++i) {
+        
+        value = self.path(keys[i], event.item);
+        
+        if (typeof value !== 'undefined') {
+            path += (value instanceof Array ? value[0] : value) + (separator || '');
+        }
+    }
+    // route
+    self.route(path);
+}
+
+function setItem (event) {
+    this.item = event.item;
 }
 
 function load (state, modelData) {
     var self = this;
+    
+    // reset current item
+    self.currentItem = null;
     
     // state can't be emitted before the view is ready
     if (!self.item || !self.head) {
         return;
     }
     
-    state.map = modelData ? {name: modelData} : state.map;
-    if (!state.map) {
-        return console.error('[table: ' + 'No info to fetch model.]');
+    if (!state.view) {
+        return console.error('[table: ' + 'No info to fetch view.]');
     }
     
     // reset headers
-    if (self.head.template.dom) {
-        self.head.template.dom.innerHTML = '';
+    if (self.head.dom) {
+        self.head.dom.innerHTML = '';
     }
     
     // reset items
-    if (self.item.template.dom) {
-        self.item.template.dom.innerHTML = '';
+    if (self.item.dom) {
+        self.item.dom.innerHTML = '';
     }
     
-    /*self.view(viewName, function (err, view) {
+    // load view from url
+    self.view(state.view, function (err, view) {
         
-        // read and render data
-        view.read({}, function (err) {
-            
-            // add clicks to rows
-            var rows = self.item.template.dom.getElementsByTagName('tr');
-            for (var i = 0; i < rows.length; ++i) {
-                rows[i].addEventListener('click', clickRowHander(self, data[i]._id), false);
-            }
-        });
-        
-        // render table header
-        self.header.template(view.flat);
-        
-        // render a title
-        self.title.render(view.label);
-    });*/
-    
-    // TODO fetch view
-    self.item.model(state.map, function (err, model) {
-        
-        if (err || !model) {
-            return console.error('[table: ' + (err ? err.toString() : 'No model found.') + ']');
+        if (err || !view) {
+            return console.error('[table: ' + (err ? err.toString() : 'No view found.') + ']');
         }
         
-        self.model = model;
+        // create templates from view config
+        var templates = createTemplates(view.config.columns);
         
-        // render title
-        if (self.title) {
-            self.title.template.render([{title: model.name}]);
-        }
+        // set header template
+        self.head.set(templates.headers, 'thead', self.layout.dom);
         
-        var templates = createTemplates(model.fields);
+        // set items template
+        view.set(templates.rows, 'tbody', self.layout.dom);
         
-        // render header
-        self.head.template.set(templates.headers);
-        self.head.template.render();
-        
-        // render items
-        self.item.template.set(templates.rows);
-        model.read({q: {}, o: {}}, function (err, data) {
+        view.req({m: 'find', d: view.config.req}, function (err, data) {
             
-            if (err || !data) {
-                data = [err] || ['no data'];
+            if (err) {
+                return console.error('[table: ' + err.toString() + ']');
             }
             
-            self.item.template.render(data);
+            // render title
+            self.title.render([{title: state.view}]);
             
-            // add clicks to rows
-            var rows = self.item.template.dom.getElementsByTagName('tr');
-            for (var i = 0; i < rows.length; ++i) {
-                rows[i].addEventListener('click', clickRowHander(self, data[i]._id), false);
-            }
+            // render head
+            self.head.render();
         });
     });
-}
-
-function getDataFromUrl (pattern, map) {
-    var match = location.pathname.match(pattern);
-    var output = {};
-    
-    if (!match) {
-        return;
-    }
-    
-    // create output
-    for (var key in map) {
-        if (map[key] instanceof Array) {
-            output[key] = map[key][0] + match[map[key][1]] + (map[key][2] || '');
-        } else {
-            output[key] = match[map[key]];
-        }
-    }
-    
-    return output;
 }
 
 function init () {
     var self = this;
     var config = self.mono.config.data;
     
-    // state handler
-    self.load = load;
+    // append route handler
+    self.routeHandler = routeHandler;
+    
+    // append item handler
+    self.setItem = setItem;
+    self.on('getItem', function (callback) {
+        callback(null, self.item);
+    });
     
     // init view
     if (config && config.layout) {
-        var V = View(self);
         
-        V.load(config.layout, function (err, layout) {
+        self.view(config.layout, function (err, layout) {
             
             if (err) {
                 return console.error(err);
@@ -147,78 +121,51 @@ function init () {
             // save view instance
             self.layout = layout;
             
-            if (self.layout.template) {
+            if (self.layout) {
                 
                 // render layout view
-                self.layout.template.render();
+                self.layout.render();
                 
                 // load controller
                 var count = 0;
                 var handler = function (err) {
+                    
+                    if (err) {
+                        return self.emit('ready', err);
+                    }
+                    
                     if (++count === 3) {
                         
-                        var urlData = getDataFromUrl(config.pattern, config.map);
-                        if (!urlData || !urlData.name) {
-                            return self.emit('ready');
-                        }
-                        
-                        self.layout.model(urlData, function (err, model) {
-                            
-                            if (!err) {
-                                
-                                //add click to create button
-                                var create = config.create;
-                                $(create).on('click', clickRowHander(self, 'new'));
-                            }
-                            
-                            self.emit('ready');
+                        //add click to create button
+                        var create = config.create;
+                        $(create).on('click', function () {
+                            self.route(location.pathname + 'new/');
                         });
+                        
+                        // state handler
+                        self.load = load;
+                        
+                        self.emit('ready');
                     }
                 };
                 
-                // load title
-                if (config.title) {
-                    V.load(config.title, function (err, title) {
-                        self.title = title;
-                        handler(err);
-                    });
-                } else {
-                    handler();
-                }
+                // create title view
+                self.view({to: '.tableTitle', in: self.layout.dom, html: '<h1>{title}</h1>'}, function (err, view) {
+                    self.title = view;
+                    handler(err);
+                });
                 
-                // load headers
-                if (config.head) {
-                    V.load(config.head, function (err, head) {
-                        self.head = head;
-                        handler(err);
-                    });
-                } else {
-                    self.head = {
-                        model: V.model,
-                        template: V.template({
-                            to: 'thead',
-                            in: self.layout.template.dom
-                        })
-                    };
-                    handler();
-                }
+                // create head view
+                self.view(function(err, view) {
+                    self.head = view;
+                    handler(err);
+                });
                 
-                // load items
-                if (config.item) {
-                    V.load(config.item, function (err, item) {
-                        self.item = item;
-                        handler(err);
-                    });
-                } else {
-                    self.item = {
-                        model: V.model,
-                        template: V.template({
-                            to: 'tbody',
-                            in: self.layout.template.dom
-                        })
-                    };
-                    handler();
-                }
+                // create item view
+                self.view(function(err, view) {
+                    self.item = view;
+                    handler(err);
+                });
             }
         });
     }
