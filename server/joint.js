@@ -6,7 +6,7 @@ function init (config) {
     // load and init custom module
     if (config.module) {
         try {
-            (require(M.config.paths.APPLICATION_ROOT + config.module)).call(self, config.config);
+            (require(M.config.paths.PROJECT_ROOT + config.module)).call(self, config.config);
         } catch (err) {
             // TODO handle error
             console.log(err);
