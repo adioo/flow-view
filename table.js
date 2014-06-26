@@ -619,7 +619,7 @@ function Table (module) {
 
             $htr[how]($checkTh);
 
-            // ...and to tempalte
+            // ...and to template
             var $checkTd = $("<td>").append($checkbox.clone().addClass(ITEM_CHECKBOX_CLASS));
             $template[how]($checkTd);
         }
