@@ -3,5 +3,5 @@
     "owner": "jillix",
     "name": "layout",
     "version": "v0.0.1",
-    "dependencies": ["layout.js", "github/jillix/bind/v0.0.1"]
+    "dependencies": ["layout.js"]
 }
