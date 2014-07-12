@@ -37,41 +37,10 @@ function page (state, target, options) {
     }
 }
 
+// TODO implement animations
 function transition (state, from, to) {
-    // TODO implement animations
     $(from).hide();
     $(to).show();
-}
-
-function render (state) {
-    var self = this;
-
-    if (!self.view) {
-        return;
-    }
-
-    var views = self._toArray(arguments).slice(1);
-    for (var i = 0; i < views.length; ++i) {
-        if (self.view[views[i]]) {
-            self.view[views[i]].render();
-        }
-    }
-}
-
-// not found handler
-function notFoundHandler (state) {
-    var self = this;
-
-    if (self._url === state.url) {
-        return;
-    }
-
-    if (!self._state) {
-        self.pages.hide();
-        self.notFound.show();
-    }
-
-    self._state = false;
 }
 
 // animate page transitions
@@ -118,48 +87,64 @@ function animation_end_handler (elm, animate_class) {
     };
 }
 
-function localChange (err, locale) {
+// not found handler
+// TODO needs to be tested
+function notFoundHandler (state) {
+    var self = this;
 
-    if (err) {
+    if (self._url === state.url) {
         return;
     }
 
-    // TODO currentLocale != locale
+    if (!self._state) {
+        self.pages.hide();
+        self.notFound.show();
+    }
 
-    // update model with new locale on locale change event
-    self.layout.req({
-        m: 'find',
-        q: {
-            // TODO query
-        }
-    }, function (err, data) {
-
-        if (err) {
-            console.error(err);
-        }
-    });
+    self._state = false;
 }
 
-function routeHandler (event, path, re) {
+// render views on events
+function render (state) {
     var self = this;
 
-    if (re) {
-        var match = window.location.pathname.match(re);
-        if (match) {
+    if (!self.view) {
+        return;
+    }
 
-            // marge matched data into path
-            for (var i = 0; i < path.length; ++i) {
-                if (typeof path[i] === 'number') {
-                    path[i] = match[path[i]];
-                }
-            }
-
-            // route
-            self.route('/' + path.join('/'));
+    var views = self._toArray(arguments).slice(1);
+    for (var i = 0; i < views.length; ++i) {
+        if (self.view[views[i]]) {
+            self.view[views[i]].render();
         }
-    } else {
-        // route
-        self.route(path);
+    }
+}
+
+// mainpulate dom with jquery
+function $jq (event, selector, method) {
+    var self = this;
+
+    // call jquery function
+    if ($.fn[method]) {
+
+        // get selector
+        switch (selector) {
+            case 'cur':
+                selector = event.currentTarget;
+                break;
+            case 'src':
+                selector = event.srcElement;
+                break;
+            case 'all':
+                selector = event.elms;
+                break;
+        }
+
+        var args = self._toArray(arguments).slice(3);
+
+        // call method
+        selector = $(selector);
+        selector[method].apply(selector, args);
     }
 }
 
@@ -177,7 +162,7 @@ function init (config, ready) {
     self.page = page;
     self.render = render;
     self.transition = transition;
-    self.routeHandler = routeHandler;
+    self.$jq = $jq;
 
     // state handler to handle css in pages
     self.pageSelector = '.' + pageName;
@@ -199,10 +184,12 @@ function init (config, ready) {
             self.on('route', notFoundHandler);
         }
 
-        // listen to locale change event
-        //if (self.view.layout.config && self.view.layout.config.req) {
-        //    self.on('i18n', localChange);
-        //}
+        // render other views
+        for (var view in self.view) {
+            if (view !== 'layout') {
+                self.view[view].render();
+            }
+        }
     }
 
     console.log('layout:', self._name);
