@@ -18,6 +18,11 @@ function page (state, target, options) {
         self.notFound.hide();
     }
 
+    // set document title
+    if (self.title) {
+        document.title = self.title;
+    }
+
     self.pages.hide();
 
     var targetPage = $(target, self.view.layout.dom);
@@ -29,6 +34,27 @@ function page (state, target, options) {
     // show requested page
     } else {
         targetPage.show();
+    }
+}
+
+function transition (state, from, to) {
+    // TODO implement animations
+    $(from).hide();
+    $(to).show();
+}
+
+function render (state) {
+    var self = this;
+
+    if (!self.view) {
+        return;
+    }
+
+    var views = self._toArray(arguments).slice(1);
+    for (var i = 0; i < views.length; ++i) {
+        if (self.view[views[i]]) {
+            self.view[views[i]].render();
+        }
     }
 }
 
@@ -137,18 +163,20 @@ function routeHandler (event, path, re) {
     }
 }
 
-function init () {
+function init (config, ready) {
     var self = this;
     var pageName = '_page_' + self._name;
-    var config = self._config || {};
 
     // set document title
     if (config.title) {
+        self.title = config.title;
         document.title = config.title;
     }
 
     // attach state handler to instance
     self.page = page;
+    self.render = render;
+    self.transition = transition;
     self.routeHandler = routeHandler;
 
     // state handler to handle css in pages
@@ -157,7 +185,7 @@ function init () {
     // render views
     if (self.view && self.view.layout) {
 
-        // add page classes
+        // render layout and add page classes
         self.view.layout.render([{page: pageName}]);
 
         // get pages dom refs
@@ -177,7 +205,8 @@ function init () {
         //}
     }
 
-    self.emit('ready');
+    console.log('layout:', self._name);
+    ready();
 }
 
 module.exports = init;
