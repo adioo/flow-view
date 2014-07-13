@@ -127,17 +127,31 @@ function $jq (event, selector, method) {
     // call jquery function
     if ($.fn[method]) {
 
-        // get selector
-        switch (selector) {
-            case 'cur':
-                selector = event.currentTarget;
-                break;
-            case 'src':
-                selector = event.srcElement;
-                break;
-            case 'all':
-                selector = event.elms;
-                break;
+        // get selector from url
+        if (typeof selector !== 'string') {
+
+            // return when regexp is not found
+            var re = new RegExp(selector[0]);
+            if (!re.test(window.location)) {
+                return;
+            }
+
+            selector = window.location.href.replace(re, selector[1]);
+
+        } else {
+
+            // get selector
+            switch (selector) {
+                case 'cur':
+                    selector = event.currentTarget;
+                    break;
+                case 'src':
+                    selector = event.srcElement;
+                    break;
+                case 'all':
+                    selector = event.elms;
+                    break;
+            }
         }
 
         var args = self._toArray(arguments).slice(3);
