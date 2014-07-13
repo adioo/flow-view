@@ -93,7 +93,7 @@ function init (config, ready) {
     // a table can have only one model
     if (self.model) {
         for (var model in self.model) {
-            self.model = self.model[model]
+            self.model = self.model[model];
             break;
         }
     }
