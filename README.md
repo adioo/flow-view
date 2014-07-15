@@ -3,10 +3,12 @@ layout
 
 Basic layout module
 
-# Config
+#### Instance config
 ```json
 {
-    "title": "string",
-    "notFound": "?"
+    "client": {
+        "title": "string",
+        "notFound": "?"
+    }
 }
 ```
