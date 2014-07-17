@@ -8,8 +8,8 @@ function init (config) {
         try {
             (require(M.config.paths.PROJECT_ROOT + config.module)).call(self, config.config);
         } catch (err) {
-            // TODO handle error
-            console.log(err);
+            // emit ready with error
+            self.emit('ready', err);
         }
     }
 }
