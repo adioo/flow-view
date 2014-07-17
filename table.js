@@ -57,7 +57,7 @@ function load (state, viewInfo) {
     }
 
     // TODO fetch view with view info or render direct on self.view.item
-    // TODO handle title
+    // TODO handle title (...see editor module)
     // self.view.title.render([{title: self.view.item.config.title}]);
 
     if (viewInfo) {
@@ -99,7 +99,7 @@ function init (config, ready) {
     }
 
     // get an empty view instance for the table headers
-    self._load('V', {}, function (err, view) {
+    self._load('V', {to: ''}, function (err, view) {
 
         self.view.head = view;
 
