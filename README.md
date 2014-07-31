@@ -7,6 +7,9 @@ No datasources needed.
 
 ### Change Log
 
+#### v0.2.0
+ - Updated deps
+
 #### v0.1.7
  - Added `getSelected` method
  - Added communication via events
