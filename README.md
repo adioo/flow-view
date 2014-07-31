@@ -8,6 +8,9 @@ Bind-table module for CRUD.
 
 ### dev
 
+### v0.2.0
+ - Updated deps
+
 ### v0.1.19
  - Fixed `selectItem` method.
 
