@@ -36,7 +36,6 @@ function init (config, ready) {
 
         self.view.head = view;
 
-        console.log('table:', self._name);
         ready();
     });
 }
