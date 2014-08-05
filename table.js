@@ -788,7 +788,7 @@ function Table (module) {
         $("." + selectedClass, container).removeClass(selectedClass);
     }
 
-    function refreshItem (err, item) {
+    function refreshItem (err, item, doNotFetch) {
 
         if (err) {
             alert(err);
@@ -809,6 +809,7 @@ function Table (module) {
 
         // the item is a new one
         if (!$("#" + unflattenItem._id).length) {
+            if (doNotFetch) { return; }
             self.read (dbData.filter, dbData.options, function (err, data) {
                 if (err) { return console.error (err); }
                 self.emit ("itemRefreshed", unflattenItem);
