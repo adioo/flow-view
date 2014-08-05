@@ -12,10 +12,6 @@ function init (config, ready) {
     self.load = load;
     self.renderData = renderData;
 
-    // event interface
-    self.on('load', load);
-    self.on('renderData', renderData);
-
     // render layout
     if (self.view && self.view.layout) {
         self.view.layout.render();
