@@ -151,22 +151,16 @@ function animate (elm, config) {
 /*
     type: actor
 */
-function render (state, data, view) {
+function render (event, data) {
     var self = this;
+    var view = data.view;
 
     if (!self.view || !self.view[view] || !data) {
         return;
     }
 
     // render data
-    //self.view[view].render([data]);
-
-    /*var views = self._toArray(arguments).slice(1);
-    for (var i = 0; i < views.length; ++i) {
-        if (self.view[views[i]]) {
-            self.view[views[i]].render(data);
-        }
-    }*/
+    self.view[view].render([data]);
 }
 
 /*
