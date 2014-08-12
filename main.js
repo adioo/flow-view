@@ -12,3 +12,4 @@ module.exports = function (config) {
 
     Table (this, config);
 };
+

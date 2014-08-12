@@ -1,12 +1,12 @@
 {
     "source": "github",
-    "owner": "IonicaBizau",
+    "owner": "jillix",
     "name": "bind-table-crud",
     "dependencies": [
         "/main.js",
         "/table.js",
         "/sort.js",
-        "github/jillix/bind/v0.3.0",
+        "github/jillix/bind/v0.3.1",
         "github/jillix/events/v0.3.0"
     ],
     "operations": []
