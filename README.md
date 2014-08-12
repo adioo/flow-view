@@ -7,6 +7,9 @@ Bind-table module for CRUD.
 ## Change Log
 
 ### dev
+### v0.2.1
+ - Added `doNotFetch` parameter for `refreshItem` method
+ - Added LICENSE
 
 ### v0.2.0
  - Updated deps
