@@ -203,7 +203,7 @@ function List(module) {
     function renderSelector(item) {
 
         if (!item) { return; }
-        if (item.constructor.name === "Array") {
+        if (item instanceof Array) {
             for (var i = 0; i < item.length; ++i) {
                 renderSelector(item[i]);
             }
@@ -838,3 +838,4 @@ module.exports = function (module, config) {
 
     return list;
 };
+

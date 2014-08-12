@@ -7,6 +7,10 @@ No datasources needed.
 
 ### Change Log
 
+#### v0.2.1
+ - Removed `contructor.name` for IE compatibility
+ - Updated to Bind `v0.3.1`
+
 #### v0.2.0
  - Updated deps
 
