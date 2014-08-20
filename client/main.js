@@ -1,6 +1,8 @@
 Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, module, exports) {
 
+    debugger;
     var List = require("./list");
+    var Ui = require("./ui");
 
     function init (config, ready) {
         var self = this;
@@ -23,7 +25,9 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
         config = $.extend(self._conf, config);
         var instanceSelector = Object.keys(self.view).join(",");
         var $itemTemplate = $(self._conf.ui.template.selector, instanceSelector);
+
         var list = new List(self);
+        var ui = new Ui(self);
 
         self.model = self.model[self._conf.model];
         if (!self.model) {
@@ -32,8 +36,9 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
 
         if (self._conf.autoinit) {
             var req = config.options;
-            list.read(req.query, req.options, function () {
+            list.read(req.query, req.options, function (err, data) {
                 if (err) { return errorHandler(err); }
+                ui.render(data);
                 ready();
             });
         } else {

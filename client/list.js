@@ -10,7 +10,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/list.js', function (require, modul
                     o: options
                 }
             }, callback);
-        }
+        };
     };
 
     return module;
