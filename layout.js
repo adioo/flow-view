@@ -30,7 +30,7 @@ function init (config, ready) {
     verifyDeps();
 
     // set locale
-    self.locale.set = function (ev, data)
+    self.locale.set = function (ev, data) {
         var locale = data.locale;
         var cookie = data.cookie || config.locale.cookie;
         $.cookie(cookie, locale);
