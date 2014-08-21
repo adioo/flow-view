@@ -1,19 +1,21 @@
 Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, module, exports) {
 
-    debugger;
     var List = require("./list");
     var Ui = require("./ui");
 
     function init (config, ready) {
         var self = this;
+
+        if (!self.view.layout) {
+            throw new Error("A view named 'layout' is required.");
+        }
+        if (!self.view.item) {
+            throw new Error("A view named 'item' is required.");
+        }
+
+        self.view.layout.render();
+
         self._conf = {
-            "ui": {
-                "template": {
-                    "selector": "",
-                    "class": "template"
-                },
-                "container": ""
-            },
             "options": {
                 "query": {},
                 "options": {}
@@ -23,8 +25,6 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
         };
 
         config = $.extend(self._conf, config);
-        var instanceSelector = Object.keys(self.view).join(",");
-        var $itemTemplate = $(self._conf.ui.template.selector, instanceSelector);
 
         var list = new List(self);
         var ui = new Ui(self);
@@ -44,8 +44,6 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
         } else {
             // TODO
         }
-
-        ready();
     }
 
     module.exports = init;
