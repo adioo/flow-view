@@ -21,7 +21,12 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
                 "options": {}
             },
             "model": "",
-            "autoinit": true
+            "autoinit": true,
+            "item": {
+                "on": {
+                    "data": null
+                }
+            }
         };
 
         config = $.extend(self._conf, config);
@@ -33,6 +38,8 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
         if (!self.model) {
             throw new Error("Model is not loaded. Please load the model using the composition configuration");
         }
+
+        self.view.item.on.data = self._path(config.item.on.data);
 
         if (self._conf.autoinit) {
             var req = config.options;
