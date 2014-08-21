@@ -9,6 +9,63 @@ function init (config, ready) {
     var self = this;
     var pageName = '_page_' + self._name;
 
+    config = $.extend(config, {
+        locale: null,
+        title: ""
+    });
+
+    // locale stuff
+    self.locale = {};
+    function verifyDeps() {
+
+        if (typeof $ === "undefined") {
+            throw new Error("jQuery is required for layout module");
+        }
+
+        if (config.locale && typeof $.cookie === "undefined") {
+            throw new Error("jQuery cookie library is required when using locale");
+        }
+    }
+
+    verifyDeps();
+
+    // set locale
+    self.locale.set = function (ev, data)
+        var locale = data.locale;
+        var cookie = data.cookie || config.locale.cookie;
+        $.cookie(cookie, locale);
+        self.emit("localeSet", null, {
+            locale: locale,
+            cookie: cookie
+        });
+    };
+
+    // get locale
+    self.locale.get = function (ev, data) {
+        return $.cookie(cookie || config.locale.cookie);
+    };
+
+    if (config.locale) {
+
+        if (typeof config.locale === "string") {
+            config.locale = {
+                value: config.locale,
+                cookie: "_loc"
+            };
+        }
+
+        if (typeof config.locale.value !== "string") {
+            throw new Error("config.locale.value shoud be a string.");
+        }
+
+        if (typeof config.locale.cookie !== "string") {
+            throw new Error("config.locale.cookie shoud be a string.");
+        }
+
+        self.locale.set(config.locale);
+    }
+
+
     // set document title
     if (config.title) {
         self.title = config.title;
