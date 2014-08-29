@@ -25,7 +25,8 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
             "item": {
                 "on": {
                     "data": null
-                }
+                },
+                "id": "_id"
             }
         };
 
@@ -33,6 +34,41 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
 
         var list = new List(self);
         var ui = new Ui(self);
+
+        self.read = function (ev, data) {
+
+            var callback = function (err, data) {
+                self.emit("list_rendered", err, data);
+            };
+
+            if (typeof data === "function") {
+                callback = data;
+                data = ev;
+                ev = null;
+            }
+
+            list.read(data.q, data.o, function (err, data) {
+                if (!err) { ui.render(data); }
+                callback(err, data);
+            });
+        };
+
+        self.getItem = function (ev, callback) {
+
+            var data = {}
+            if (typeof ev === "string") {
+                data.q = {};
+                data.q[self._conf.item.id] = ev;
+            }
+
+            list.read(data.q, {}, function (err, data) {
+                data = data && data[0];
+                self.emit("item_got", err, data);
+                if (typeof callback === "function") {
+                    callback(err, data);
+                }
+            });
+        };
 
         self.model = self.model[self._conf.model];
         if (!self.model) {
@@ -43,12 +79,15 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
 
         if (self._conf.autoinit) {
             var req = config.options;
-            list.read(req.query, req.options, function (err, data) {
+            self.read({
+                q: req.query,
+                o: req.options
+            }, function (err, data) {
                 if (err) { return errorHandler(err); }
                 ui.render(data);
-                self.emit("list_rendered");
                 ready();
             });
+
         } else {
             // TODO
         }
