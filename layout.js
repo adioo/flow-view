@@ -160,7 +160,7 @@ function render (event, data) {
     }
 
     // render data
-    self.view[view].render([data]);
+    self.view[view].render([data.item]);
 }
 
 /*
