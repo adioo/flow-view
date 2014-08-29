@@ -46,6 +46,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
             list.read(req.query, req.options, function (err, data) {
                 if (err) { return errorHandler(err); }
                 ui.render(data);
+                self.emit("list_rendered");
                 ready();
             });
         } else {
