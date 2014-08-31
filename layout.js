@@ -40,12 +40,12 @@ function init (config, ready) {
         if ((self.notFound = $(config.notFound, self.view.layout.dom))) {
             self.on('route', notFoundHandler);
         }
+    }
 
-        // render other views
-        for (var view in self.view) {
-            if (view !== 'layout') {
-                self.view[view].render();
-            }
+    // render other views
+    for (var view in self.view) {
+        if (view !== 'layout') {
+            self.view[view].render();
         }
     }
 
