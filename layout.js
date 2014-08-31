@@ -159,6 +159,9 @@ function render (event, data) {
         return;
     }
 
+    // TODO Handle pages on manual rendering
+    // data.item && (data.item.page = '_page_' + self._name);
+
     // render data
     self.view[view].render([data.item]);
 }
