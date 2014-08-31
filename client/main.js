@@ -55,10 +55,22 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
 
         self.getItem = function (ev, callback) {
 
-            var data = {}
+            var data = {};
             if (typeof ev === "string") {
                 data.q = {};
                 data.q[self._conf.item.id] = ev;
+            } else if (typeof ev === "object") {
+                data.q = ev;
+            }
+
+            if (typeof data.q[self._conf.item.id] === "string") {
+                var cache = self.view.item.data || [];
+                for (var i = 0; i < cache.length; ++i) {
+                    var cCache = cache[i];
+                    if (cCache[self._conf.item.id] === ev) {
+                        return callback(null, cCache);
+                    }
+                }
             }
 
             list.read(data.q, {}, function (err, data) {
