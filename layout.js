@@ -9,10 +9,12 @@ function init (config, ready) {
     var self = this;
     var pageName = '_page_' + self._name;
 
-    config = $.extend(config, {
-        locale: null,
-        title: ""
-    });
+    self._conf = {
+        title: "",
+        locale: null
+    };
+
+    config = $.extend(self._conf, config);
 
     // locale stuff
     self.locale = {};
