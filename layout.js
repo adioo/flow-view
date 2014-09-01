@@ -42,6 +42,8 @@ function init (config, ready) {
 
     // get locale
     self.locale.get = function (ev, data) {
+        if (typeof ev === "function") { data = { callback: ev }; }
+        if (typeof data === "function") { data = { callback: data }; }
         data && data.callback(null, $.cookie(cookie || config.locale.cookie));
     };
 
