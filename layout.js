@@ -42,7 +42,7 @@ function init (config, ready) {
 
     // get locale
     self.locale.get = function (ev, data) {
-        return $.cookie(cookie || config.locale.cookie);
+        data && data.callback(null, $.cookie(cookie || config.locale.cookie));
     };
 
     if (config.locale) {
