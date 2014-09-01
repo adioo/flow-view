@@ -44,7 +44,9 @@ function init (config, ready) {
     self.locale.get = function (ev, data) {
         if (typeof ev === "function") { data = { callback: ev }; }
         if (typeof data === "function") { data = { callback: data }; }
-        data && data.callback(null, $.cookie(cookie || config.locale.cookie));
+        var localeVal = $.cookie(cookie || config.locale.cookie);
+        data && data.callback(null, localeVal);
+        return localeVal;
     };
 
     if (config.locale) {
@@ -64,6 +66,8 @@ function init (config, ready) {
             throw new Error("config.locale.cookie shoud be a string.");
         }
 
+        // Prevent locale overriding
+        if (self.locale.get()) { return; }
         self.locale.set(config.locale);
     }
 
