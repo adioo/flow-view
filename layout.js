@@ -33,7 +33,7 @@ function init (config, ready) {
 
     // set locale
     self.locale.set = function (ev, data) {
-        var locale = data.locale;
+        var locale = data.locale || data.value || data;
         var cookie = data.cookie || config.locale.cookie;
         $.cookie(cookie, locale);
         self.emit("localeSet", null, {
@@ -44,9 +44,10 @@ function init (config, ready) {
 
     // get locale
     self.locale.get = function (ev, data) {
+        var cookie = data && data.cookie || config.locale.cookie;
         if (typeof ev === "function") { data = { callback: ev }; }
         if (typeof data === "function") { data = { callback: data }; }
-        var localeVal = $.cookie(cookie || config.locale.cookie);
+        var localeVal = $.cookie(cookie);
         data && data.callback(null, localeVal);
         return localeVal;
     };
@@ -69,8 +70,9 @@ function init (config, ready) {
         }
 
         // Prevent locale overriding
-        if (self.locale.get()) { return; }
-        self.locale.set(config.locale);
+        var cLoc = self.locale.get();
+        if (cLoc && cLoc !== "undefined") { return; }
+        self.locale.set(null, config.locale);
     }
 
 
