@@ -81,29 +81,20 @@ function init (config, ready) {
     // state handler to handle css in pages
     self.pageSelector = '.' + pageName;
 
-    // render views
-    if (self.view && self.view.layout) {
+    // render other views
+    for (var view in self.view) {
+        self.view[view].render([{page: pageName}]);
+    }
 
-        // render layout and add page classes
-        self.view.layout.render([{page: pageName}]);
+    // get pages dom refs
+    self.pages = $(self.pageSelector);
 
-        // get pages dom refs
-        self.pages = $(self.pageSelector, self.view.layout.dom);
+    // hide all pages in init state
+    self.pages.hide();
 
-        // hide all pages in init state
-        self.pages.hide();
-
-        // handle not found
-        if ((self.notFound = $(config.notFound, self.view.layout.dom))) {
-            self.on('route', notFoundHandler);
-        }
-
-        // render other views
-        for (var view in self.view) {
-            if (view !== 'layout') {
-                self.view[view].render();
-            }
-        }
+    // handle not found
+    if ((self.notFound = $(config.notFound))) {
+        self.on('route', notFoundHandler);
     }
 
     ready();
@@ -139,7 +130,7 @@ function page (state, data) {
 
     self.pages.hide();
 
-    var targetPage = $(target, self.view.layout.dom);
+    var targetPage = $(target);
 
     // animate page transition
     if (options.animate) {
@@ -216,8 +207,11 @@ function render (event, data) {
         return;
     }
 
+    // TODO Handle pages on manual rendering
+    // data.item && (data.item.page = '_page_' + self._name);
+
     // render data
-    self.view[view].render([data]);
+    self.view[view].render([data.item]);
 }
 
 /*
