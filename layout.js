@@ -35,10 +35,14 @@ function init (config, ready) {
     self.locale.set = function (ev, data) {
         var locale = data.locale || data.value || data;
         var cookie = data.cookie || config.locale.cookie;
-        $.cookie(cookie, locale);
+        if (data.setCookie !== false) {
+            $.cookie(cookie, locale);
+        }
+
         self.emit("localeSet", null, {
             locale: locale,
-            cookie: cookie
+            cookie: cookie,
+            i18n: locale
         });
     };
 
@@ -48,7 +52,10 @@ function init (config, ready) {
         if (typeof ev === "function") { data = { callback: ev }; }
         if (typeof data === "function") { data = { callback: data }; }
         var localeVal = $.cookie(cookie);
-        data && data.callback(null, localeVal);
+        data && typeof data.callback === "function" && data.callback(null, localeVal);
+        self.emit("localeGet", null, {
+            i18n: localeVal
+        });
         return localeVal;
     };
 
@@ -71,8 +78,11 @@ function init (config, ready) {
 
         // Prevent locale overriding
         var cLoc = self.locale.get();
-        if (cLoc && cLoc !== "undefined") { return; }
-        self.locale.set(null, config.locale);
+        self.locale.set(null, {
+            value: config.locale.value,
+            cookie: config.locale.cookie,
+            setCookie: config.locale.value === cLoc || !cLoc
+        });
     }
 
 
