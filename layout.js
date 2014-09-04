@@ -33,7 +33,7 @@ function init (config, ready) {
 
     // set locale
     self.locale.set = function (ev, data) {
-        var locale = data.locale || data.value || data;
+        var locale = data.i18n || data.locale || data.value || data;
         var cookie = data.cookie || config.locale.cookie;
         if (data.setCookie !== false) {
             $.cookie(cookie, locale);
