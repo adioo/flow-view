@@ -32,6 +32,17 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
 
         config = $.extend(self._conf, config);
 
+        // Handle pagination
+        if (config.pagination) {
+            config.pagination = $.extend({
+                limit: 20,
+                numbers: {
+                    max: 3
+                }
+            }, config.pagination);
+
+        }
+
         var list = new List(self);
         var ui = new Ui(self);
 
@@ -97,12 +108,13 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
             }, function (err, data) {
                 if (err) { return errorHandler(err); }
                 ui.render(data);
-                ready();
             });
 
         } else {
             // TODO
         }
+
+        ready();
     }
 
     module.exports = init;
