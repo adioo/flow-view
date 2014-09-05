@@ -42,7 +42,7 @@ function init (config, ready) {
      *  - i18n (or locale or value): the locale value
      *  - cookie (optional): the cookie that should be set
      * If it's a string, it will represent the locale value.
-     * @return {undefined}
+     * @return {String} The locale that was set.
      */
     self.locale.set = function (ev, data) {
         var locale = data.i18n || data.locale || data.value || data;
@@ -69,6 +69,8 @@ function init (config, ready) {
                 i18n: locale
             });
         }
+
+        return locale;
     };
 
     /**
@@ -85,13 +87,27 @@ function init (config, ready) {
      */
     self.locale.get = function (ev, data) {
         var cookie = data && data.cookie || config.locale.cookie;
+
         if (typeof ev === "function") { data = { callback: ev }; }
         if (typeof data === "function") { data = { callback: data }; }
+
         var localeVal = $.cookie(cookie);
+
+        // If the locale doesn't match this regular
+        // expression, set the default language
+        if (!config.locale.possible.test(localeVal)) {
+            localeVal = self.locale.set(null, {
+                locale: localeVal,
+                emitEvent: false
+            });
+        }
+
+        // Callback, emit and reutrn locale
         data && typeof data.callback === "function" && data.callback(null, localeVal);
         self.emit("localeGet", null, {
             i18n: localeVal
         });
+
         return localeVal;
     };
 
