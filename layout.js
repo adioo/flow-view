@@ -35,15 +35,23 @@ function init (config, ready) {
     self.locale.set = function (ev, data) {
         var locale = data.i18n || data.locale || data.value || data;
         var cookie = data.cookie || config.locale.cookie;
+
+        // Update cookie
         if (data.setCookie !== false) {
             $.cookie(cookie, locale);
         }
 
-        self.emit("localeSet", null, {
-            locale: locale,
-            cookie: cookie,
-            i18n: locale
-        });
+        // Update Z i18n
+        Z._i18n = locale;
+
+        // Emit the event
+        if (data.emitEvent !== false) {
+            self.emit("localeSet", null, {
+                locale: locale,
+                cookie: cookie,
+                i18n: locale
+            });
+        }
     };
 
     // get locale
@@ -81,7 +89,8 @@ function init (config, ready) {
         self.locale.set(null, {
             value: config.locale.value,
             cookie: config.locale.cookie,
-            setCookie: config.locale.value === cLoc || !cLoc
+            setCookie: config.locale.value === cLoc || !cLoc,
+            emitEvent: false
         });
     }
 
