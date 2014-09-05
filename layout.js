@@ -9,6 +9,144 @@ function init (config, ready) {
     var self = this;
     var pageName = '_page_' + self._name;
 
+    self._conf = {
+        title: "",
+        locale: null
+    };
+
+    config = $.extend(self._conf, config);
+
+    // locale stuff
+    self.locale = {};
+    function verifyDeps() {
+
+        if (typeof $ === "undefined") {
+            throw new Error("jQuery is required for layout module");
+        }
+
+        if (config.locale && typeof $.cookie === "undefined") {
+            throw new Error("jQuery cookie library is required when using locale");
+        }
+    }
+
+    verifyDeps();
+
+    /**
+     * locale.set
+     * Sets the locale value (in cookie and in Z._i18n)
+     *
+     * @name set
+     * @function
+     * @param {Object} ev Event object
+     * @param {Object|String} data An object containing the following fields:
+     *  - i18n (or locale or value): the locale value
+     *  - cookie (optional): the cookie that should be set
+     * If it's a string, it will represent the locale value.
+     * @return {String} The locale that was set.
+     */
+    self.locale.set = function (ev, data) {
+        var locale = data.i18n || data.locale || data.value || data;
+        var cookie = data.cookie || config.locale.cookie;
+
+        // If the locale doesn't match this regular
+        // expression, set the default language
+        if (!config.locale.possible.test(locale)) {
+            locale = config.locale.value;
+        }
+
+        // Update cookie and Z._i18n
+        if (data.setCookie !== false) {
+            $.cookie(cookie, locale);
+        }
+
+        Z._i18n = locale;
+
+        // Emit the event
+        if (data.emitEvent !== false) {
+            self.emit("localeSet", null, {
+                locale: locale,
+                cookie: cookie,
+                i18n: locale
+            });
+        }
+
+        return locale;
+    };
+
+    /**
+     * get
+     * Callbacks, emits via an event, and returns the locale value.
+     *
+     * @name get
+     * @function
+     * @param {Object} ev Event object
+     * @param {Object|undefined} data An object containing the following fields:
+     *  - cookie (optional): the cookie value
+     *  - callback: if provided, the function will be called with an err and locale value
+     * @return {String} The locale that is set.
+     */
+    self.locale.get = function (ev, data) {
+        var cookie = data && data.cookie || config.locale.cookie;
+
+        if (typeof ev === "function") { data = { callback: ev }; }
+        if (typeof data === "function") { data = { callback: data }; }
+
+        var localeVal = $.cookie(cookie);
+
+        // If the locale doesn't match this regular
+        // expression, set the default language
+        if (!config.locale.possible.test(localeVal)) {
+            localeVal = self.locale.set(null, {
+                locale: localeVal,
+                emitEvent: false
+            });
+        }
+
+        // Callback, emit and reutrn locale
+        data && typeof data.callback === "function" && data.callback(null, localeVal);
+        self.emit("localeGet", null, {
+            i18n: localeVal
+        });
+
+        return localeVal;
+    };
+
+    // Handle locale settings
+    if (config.locale) {
+
+        if (typeof config.locale === "string") {
+            config.locale = {
+                value: config.locale
+            };
+        }
+
+        // Add defaults
+        config.locale.cookie = config.locale.cookie || "_loc";
+        config.locale.possible = config.locale.possible || /.*/;
+
+        if (typeof config.locale.possible === "string") {
+            config.locale.possible = new RegExp(config.locale.possible);
+        }
+
+        if (typeof config.locale.value !== "string") {
+            throw new Error("config.locale.value shoud be a string.");
+        }
+
+        if (typeof config.locale.cookie !== "string") {
+            throw new Error("config.locale.cookie shoud be a string.");
+        }
+
+        // Prevent locale overriding
+        var cLoc = self.locale.get();
+        self.locale.set(null, {
+            value: cLoc || config.locale.value,
+            cookie: config.locale.cookie,
+            setCookie: config.locale.value === cLoc || !cLoc,
+            emitEvent: false
+        });
+    }
+
+
     // set document title
     if (config.title) {
         self.title = config.title;
