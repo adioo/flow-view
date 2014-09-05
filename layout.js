@@ -36,12 +36,11 @@ function init (config, ready) {
         var locale = data.i18n || data.locale || data.value || data;
         var cookie = data.cookie || config.locale.cookie;
 
-        // Update cookie
+        // Update cookie and Z._i18n
         if (data.setCookie !== false) {
             $.cookie(cookie, locale);
         }
 
-        // Update Z i18n
         Z._i18n = locale;
 
         // Emit the event
@@ -87,7 +86,7 @@ function init (config, ready) {
         // Prevent locale overriding
         var cLoc = self.locale.get();
         self.locale.set(null, {
-            value: config.locale.value,
+            value: cLoc || config.locale.value,
             cookie: config.locale.cookie,
             setCookie: config.locale.value === cLoc || !cLoc,
             emitEvent: false
