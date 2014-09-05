@@ -116,11 +116,13 @@ function init (config, ready) {
 
         if (typeof config.locale === "string") {
             config.locale = {
-                value: config.locale,
-                cookie: "_loc",
-                possible: /.*/
+                value: config.locale
             };
         }
+
+        // Add defaults
+        config.locale.cookie = config.locale.cookie || "_loc";
+        config.locale.possible = config.locale.possible || /.*/;
 
         if (typeof config.locale.possible === "string") {
             config.locale.possible = new RegExp(config.locale.possible);
