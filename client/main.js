@@ -14,6 +14,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
             throw new Error("A view named 'item' is required.");
         }
 
+        debugger;
         self.view.layout.render();
 
         self._conf = {
@@ -33,6 +34,16 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
 
         config = $.extend(self._conf, config);
 
+        var list = self.list = new List(self);
+        var ui = self.ui = new Ui(self);
+
+        self.model = self.model[self._conf.model];
+        if (!self.model) {
+            throw new Error("Model is not loaded. Please load the model using the composition configuration");
+        }
+
+        self.view.item.on.data = self._path(config.item.on.data);
+
         // Handle pagination
         if (config.pagination) {
             config.pagination = $.extend({
@@ -51,11 +62,9 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
             }, config.pagination);
 
             config.options.limit = config.pagination.size;
+            var pagination = self.pagination = new Pagination(self);
+            pagination.update();
         }
-
-        var list = self.list = new List(self);
-        var ui = self.ui = new Ui(self);
-        var pagination = self.pagination = new Pagination(self);
 
         self.read = function (ev, data) {
 
@@ -106,13 +115,6 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
                 }
             });
         };
-
-        self.model = self.model[self._conf.model];
-        if (!self.model) {
-            throw new Error("Model is not loaded. Please load the model using the composition configuration");
-        }
-
-        self.view.item.on.data = self._path(config.item.on.data);
 
         if (self._conf.autoinit) {
             var req = config.options;
