@@ -14,7 +14,6 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
             throw new Error("A view named 'item' is required.");
         }
 
-        debugger;
         self.view.layout.render();
 
         self._conf = {
@@ -61,7 +60,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
                 }
             }, config.pagination);
 
-            config.options.limit = config.pagination.size;
+            config.options.options.limit = config.pagination.size;
             var pagination = self.pagination = new Pagination(self);
             pagination.update();
         }
