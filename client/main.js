@@ -2,6 +2,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
 
     var List = require("./list");
     var Ui = require("./ui");
+    var Pagination = require("./pagination");
 
     function init (config, ready) {
         var self = this;
@@ -52,8 +53,9 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
             config.options.limit = config.pagination.size;
         }
 
-        var list = new List(self);
-        var ui = new Ui(self);
+        var list = self.list = new List(self);
+        var ui = self.ui = new Ui(self);
+        var pagination = self.pagination = new Pagination(self);
 
         self.read = function (ev, data) {
 
