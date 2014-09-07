@@ -35,12 +35,21 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
         // Handle pagination
         if (config.pagination) {
             config.pagination = $.extend({
-                limit: 20,
+                size: 8,
+                classes: {
+                    disabled: "disabled",
+                    next: "next-page",
+                    prev: "prev-page",
+                    active: "active"
+                },
                 numbers: {
-                    max: 3
+                    max: 5,
+                    aFirst: true,
+                    aLast: true
                 }
             }, config.pagination);
 
+            config.options.limit = config.pagination.size;
         }
 
         var list = new List(self);
@@ -57,6 +66,9 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
                 data = ev;
                 ev = null;
             }
+
+            data.q = $.extend(config.options.query, data.q);
+            data.o = $.extend(config.options.options, data.q);
 
             list.read(data.q, data.o, function (err, data) {
                 if (!err) { ui.render(data); }
