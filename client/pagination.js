@@ -6,11 +6,11 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
 
         this._cache = {
             skip: 0,
-            limit: config.options.limit,
+            limit: config.options.options.limit,
             container: {
                 initialHTML: $(self.view.page.dom)[0].outerHTML,
                 selector: self.view.page.dom,
-                reference: $(self.view.page.dom)
+                $: $(self.view.page.dom)
             },
             active: 1
         };
@@ -27,19 +27,26 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
                 }
             }, function (err, count) {
                 if (err) { return self._errorHandler(err); }
-                var pagesNumber = Math.ceil(count / config.options.limit);
-                var liElms = "";
+
+                // Create data array
+                var pagesNumber = Math.ceil(count / pagination._cache.limit);
+                var data = [];
                 for (var i = 0; i < pagesNumber; ++i) {
-                    // TODO https://github.com/IonicaBizau/engine-list/issues/3
-                    liElms += "<li><a href='#'>" + i + "</a></li>";
+                    data.push({
+                        pageNr: i + 1
+                    });
                 }
-                var $container
-                $(pagination._cache.container.selector).html(
-                    pagination._cache.container.initialHTML.replace(
+
+                // Modify HTML before updating innerHTML
+                self.view.page.on.html = function (html) {
+                    return pagination._cache.container.initialHTML.replace(
                         "[pages]",
-                        liElms
-                    )
-                );
+                        html
+                    );
+                };
+
+                // Render view
+                self.view.page.render(data);
             });
         };
 
