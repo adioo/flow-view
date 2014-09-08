@@ -101,7 +101,30 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
                             $c.remove();
                         }
 
+                        // Append dots
+                        var $last = $liElms.last();
+                        var $first = $liElms.first();
+                        if (pag.numbers.aLast) {
+                            var lastPageValue1 = parseInt($last.find("a").html())
+                            var lastPageValue2 = parseInt($last.prev().find("a").html())
+                            if (lastPageValue1 >= lastPageValue2 + 2) {
+                                var $clone = $last.clone();
+                                $clone.addClass(pag.classes.disabled);
+                                $clone.find(":contains(" + pagesNumber + ")").text("…");
+                                $last.before($clone);
+                            }
+                        }
 
+                        if (pag.numbers.aFirst) {
+                            var firstPageValue1 = parseInt($first.find("a").html())
+                            var firstPageValue2 = parseInt($first.next().find("a").html())
+                            if (firstPageValue1 <= firstPageValue2 - 2) {
+                                var $clone = $first.clone();
+                                $clone.addClass(pag.classes.disabled);
+                                $clone.find(":contains(1)").text("…");
+                                $first.after($clone);
+                            }
+                        }
                     }
 
                     return $allPages[0].outerHTML;
