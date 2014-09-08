@@ -54,7 +54,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
                     active: "active"
                 },
                 numbers: {
-                    max: 5,
+                    max: 3,
                     aFirst: true,
                     aLast: true
                 }

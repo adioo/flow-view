@@ -12,7 +12,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
                 selector: self.view.page.dom,
                 $: $(self.view.page.dom)
             },
-            active: 1
+            active: 9
         };
 
         this.update = function (ev, data) {
@@ -39,10 +39,72 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
 
                 // Modify HTML before updating innerHTML
                 self.view.page.on.html = function (html) {
-                    return pagination._cache.container.initialHTML.replace(
+                    var $allPages = $(pagination._cache.container.initialHTML.replace(
                         "[pages]",
                         html
-                    );
+                    ));
+
+                    var max = config.pagination.numbers.max;
+                    if (max < 3) {
+                        switch (max) {
+                            // « | »
+                            case 0:
+                                $allPages = $(pagination._cache.container.initialHTML.replace(
+                                    "[pages]",
+                                    ""
+                                ));
+                                break;
+                            // « | <pgNr> | »
+                            case 1:
+                                // TODO
+                                break;
+                            case 2:
+                                // TODO
+                                break;
+                        }
+                    } else {
+                        var active = pagination._cache.active;
+                        var pag = config.pagination;
+                        var $liElms = $allPages.find("li:not(." + pag.classes.next + ",." + pag.classes.prev + ")");
+                        var $active = $liElms.eq(active + -1 ).addClass(pag.classes.active);
+
+                        // TODO Clean up code
+                        // Go to right
+                        var $c = null;
+                        var $next = $active.next();
+                        var i = 0;
+                        while (true) {
+                            $c = $next;
+                            var br = $c.hasClass(pag.classes.next) ||
+                                     ($c.next().hasClass(pag.classes.next) &&
+                                     pag.numbers.aLast) ||
+                                     !$c.length;
+                            if (br) { break; }
+                            $next = $c.next();
+                            if (++i <= pag.numbers.max) { continue; }
+                            $c.remove();
+                        }
+
+                        // Go to left
+                        var $c = null;
+                        var $prev = $active.prev();
+                        var i = 0;
+                        while (true) {
+                            $c = $prev;
+                            var br = $c.hasClass(pag.classes.prev) ||
+                                     ($c.prev().hasClass(pag.classes.prev) &&
+                                     pag.numbers.aLast) ||
+                                     !$c.length;
+                            if (br) { break; }
+                            $prev = $c.prev();
+                            if (++i <= pag.numbers.max) { continue; }
+                            $c.remove();
+                        }
+
+
+                    }
+
+                    return $allPages[0].outerHTML;
                 };
 
                 // Render view
