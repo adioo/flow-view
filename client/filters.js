@@ -18,4 +18,6 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/filters.js', function (require, mo
             }
         };
     };
+
+    return module;
 });
