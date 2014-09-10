@@ -79,12 +79,15 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
                 ev = null;
             }
 
+            data = Object(data);
+
             filters.set(ev, {
-                filters: data.q,
-                reset: true
+                query: data.q,
+                options: data.o,
+                qReset: true
             });
 
-            list.read(filters._query, data.o, function (err, data) {
+            list.read(filters._query, filters._options, function (err, data) {
                 if (!err) { ui.render(data); }
                 callback(err, data);
             });
@@ -135,6 +138,10 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
         } else {
             // TODO
         }
+
+        self.on("pageChanged", function (ev, data) {
+            self.read();
+        });
 
         ready();
     }
