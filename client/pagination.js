@@ -177,13 +177,17 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
         pagination.select = function (ev, data) {
             var $page = null;
             var pageNr = -1;
+            data = Object(data).page || data;
             if (data instanceof $) {
                 $page = data;
-            } else if (typeof data === "number") {
+                pageNr = parseInt($page.attr("data-page"));
+            } else if (typeof (pageNr = parseInt(data)) === "number" && !isNaN(data)) {
                 $page = $("[data-page='" + data + "']", pagination.ui.$);
+            } else {
+                self.emit("notFound");
+                return;
             }
 
-            pageNr = parseInt($page.attr("data-page"));
             if (isNaN(pageNr) || pageNr < 1 || pageNr > pagination._cache.pageCount + 1) { return; }
 
             // pagination.ui.$.find("." + pagination.ui.classes.item).removeClass(pagination.ui.classes.active);
