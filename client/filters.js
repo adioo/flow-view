@@ -23,14 +23,15 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/filters.js', function (require, mo
             if (data._oReset) { resetObj(Filters._options); }
 
             // Merge data
-            $.each(fields, function (c) {
+            $.each(fields, function () {
+                var c = this;
                 if (!(what = data[c])) { return; }
                 var ref = Filters["_" + c];
                 for (var f in config.options[c]) {
                     ref[f] = config.options[c][f];
                 }
-                for (var f in filters) {
-                    ref[f] = filters[f];
+                for (var f in what) {
+                    ref[f] = what[f];
                 }
             });
         };
