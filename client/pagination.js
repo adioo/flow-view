@@ -24,6 +24,16 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
             return false;
         });
 
+        pagination.ui.$.on("click", "." + pagination.ui.classes.next, function (ev) {
+            pagination.selectNext(self, ev, $(this));
+            return false;
+        });
+
+        pagination.ui.$.on("click", "." + pagination.ui.classes.prev, function (ev) {
+            pagination.selectPrev(self, ev, $(this));
+            return false;
+        });
+
         pagination.update = function (ev, data) {
             self.model.req({
                 m: "count",
@@ -174,6 +184,14 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
                 pageNr: pageNr,
                 $: $page
             });
+        };
+
+        pagination.selectNext = function (ev, data) {
+            pagination.select(ev, pagination._cache.active + 1);
+        };
+
+        pagination.selectPrev = function (ev, data) {
+            pagination.select(ev, pagination._cache.active - 1);
         };
 
         this.disableItem = function (ev, data) {
