@@ -7,7 +7,9 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
         pagination._cache = {
             skip: 0,
             limit: config.options.options.limit,
-            active: 1
+            active: 1,
+            itemCount: -1,
+            pageCount: -1
         };
 
         pagination.ui =  {
@@ -15,7 +17,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
             selector: self.view.page.dom,
             $: $(self.view.page.dom),
             classes: config.pagination.classes
-        }
+        };
 
         // Handlers
         // TODO Move in ui.js
@@ -43,6 +45,9 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
 
                 // Create data array
                 var pagesNumber = Math.ceil(count / pagination._cache.limit);
+                pagination._cache.itemCount = count;
+                pagination._cache.pageCount = pagesNumber;
+
                 var data = [];
                 for (var i = 0; i < pagesNumber; ++i) {
                     data.push({
@@ -147,11 +152,25 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
                         $c.attr("data-page", nr);
                     });
 
+                    $("." + pagination.ui.classes.prev, $allPages)
+                        .add($("." + pagination.ui.classes.next, $allPages))
+                        .removeClass(pagination.ui.classes.disabled);
+
+                    if (active === 1) {
+                        $("." + pagination.ui.classes.prev, $allPages).addClass(pagination.ui.classes.disabled);
+                    }
+
+                    if (active === pagination._cache.pageCount) {
+                        $("." + pagination.ui.classes.next, $allPages).addClass(pagination.ui.classes.disabled);
+                    }
+
                     return $allPages[0].outerHTML;
                 };
 
                 // Render view
                 self.view.page.render(data);
+
+
             });
         };
 
@@ -165,6 +184,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
             }
 
             pageNr = parseInt($page.attr("data-page"));
+            if (isNaN(pageNr) || pageNr < 1 || pageNr > pagination._cache.pageCount + 1) { return; }
 
             // pagination.ui.$.find("." + pagination.ui.classes.item).removeClass(pagination.ui.classes.active);
             // $page.addClass(pagination.ui.classes.active);
