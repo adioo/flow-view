@@ -2,6 +2,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
 
     var List = require("./list");
     var Ui = require("./ui");
+    var Filters = require("./filters");
     var Pagination = require("./pagination");
 
     function init (config, ready) {
@@ -35,6 +36,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
 
         var list = self.list = new List(self);
         var ui = self.ui = new Ui(self);
+        var filters = self.filters = new Filters(self);
 
         self.model = self.model[self._conf.model];
         if (!self.model) {
@@ -77,10 +79,12 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
                 ev = null;
             }
 
-            data.q = $.extend(config.options.query, data.q);
-            data.o = $.extend(config.options.options, data.q);
+            filters.set(ev, {
+                filters: data.q,
+                reset: true
+            });
 
-            list.read(data.q, data.o, function (err, data) {
+            list.read(filters._get, data.o, function (err, data) {
                 if (!err) { ui.render(data); }
                 callback(err, data);
             });
@@ -107,6 +111,9 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
             }
 
             list.read(data.q, {}, function (err, data) {
+                if (data.length > 1) {
+                    console.warn("Found more items, but returning the first one.");
+                }
                 data = data && data[0];
                 self.emit("item_got", err, data);
                 if (typeof callback === "function") {
