@@ -84,7 +84,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
                 reset: true
             });
 
-            list.read(filters._get, data.o, function (err, data) {
+            list.read(filters._query, data.o, function (err, data) {
                 if (!err) { ui.render(data); }
                 callback(err, data);
             });

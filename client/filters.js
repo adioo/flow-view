@@ -1,21 +1,38 @@
 Z.wrap('github/ionicabizau/list/v0.0.1/client/filters.js', function (require, module, exports) {
     module.exports = function (self) {
+
         var Filters = this;
         var config = self._conf;
-        Filters._get = {};
+
+        // Query and options
+        Filters._query = {};
+        Filters._options = {};
+
+        function resetObj(obj) {
+            for (var k in obj) {
+                delete obj[k];
+            }
+        }
+
         Filters.set = function (ev, data) {
-            var filters = data.filters || data;
-            if (data.reset) {
-                for (var k in Filters._get) {
-                    delete Filters._get[k];
+            var what = null;
+            var fields = ["query", "options"];
+
+            // Reset data
+            if (data._qReset) { resetObj(Filters._query); }
+            if (data._oReset) { resetObj(Filters._options); }
+
+            // Merge data
+            $.each(fields, function (c) {
+                if (!(what = data[c])) { return; }
+                var ref = Filters["_" + c];
+                for (var f in config.options[c]) {
+                    ref[f] = config.options[c][f];
                 }
-            }
-            for (var f in config.options.query) {
-                Filters._get[f] = config.options.query[f];
-            }
-            for (var f in filters) {
-                Filters._get[f] = filters[f];
-            }
+                for (var f in filters) {
+                    ref[f] = filters[f];
+                }
+            });
         };
     };
 
