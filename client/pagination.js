@@ -4,18 +4,27 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
         var config = self._conf;
         var pagination = this;
 
-        this._cache = {
+        pagination._cache = {
             skip: 0,
             limit: config.options.options.limit,
-            container: {
-                initialHTML: $(self.view.page.dom)[0].outerHTML,
-                selector: self.view.page.dom,
-                $: $(self.view.page.dom)
-            },
             active: 9
         };
 
-        this.update = function (ev, data) {
+        pagination.ui =  {
+            initialHTML: $(self.view.page.dom)[0].outerHTML,
+            selector: self.view.page.dom,
+            $: $(self.view.page.dom),
+            classes: config.pagination.classes
+        }
+
+        // Handlers
+        // TODO Move in ui.js
+        pagination.ui.$.on("click", "." + pagination.ui.classes.item, function (ev) {
+            pagination.select.call(self, ev, $(this));
+            return false;
+        });
+
+        pagination.update = function (ev, data) {
             self.model.req({
                 m: "count",
                 q: self.filters._query
@@ -33,7 +42,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
 
                 // Modify HTML before updating innerHTML
                 self.view.page.on.html = function (html) {
-                    var $allPages = $(pagination._cache.container.initialHTML.replace(
+                    var $allPages = $(pagination.ui.initialHTML.replace(
                         "[pages]",
                         html
                     ));
@@ -43,7 +52,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
                         switch (max) {
                             // « | »
                             case 0:
-                                $allPages = $(pagination._cache.container.initialHTML.replace(
+                                $allPages = $(pagination.ui.initialHTML.replace(
                                     "[pages]",
                                     ""
                                 ));
@@ -121,6 +130,13 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
                         }
                     }
 
+                    $allPages.children().each(function () {
+                        var $c = $(this);
+                        var nr = parseInt($c.text());
+                        if (isNaN(nr)) { return; }
+                        $c.attr("data-page", nr);
+                    });
+
                     return $allPages[0].outerHTML;
                 };
 
@@ -130,6 +146,23 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
         };
 
         this.select = function (ev, data) {
+            var $page = null;
+            var pageNr = -1;
+            if (data instanceof $) {
+                $page = data;
+            } else if (typeof data === "number") {
+                $page = $("[data-page='" + data + "']", pagination.ui.$);
+            }
+
+            pageNr = parseInt($page.attr("data-page"));
+
+            pagination.ui.$.find("." + pagination.ui.classes.item).removeClass(pagination.ui.classes.active);
+            $page.addClass(pagination.ui.classes.active);
+
+            // TODO Cache somehow to prevent count requests to Mongo
+            pagination.update();
+
+            pagination._cache.active = pageNr;
 
         };
 
