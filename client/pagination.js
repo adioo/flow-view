@@ -193,10 +193,6 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
         pagination.selectPrev = function (ev, data) {
             pagination.select(ev, pagination._cache.active - 1);
         };
-
-        this.disableItem = function (ev, data) {
-
-        };
     };
 
     return module;
