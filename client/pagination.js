@@ -7,7 +7,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
         pagination._cache = {
             skip: 0,
             limit: config.options.options.limit,
-            active: 9
+            active: 1
         };
 
         pagination.ui =  {
@@ -145,7 +145,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
             });
         };
 
-        this.select = function (ev, data) {
+        pagination.select = function (ev, data) {
             var $page = null;
             var pageNr = -1;
             if (data instanceof $) {
@@ -156,14 +156,24 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
 
             pageNr = parseInt($page.attr("data-page"));
 
-            pagination.ui.$.find("." + pagination.ui.classes.item).removeClass(pagination.ui.classes.active);
-            $page.addClass(pagination.ui.classes.active);
+            // pagination.ui.$.find("." + pagination.ui.classes.item).removeClass(pagination.ui.classes.active);
+            // $page.addClass(pagination.ui.classes.active);
 
             // TODO Cache somehow to prevent count requests to Mongo
             pagination.update();
 
+            // Update cache and filter options
             pagination._cache.active = pageNr;
+            pagination._cache.skip = (pageNr - 1) * config.pagination.size;
+            self.filters.set(null, {
+                options: { skip: pagination._cache.skip }
+            });
 
+            // Emit page changed event
+            self.emit("pageChanged", ev, {
+                pageNr: pageNr,
+                $: $page
+            });
         };
 
         this.disableItem = function (ev, data) {
