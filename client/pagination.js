@@ -36,6 +36,16 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
             return false;
         });
 
+        /**
+         * update
+         * Updates pagination numbers
+         *
+         * @name update
+         * @function
+         * @param {Object} ev Event object
+         * @param {Object} data Data object
+         * @return {undefined}
+         */
         pagination.update = function (ev, data) {
             self.model.req({
                 m: "count",
@@ -174,6 +184,16 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
             });
         };
 
+        /**
+         * select
+         * Selects a page
+         *
+         * @name select
+         * @function
+         * @param {Object} ev Event object
+         * @param {Object} data Data object
+         * @return {undefined}
+         */
         pagination.select = function (ev, data) {
             var $page = null;
             var pageNr = -1;
@@ -218,10 +238,30 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
             });
         };
 
+        /**
+         * selectNext
+         * Selects the next page
+         *
+         * @name selectNext
+         * @function
+         * @param {Object} ev Event object
+         * @param {Object} data Data object
+         * @return {undefined}
+         */
         pagination.selectNext = function (ev, data) {
             pagination.select(ev, pagination._cache.active + 1);
         };
 
+        /**
+         * selectPrev
+         * Selects the previous page
+         *
+         * @name selectPrev
+         * @function
+         * @param {Object} ev Event object
+         * @param {Object} data Data object
+         * @return {undefined}
+         */
         pagination.selectPrev = function (ev, data) {
             pagination.select(ev, pagination._cache.active - 1);
         };

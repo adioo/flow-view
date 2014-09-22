@@ -67,6 +67,19 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
             });
         }
 
+        /**
+         * read
+         * Read and renders data.
+         *
+         * `data` argument should contain:
+         *  - `q`: the query object
+         *  - `o`: the options object
+         *
+         * Data can be passed via `event` parameter, the second argument being used as `callback` function.
+         *
+         * @name read
+         * @function
+         */
         self.read = function (ev, data) {
 
             var callback = function (err, data) {
@@ -94,6 +107,15 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
             });
         };
 
+        /**
+         * getItem
+         *
+         * @name getItem
+         * @function
+         * @param {} ev
+         * @param {} callback
+         * @return {undefined}
+         */
         self.getItem = function (ev, callback) {
 
             var data = {};
@@ -114,6 +136,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
                 }
             }
 
+            // TODO
             list.read(data.q, {}, function (err, data) {
                 if (data.length > 1) {
                     console.warn("Found more items, but returning the first one.");
