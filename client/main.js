@@ -1,8 +1,6 @@
 Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, module, exports) {
 
-    var List = require("./list");
     var Ui = require("./ui");
-    var Filters = require("./filters");
     var Pagination = require("./pagination");
 
     function init (config, ready) {
@@ -63,7 +61,10 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
 
             config.options.options.limit = config.pagination.size;
             var pagination = self.pagination = new Pagination(self);
-            pagination.update();
+            self.on("filtersSet", function (ev, filters) {
+                self.filters = filters;
+                pagination.update();
+            });
         }
 
         self.read = function (ev, data) {
@@ -79,14 +80,15 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
             }
 
             data = Object(data);
-
-            filters.set(ev, {
+            self.emit({
+                to: self._conf.filters,
+                event: "setFilters"
+            }, ev, {
                 query: data.q,
                 options: data.o,
-                qReset: true
-            });
-
-            list.read(filters._query, filters._options, function (err, data) {
+                _qReset: true,
+                _model: self.model
+            }, function (err, data) {
                 if (!err) { ui.render(data); }
                 callback(err, data);
             });
@@ -124,22 +126,25 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
             });
         };
 
-        if (self._conf.autoinit) {
-            var req = config.options;
-            self.read({
-                q: req.query,
-                o: req.options
-            }, function (err, data) {
-                if (err) { return errorHandler(err); }
-                ui.render(data);
+        self.on("ready", function () {
+            if (self._conf.autoinit) {
+                var req = config.options;
+
+                self.read({
+                    q: req.query,
+                    o: req.options
+                }, function (err, data) {
+                    if (err) { return errorHandler(err); }
+                    ui.render(data);
+                });
+
+            } else {
+                // TODO
+            }
+
+            self.on("pageChanged", function (ev, data) {
+                self.read();
             });
-
-        } else {
-            // TODO
-        }
-
-        self.on("pageChanged", function (ev, data) {
-            self.read();
         });
 
         ready();
