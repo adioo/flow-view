@@ -39,7 +39,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
         pagination.update = function (ev, data) {
             self.model.req({
                 m: "count",
-                q: self.filters._query
+                q: self.filters.query
             }, function (err, count) {
                 if (err) { return self._errorHandler(err); }
 
