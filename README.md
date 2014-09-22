@@ -74,3 +74,6 @@ Selects the next page
 
 ## `pagination.selectPrev(event, data)`
 Selects the previous page
+
+# License
+See the [LICENSE](./license) file.
