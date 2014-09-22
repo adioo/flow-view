@@ -15,25 +15,7 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/filters.js', function (require, mo
         }
 
         Filters.set = function (ev, data) {
-            var what = null;
-            var fields = ["query", "options"];
 
-            // Reset data
-            if (data._qReset) { resetObj(Filters._query); }
-            if (data._oReset) { resetObj(Filters._options); }
-
-            // Merge data
-            $.each(fields, function () {
-                var c = this;
-                if (!(what = data[c])) { return; }
-                var ref = Filters["_" + c];
-                for (var f in config.options[c]) {
-                    ref[f] = config.options[c][f];
-                }
-                for (var f in what) {
-                    ref[f] = what[f];
-                }
-            });
         };
     };
 
