@@ -199,8 +199,16 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
             // Update cache and filter options
             pagination._cache.active = pageNr;
             pagination._cache.skip = (pageNr - 1) * config.pagination.size;
-            self.filters.set(null, {
-                options: { skip: pagination._cache.skip }
+
+            self.emit({
+                to: self._conf.filters,
+                event: "setFilters"
+            }, ev, {
+                query: data.q,
+                options: { skip: pagination._cache.skip },
+                _qReset: true,
+                _model: self.model,
+                _fetchData: false
             });
 
             // Emit page changed event
