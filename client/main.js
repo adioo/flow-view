@@ -29,14 +29,13 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
                     "data": null
                 },
                 "id": "_id"
-            }
+            },
+            "filters": "filters"
         };
 
         config = $.extend(self._conf, config);
 
-        var list = self.list = new List(self);
         var ui = self.ui = new Ui(self);
-        var filters = self.filters = new Filters(self);
 
         self.model = self.model[self._conf.model];
         if (!self.model) {
