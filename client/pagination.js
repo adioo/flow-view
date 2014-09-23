@@ -226,7 +226,6 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/pagination.js', function (require,
             }, ev, {
                 query: data.q,
                 options: { skip: pagination._cache.skip },
-                _qReset: true,
                 _model: self.model,
                 _fetchData: false
             });

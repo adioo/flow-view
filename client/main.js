@@ -99,7 +99,6 @@ Z.wrap('github/ionicabizau/list/v0.0.1/client/main.js', function (require, modul
             }, ev, {
                 query: data.q,
                 options: data.o,
-                _qReset: true,
                 _model: self.model
             }, function (err, data) {
                 if (!err) { ui.render(data); }
