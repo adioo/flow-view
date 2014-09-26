@@ -1,5 +1,3 @@
-Z.wrap('github/jillix/layout/v0.0.1/layout.js', function (require, module, exports) {
-
 module.exports = init;
 
 /*
@@ -368,8 +366,3 @@ function notFoundHandler (state) {
 
     self._state = false;
 }
-
-
-return module;
-
-});
