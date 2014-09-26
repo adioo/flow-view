@@ -1,5 +1,3 @@
-Z.wrap('github/jillix/table/v0.0.1/table.js', function (require, module, exports) {
-
 module.exports = init;
 
 /*
@@ -121,7 +119,3 @@ function renderData (event, data) {
     self.view.head.render();
     self.view.item.render(data);
 }
-
-return module;
-
-});
