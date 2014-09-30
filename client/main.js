@@ -168,4 +168,4 @@ module.exports = function (config, ready) {
     });
 
     ready();
-}
+};
