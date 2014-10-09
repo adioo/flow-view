@@ -45,8 +45,7 @@ module.exports = function (self) {
      * @return {undefined}
      */
     pagination.update = function (ev, data) {
-        self.model.req({
-            m: "count",
+        self.model.req("count", {
             q: self.filters.query
         }, function (err, count) {
             if (err) { return self._errorHandler(err); }
