@@ -46,6 +46,30 @@ List module for Engine framework.
 }
 ```
 
+# Model Queries
+
+The module needs the following model queries defined in models. Being a [`filters`](https://github.com/IonicaBizau/engine-filters) dependent, you may check the [model queries from there too](https://github.com/IonicaBizau/engine-filters/blob/master/README.md#model-queries).
+
+## `count`
+
+Needed only when using pagination feature.
+
+```js
+{
+    "queries": [
+        {
+            "name": "count",
+            "request": {
+                "method": "count"
+            },
+            "add": {
+                "query": "q"
+            }
+        }
+    ]
+}
+```
+
 # Methods
 
 ## `read(event, data)`
