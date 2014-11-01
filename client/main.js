@@ -4,14 +4,13 @@ var Pagination = require("./pagination");
 module.exports = function (config, ready) {
     var self = this;
 
-    if (!self.view.layout) {
-        throw new Error("A view named 'layout' is required.");
-    }
     if (!self.view.item) {
         throw new Error("A view named 'item' is required.");
     }
 
-    self.view.layout.render();
+    if (self.view.layout) {
+        self.view.layout.render();
+    }
 
     self._conf = {
         "options": {
