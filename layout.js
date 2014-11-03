@@ -160,9 +160,11 @@ function init (config, ready) {
     // state handler to handle css in pages
     self.pageSelector = '.' + pageName;
 
-    // render other views
-    for (var i = 0; i < self._renderOrder.length; ++i) {
-        self.view[self._renderOrder[i]].render([{page: pageName}]);
+    // render views
+    if (self._renderOrder) {
+        for (var i = 0; i < self._renderOrder.length; ++i) {
+            self.view[self._renderOrder[i]].render([{page: pageName}]);
+        }
     }
 
     // get pages dom refs
