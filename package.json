@@ -5,7 +5,7 @@
   "main": "main.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/IonicaBizau/bind-table-crud.git"
+    "url": "git://github.com/jillix/bind-table-crud.git"
   },
   "mono": {
     "dependencies": [
@@ -23,7 +23,7 @@
   ],
   "author": "Ionică Bizău",
   "bugs": {
-    "url": "https://github.com/IonicaBizau/bind-table-crud/issues"
+    "url": "https://github.com/jillix/bind-table-crud/issues"
   },
-  "homepage": "https://github.com/IonicaBizau/bind-table-crud"
+  "homepage": "https://github.com/jillix/bind-table-crud"
 }
