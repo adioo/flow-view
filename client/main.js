@@ -1,5 +1,6 @@
 var Ui = require("./ui");
 var Pagination = require("./pagination");
+var $ = require("/jquery");
 
 module.exports = function (config, ready) {
     var self = this;

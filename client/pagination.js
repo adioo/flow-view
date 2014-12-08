@@ -1,3 +1,5 @@
+var $ = require("/jquery");
+
 module.exports = function (self) {
     var config = self._conf;
     var pagination = this;
