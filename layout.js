@@ -157,6 +157,7 @@ function init (config, ready) {
     self.page = page;
     self.transition = transition;
     self.render = render;
+    self.fetch = fetch;
     self.$jq = $jq;
 
     // state handler to handle css in pages
@@ -239,68 +240,64 @@ function transition (state, data) {
     data.show && $(data.show).show();
 }
 
-/*
-    type: private
-*/
-function animate (elm, config) {
+
+// THIS IS JUST AN IDEA..
+function state (event, data) {
     var self = this;
-
-    if (!elm || !config) {
-        return;
-    }
-
-    for (var i = 0; i < config.length; ++i) {
-
-        // get element
-        elm = config[i].elm ? $(config[i].elm, elm) : elm;
-
-        // handle show/hide
-        if (config[i].fx === 'show' || config[i].fx === 'hide') {
-            elm[config[i].fx]();
-
-        // handle animateion
-        } else {
-
-            // set timing
-            if (config[i].dd) {
-                elm.css("-webkit-animation-duration", config[i].dd[0]);
-                elm.css("-webkit-animation-delay", config[i].dd[1]);
-            }
-
-            var animate_class = 'animated ' + config[i].fx;
-
-            // animation end handler
-            elm.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', animation_end_handler(elm, animate_class));
-
-            // start animation
-            elm.addClass(animate_class);
-            elm.show();
-        }
-    }
+    self.view[data.view].state(data.state);
 }
 
-/*
-    type: actor
-*/
+function fetch (event, data) {
+    var self = this;
+    var model = data.model;
+    var query = data.query;
+    data = data.data;
+
+    if (!model || !query) {
+        return self.emit('error', null, {err: new Error('No model or query.')});
+    }
+
+    if (!self.model || !self.model[model]) {
+        return self.emit('error', null, {err: new Error('Model not found.')});
+    }
+
+    self.model[model].req(query, data, function (err, data) {
+
+        if (err) {
+            return self.emit('error', null, {err: err});
+        }
+
+        // emit callback event
+        self.emit('data:' + model + '.' + query, null, {data: data});
+    });
+}
+
+// render data to a view
 function render (event, data) {
     var self = this;
     var view = data.view;
+    data = data.data;
 
     if (!self.view || !self.view[view] || !data) {
-        return;
+        return self.emit('error', null, {err: new Error('View "' + view + '" don\'t exists.' )});
     }
 
     // TODO Handle pages on manual rendering
     // data.item && (data.item.page = '_page_' + self._name);
 
+    // push a single item to an array
+    if (!(data instanceof Array)) {
+        data = [data];
+    }
+
     // render data
-    self.view[view].render([data.item]);
+    self.view[view].render(data);
+
+    // emit callback event
+    self.emit('render:' + view, null, data);
 }
 
-/*
-    type: actor
-    desc: mainpulate dom with jquery
-*/
+// mainpulate dom with jquery
 function $jq (event, data) {
     var self = this;
     var selector = data.selector;
@@ -343,19 +340,49 @@ function $jq (event, data) {
     }
 }
 
-/*
-    type: private
-*/
+function animate (elm, config) {
+    var self = this;
+
+    if (!elm || !config) {
+        return;
+    }
+
+    for (var i = 0; i < config.length; ++i) {
+
+        // get element
+        elm = config[i].elm ? $(config[i].elm, elm) : elm;
+
+        // handle show/hide
+        if (config[i].fx === 'show' || config[i].fx === 'hide') {
+            elm[config[i].fx]();
+
+        // handle animateion
+        } else {
+
+            // set timing
+            if (config[i].dd) {
+                elm.css("-webkit-animation-duration", config[i].dd[0]);
+                elm.css("-webkit-animation-delay", config[i].dd[1]);
+            }
+
+            var animate_class = 'animated ' + config[i].fx;
+
+            // animation end handler
+            elm.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', animation_end_handler(elm, animate_class));
+
+            // start animation
+            elm.addClass(animate_class);
+            elm.show();
+        }
+    }
+}
+
 function animation_end_handler (elm, animate_class) {
     return function () {
         elm.removeClass(animate_class);
     };
 }
 
-/*
-    type: private
-    TODO: needs to be tested
-*/
 function notFoundHandler (state) {
     var self = this;
 
