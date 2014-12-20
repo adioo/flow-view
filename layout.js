@@ -2,9 +2,6 @@ var $ = require('/jquery');
 
 module.exports = init;
 
-/*
-    type: constructor
-*/
 function init (config, ready) {
     var self = this;
     var pageName = '_page_' + self._name;
@@ -184,9 +181,6 @@ function init (config, ready) {
     ready();
 }
 
-/*
-    type: actor
-*/
 function page (state, data) {
     var self = this;
     var target = data.show;
@@ -226,10 +220,7 @@ function page (state, data) {
     }
 }
 
-/*
-    type: actor
-    TODO: implement animations
-*/
+// TODO: implement animations
 function transition (state, data) {
 
     if (!data) {
@@ -247,39 +238,39 @@ function state (event, data) {
     self.view[data.view].state(data.state);
 }
 
-function fetch (event, data) {
+function fetch (event, data, callback) {
     var self = this;
     var model = data.model;
     var query = data.query;
     data = data.data;
 
     if (!model || !query) {
-        return self.emit('error', null, {err: new Error('No model or query.')});
+        return callback('No model or query.');
     }
 
     if (!self.model || !self.model[model]) {
-        return self.emit('error', null, {err: new Error('Model not found.')});
+        return callback('Model not found.');
     }
 
     self.model[model].req(query, data, function (err, data) {
 
         if (err) {
-            return self.emit('error', null, {err: err});
+            return callback(err);
         }
 
         // emit callback event
-        self.emit('data:' + model + '.' + query, null, {data: data});
+        callback(null, {data: data});
     });
 }
 
 // render data to a view
-function render (event, data) {
+function render (event, data, callback) {
     var self = this;
     var view = data.view;
     data = data.data;
 
     if (!self.view || !self.view[view] || !data) {
-        return self.emit('error', null, {err: new Error('View "' + view + '" don\'t exists.' )});
+        return callback('View "' + view + '" don\'t exists.' );
     }
 
     // TODO Handle pages on manual rendering
@@ -294,31 +285,19 @@ function render (event, data) {
     self.view[view].render(data);
 
     // emit callback event
-    self.emit('render:' + view, null, data);
+    callback(null, self.view[view]);
 }
 
 // mainpulate dom with jquery
-function $jq (event, data) {
+function $jq (event, data, callback) {
     var self = this;
     var selector = data.selector;
-    var method = data.method;
-    var args = data.args;
 
     // call jquery function
-    if ($.fn[method]) {
+    if ($.fn[data.method]) {
 
-        // get selector from url
-        if (typeof selector !== 'string') {
-
-            // return when regexp is not found
-            var re = new RegExp(selector[0]);
-            if (!re.test(window.location)) {
-                return;
-            }
-
-            selector = window.location.href.replace(re, selector[1]);
-
-        } else {
+        // get selector dom ref
+        if (typeof selector === 'string') {
 
             // get selector
             switch (selector) {
@@ -334,10 +313,20 @@ function $jq (event, data) {
             }
         }
 
+        // get scope dom ref
+        if (typeof data.scope === 'string') {
+            data.scope = document.querySelector(data.scope);
+        }
+
         // call method
-        selector = $(selector);
-        selector[method].apply(selector, args);
+        selector = $(selector, data.scope);
+
+        selector[data.method].apply(selector, data.args);
+
+        return callback();
     }
+
+    callback('jQuery method "' + method + '" doesn\'t exists.');
 }
 
 function animate (elm, config) {
