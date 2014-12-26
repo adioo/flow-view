@@ -1,4 +1,4 @@
-var $ = require('/jquery');
+var $ = require('/libs/jquery');
 
 module.exports = init;
 
@@ -156,6 +156,7 @@ function init (config, ready) {
     self.render = render;
     self.fetch = fetch;
     self.$jq = $jq;
+    self.state = state;
 
     // state handler to handle css in pages
     self.pageSelector = '.' + pageName;
@@ -231,11 +232,16 @@ function transition (state, data) {
     data.show && $(data.show).show();
 }
 
-
 // THIS IS JUST AN IDEA..
-function state (event, data) {
+function state (event, data, callback) {
     var self = this;
-    self.view[data.view].state(data.state);
+
+    console.log(event);
+    console.log(data);
+
+    callback();
+
+    //self.view[data.view].state(data.state);
 }
 
 function fetch (event, data, callback) {
@@ -319,7 +325,7 @@ function $jq (event, data, callback) {
         }
 
         // call method
-        selector = $(selector, data.scope);
+        selector = $(selector, data.scope || event._scope);
 
         selector[data.method].apply(selector, data.args);
 
@@ -327,49 +333,6 @@ function $jq (event, data, callback) {
     }
 
     callback('jQuery method "' + method + '" doesn\'t exists.');
-}
-
-function animate (elm, config) {
-    var self = this;
-
-    if (!elm || !config) {
-        return;
-    }
-
-    for (var i = 0; i < config.length; ++i) {
-
-        // get element
-        elm = config[i].elm ? $(config[i].elm, elm) : elm;
-
-        // handle show/hide
-        if (config[i].fx === 'show' || config[i].fx === 'hide') {
-            elm[config[i].fx]();
-
-        // handle animateion
-        } else {
-
-            // set timing
-            if (config[i].dd) {
-                elm.css("-webkit-animation-duration", config[i].dd[0]);
-                elm.css("-webkit-animation-delay", config[i].dd[1]);
-            }
-
-            var animate_class = 'animated ' + config[i].fx;
-
-            // animation end handler
-            elm.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', animation_end_handler(elm, animate_class));
-
-            // start animation
-            elm.addClass(animate_class);
-            elm.show();
-        }
-    }
-}
-
-function animation_end_handler (elm, animate_class) {
-    return function () {
-        elm.removeClass(animate_class);
-    };
 }
 
 function notFoundHandler (state) {
