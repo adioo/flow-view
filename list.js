@@ -1,3 +1,4 @@
+M.wrap('github/jillix/bind-list-crud/dev/list.js', function (require, module, exports) {
 var Bind = require("github/jillix/bind");
 var Events = require("github/jillix/events");
 
@@ -595,9 +596,32 @@ function List(module) {
             q: query || {},
             d: updateObj
         };
+        callback = callback || function () {};
+
+        // Normalize the query if id is provided
+        if (query[config.options.id]) {
+            crudObj.q = {};
+            crudObj.q[config.options.id] = query[config.options.id]
+        }
+
 
         // send the crud object to crud
-        self.emit("update", crudObj, callback);
+        self.emit("update", crudObj, function (err) {
+            if (err) { return callback(err); }
+            delete crudObj.d;
+            var args = arguments;
+            self.emit("find", crudObj, function(err, data) {
+                if (err) { return callback(err); }
+                for (var i = 0; i < data.length; ++i) {
+                    var cData = $("#" + data[i]._id).data("dataItem");
+                    for (var k in cData) {
+                        delete cData[k];
+                        cData[k] = data[i][k];
+                    }
+                }
+                callback.apply(self, args);
+            });
+        });
     }
 
     function _sendRemove(itemData) {
@@ -839,3 +863,5 @@ module.exports = function (module, config) {
     return list;
 };
 
+
+return module; });
