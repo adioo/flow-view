@@ -7,6 +7,9 @@ No datasources needed.
 
 ### Change Log
 
+#### v0.2.2
+ - Update data cache after update request.
+
 #### v0.2.1
  - Removed `contructor.name` for IE compatibility
  - Updated to Bind `v0.3.1`
