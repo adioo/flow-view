@@ -3,5 +3,14 @@
     "owner": "jillix",
     "name": "layout",
     "version": "v0.0.1",
-    "dependencies": ["layout.js"]
+    "roles": {
+        "*": true
+    },
+    "dependencies": [
+        "./layout.js",
+        "/libs/jquery.js"
+    ],
+    "name": "github_jillix_layout_v0.0.1",
+    "url": "git@github.com:jillix/layout.git"
 }
+
