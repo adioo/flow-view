@@ -13,137 +13,6 @@ function init (config, ready) {
 
     config = $.extend(self._conf, config);
 
-    // locale stuff
-    self.locale = {};
-    function verifyDeps() {
-
-        if (typeof $ === "undefined") {
-            throw new Error("jQuery is required for layout module");
-        }
-
-        if (config.locale && typeof $.cookie === "undefined") {
-            throw new Error("jQuery cookie library is required when using locale");
-        }
-    }
-
-    verifyDeps();
-
-    /**
-     * locale.set
-     * Sets the locale value (in cookie and in Z._i18n)
-     *
-     * @name set
-     * @function
-     * @param {Object} ev Event object
-     * @param {Object|String} data An object containing the following fields:
-     *  - i18n (or locale or value): the locale value
-     *  - cookie (optional): the cookie that should be set
-     * If it's a string, it will represent the locale value.
-     * @return {String} The locale that was set.
-     */
-    self.locale.set = function (ev, data) {
-        var locale = data.i18n || data.locale || data.value || data;
-        var cookie = data.cookie || config.locale.cookie;
-
-        // If the locale doesn't match this regular
-        // expression, set the default language
-        if (!config.locale.possible.test(locale)) {
-            locale = config.locale.value;
-        }
-
-        // Update cookie and Z._i18n
-        if (data.setCookie !== false) {
-            $.cookie(cookie, locale);
-        }
-
-        Z._i18n = locale;
-
-        // Emit the event
-        if (data.emitEvent !== false) {
-            self.emit("localeSet", null, {
-                locale: locale,
-                cookie: cookie,
-                i18n: locale
-            });
-        }
-
-        return locale;
-    };
-
-    /**
-     * get
-     * Callbacks, emits via an event, and returns the locale value.
-     *
-     * @name get
-     * @function
-     * @param {Object} ev Event object
-     * @param {Object|undefined} data An object containing the following fields:
-     *  - cookie (optional): the cookie value
-     *  - callback: if provided, the function will be called with an err and locale value
-     * @return {String} The locale that is set.
-     */
-    self.locale.get = function (ev, data) {
-        var cookie = data && data.cookie || config.locale.cookie;
-
-        if (typeof ev === "function") { data = { callback: ev }; }
-        if (typeof data === "function") { data = { callback: data }; }
-
-        var localeVal = $.cookie(cookie);
-
-        // If the locale doesn't match this regular
-        // expression, set the default language
-        if (!config.locale.possible.test(localeVal)) {
-            localeVal = self.locale.set(null, {
-                locale: localeVal,
-                emitEvent: false
-            });
-        }
-
-        // Callback, emit and reutrn locale
-        data && typeof data.callback === "function" && data.callback(null, localeVal);
-        self.emit("localeGet", null, {
-            i18n: localeVal
-        });
-
-        return localeVal;
-    };
-
-    // Handle locale settings
-    if (config.locale) {
-
-        if (typeof config.locale === "string") {
-            config.locale = {
-                value: config.locale
-            };
-        }
-
-        // Add defaults
-        config.locale.cookie = config.locale.cookie || "_loc";
-        config.locale.possible = config.locale.possible || /.*/;
-
-        if (typeof config.locale.possible === "string") {
-            config.locale.possible = new RegExp(config.locale.possible);
-        }
-
-        if (typeof config.locale.value !== "string") {
-            throw new Error("config.locale.value shoud be a string.");
-        }
-
-        if (typeof config.locale.cookie !== "string") {
-            throw new Error("config.locale.cookie shoud be a string.");
-        }
-
-        // Prevent locale overriding
-        var cLoc = self.locale.get();
-        self.locale.set(null, {
-            value: cLoc || config.locale.value,
-            cookie: config.locale.cookie,
-            setCookie: config.locale.value === cLoc || !cLoc,
-            emitEvent: false
-        });
-    }
-
-
     // set document title
     if (config.title) {
         self.title = config.title;
@@ -153,8 +22,6 @@ function init (config, ready) {
     // attach state handler to instance
     self.page = page;
     self.transition = transition;
-    self.render = render;
-    self.fetch = fetch;
     self.$jq = $jq;
     self.state = state;
 
@@ -242,56 +109,6 @@ function state (event, data, callback) {
     callback();
 
     //self.view[data.view].state(data.state);
-}
-
-function fetch (event, data, callback) {
-    var self = this;
-    var model = data.model;
-    var query = data.query;
-    data = data.data;
-
-    if (!model || !query) {
-        return callback('No model or query.');
-    }
-
-    if (!self.model || !self.model[model]) {
-        return callback('Model not found.');
-    }
-
-    self.model[model].req(query, data, function (err, data) {
-
-        if (err) {
-            return callback(err);
-        }
-
-        // emit callback event
-        callback(null, {data: data});
-    });
-}
-
-// render data to a view
-function render (event, data, callback) {
-    var self = this;
-    var view = data.view;
-    data = data.data;
-
-    if (!self.view || !self.view[view] || !data) {
-        return callback('View "' + view + '" don\'t exists.' );
-    }
-
-    // TODO Handle pages on manual rendering
-    // data.item && (data.item.page = '_page_' + self._name);
-
-    // push a single item to an array
-    if (!(data instanceof Array)) {
-        data = [data];
-    }
-
-    // render data
-    self.view[view].render(data);
-
-    // emit callback event
-    callback(null, self.view[view]);
 }
 
 // mainpulate dom with jquery
