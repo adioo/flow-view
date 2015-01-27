@@ -1,18 +1,24 @@
 {
-  "name": "layout",
-  "version": "v0.1.0",
-  "description": "Basic layout module",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/jillix/layout.git"
-  },
-  "keywords": [
-    "layout",
-    "module"
-  ],
-  "author": "jillix",
-  "bugs": {
-    "url": "https://github.com/jillix/layout/issues"
-  },
-  "homepage": "https://github.com/jillix/layout"
+    "name": "layout",
+    "version": "v0.1.0",
+    "description": "Basic layout module",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/jillix/layout.git"
+    },
+    "keywords": [
+        "layout",
+        "module"
+    ],
+    "author": "jillix",
+    "bugs": {
+        "url": "https://github.com/jillix/layout/issues"
+    },
+    "homepage": "https://github.com/jillix/layout",
+    "engine": {
+        "dependencies": [
+            "./layout.js",
+            "/libs/jquery.js"
+        ]
+    }
 }
