@@ -1,4 +1,4 @@
-var $ = require('/libs/jquery');
+// var $ = require('/libs/jquery');
 
 //exports.page = page;
 //exports.transition = transition;
