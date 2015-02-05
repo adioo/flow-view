@@ -1,4 +1,5 @@
 
+var engine = E;
 var layout = require('./layout.js');
 
 var template_escape = {"\\": "\\\\", "\n": "\\n", "\r": "\\r", "'": "\\'"};
@@ -26,14 +27,6 @@ exports.factory = function (event, data) {
     if (self._config.title) {
         document.title = self._config.title;
     }
-
-    // set html template
-    // TODO maybe move this to render function
-    if (self._config.html) {
-        self.tpl = createTemplate(self._config.html);
-        self.scope = self._config['in'];
-        self.dom = self._config.to;
-    }
 }
 
 /**
@@ -50,12 +43,20 @@ exports.render = function (event, data) {
     var dontEscape = data.dontEscape;
     var leaveKeys = data.leaveKeys;
     var dontAppend = data.dontAppend;
+    var template = engine.htmls[data.tmpl];
 
-    // check if a template exists
-    if (!self.tpl) {
+    // create html template
+    if (typeof template === 'string') {
+        template = engine.htmls[template] = createTemplate(template);
+    }
+
+    // check if template exists
+    if (!template) {
         return;
     }
 
+    self.scope = self._config['in'];
+    self.dom = self._config.to;
     self.html = '';
     self.data = data = data || [{}];
 
@@ -73,7 +74,7 @@ exports.render = function (event, data) {
         }
 
         // create html
-        self.html += self.tpl(rData || data[i], default_escape_fn, dontEscape || self._config.dontEscape, leaveKeys || self._config.leaveKeys);
+        self.html += template(rData || data[i], default_escape_fn, dontEscape || self._config.dontEscape, leaveKeys || self._config.leaveKeys);
     }
 
     // change html before writing it to the dom
