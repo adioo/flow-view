@@ -1,4 +1,6 @@
 
+var layout = require('./layout.js');
+
 var template_escape = {"\\": "\\\\", "\n": "\\n", "\r": "\\r", "'": "\\'"};
 var render_escape = {'&': '&amp;', '"': '&quot;', '<': '&lt;', '>': '&gt;'};
 
@@ -14,18 +16,23 @@ exports.factory = function (event, data) {
 
     // append custom handlers
     this.handlers = {};
-    if (config.on) {
-        for (var name in config.on) {
-            this.handlers[name] = engine.path(config.on[name]);
+    if (self._config.on) {
+        for (var name in self._config.on) {
+            this.handlers[name] = engine.path(self._config.on[name]);
         }
+    }
+
+    // set document title
+    if (self._config.title) {
+        document.title = self._config.title;
     }
 
     // set html template
     // TODO maybe move this to render function
-    if (config.html) {
-        view.tpl = createTemplate(config.html);
-        view.scope = config['in'];
-        view.dom = config.to;
+    if (self._config.html) {
+        self.tpl = createTemplate(self._config.html);
+        self.scope = self._config['in'];
+        self.dom = self._config.to;
     }
 }
 
