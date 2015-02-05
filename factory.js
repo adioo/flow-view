@@ -1,8 +1,6 @@
-var env = process.env;
+/*
 var fs = require('fs');
-var cache = require(env.Z_PATH_CACHE + 'cache');
 var fingerprint = require(env.Z_PATH_UTILS + 'fingerprint');
-var compViews = cache.comp('views');
 var snippetCache = cache.file('snippets', {wd: env.Z_PATH_PROCESS_MARKUP, noCompression: true});
 
 module.exports = factoryService;
@@ -78,60 +76,4 @@ function factory (name, role, callback) {
         });
     });
 }
-
-function factoryService (event, name, callback) {
-    var self = this;
-
-    // check message
-    if (!name) {
-        return callback('Bad message');
-    }
-
-    // create model
-    factory.call(self, name, event.role, function (err, view) {
-
-        if (err) {
-            return callback(err);
-        }
-
-        // create client view
-        var clientView = {
-            name: view.name
-        };
-
-        // add client config
-        if (view.config && view.config.client) {
-            clientView.config = view.config.client;
-        }
-
-        if (view.nested) {
-            clientView.nested = view.nested;
-        }
-
-        if (view.flow) {
-            clientView.flow = view.flow;
-        }
-
-        if (view.html) {
-            clientView.html = view.html;
-        }
-
-        if (view.to) {
-            clientView.to = view.to;
-        }
-
-        if (view.css) {
-            clientView.css = view.css;
-        }
-
-        if (view.dontEscape) {
-            clientView.dontEscape = view.dontEscape;
-        }
-
-        if (view.leaveKeys) {
-            clientView.leaveKeys = view.leaveKeys;
-        }
-
-        callback(null, clientView);
-    });
-}
+*/
