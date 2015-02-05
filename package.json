@@ -17,6 +17,7 @@
     "homepage": "https://github.com/adioo/view",
     "main": "factory.js",
     "clientDependencies": [
-        "./view.js"
+        "./view.js",
+        "./layout.js"
     ]
 }
