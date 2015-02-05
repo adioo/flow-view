@@ -68,6 +68,21 @@ function page (state, data) {
     }
 }
 
+function notFoundHandler (state) {
+    var self = this;
+
+    if (self._url === state.url) {
+        return;
+    }
+
+    if (!self._state) {
+        self.pages.hide();
+        self.notFound.show();
+    }
+
+    self._state = false;
+}
+
 // mainpulate dom with jquery
 function $jq (event, data, callback) {
     var self = this;
@@ -107,19 +122,4 @@ function $jq (event, data, callback) {
     }
 
     callback('jQuery method "' + method + '" doesn\'t exists.');
-}
-
-function notFoundHandler (state) {
-    var self = this;
-
-    if (self._url === state.url) {
-        return;
-    }
-
-    if (!self._state) {
-        self.pages.hide();
-        self.notFound.show();
-    }
-
-    self._state = false;
 }
