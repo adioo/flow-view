@@ -5,11 +5,6 @@
 //exports.state = state;
 //exports.$jq = $jq;
 
-exports.test = function () {
-
-    console.log('TEST METHOD FIRED!', arguments);
-}
-
 function init (config) {
     var self = this;
     var pageName = '_page_' + self._name;
