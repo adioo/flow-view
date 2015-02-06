@@ -5,6 +5,32 @@
 //exports.state = state;
 //exports.$jq = $jq;
 
+exports.state = function (event, data) {
+
+    // get the name of the state
+    var state;
+    if (state = this.states[data.name]) {
+
+        // get current state if no "from" state is defined
+        if (!state.from) {
+            state.from = this.currentState;
+        }
+
+        // get the template scope for "from" state
+        if (state.from && this.tmpls[state.from.tmpl]) {
+            state.from.tmpl = this.tmpls[state.from.tmpl].to;
+        }
+
+        // get the template scope for "to" state
+        if (state.to && this.tmpls[state.to.tmpl]) {
+            state.to.tmpl = this.tmpls[state.to.tmpl].to;
+        }
+
+        console.log(state);
+    }
+};
+
+
 function init (config) {
     var self = this;
     var pageName = '_page_' + self._name;
