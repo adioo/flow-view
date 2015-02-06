@@ -15,9 +15,8 @@
         "url": "https://github.com/adioo/view/issues"
     },
     "homepage": "https://github.com/adioo/view",
-    "main": "factory.js",
     "clientDependencies": [
         "./view.js",
-        "./layout.js"
+        "./state.js"
     ]
 }
