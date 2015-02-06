@@ -43,11 +43,11 @@ exports.render = function (event, data) {
     var dontEscape = data.dontEscape;
     var leaveKeys = data.leaveKeys;
     var dontAppend = data.dontAppend;
-    var template = engine.htmls[data.tmpl];
+    var template = self._html ? self._html.tmpl : '';
 
     // create html template
     if (typeof template === 'string') {
-        template = engine.htmls[template] = createTemplate(template);
+        template = self._html.tmpl = createTemplate(template);
     }
 
     // check if template exists
