@@ -15,14 +15,6 @@ var render_escape = {'&': '&amp;', '"': '&quot;', '<': '&lt;', '>': '&gt;'};
 exports.factory = function (event, data) {
     var self = this;
 
-    // append custom handlers
-    this.handlers = {};
-    if (self._config.on) {
-        for (var name in self._config.on) {
-            this.handlers[name] = engine.path(self._config.on[name]);
-        }
-    }
-
     // set document title
     if (self._config.title) {
         document.title = self._config.title;
@@ -46,8 +38,13 @@ exports.factory = function (event, data) {
                 "f": default_escape_fn
             };
 
-            // TODO get data handler methods
+            // get data handler methods
             self.tmpls[template].handlers = {};
+            if (self._config.templates.on) {
+                for (var name in self._config.templates.on) {
+                    self.tmpls[template].handlers[name] = engine.path(self._config.templates.on[name], self);
+                }
+            }
 
             // create template function
             self.tmpls[template].render = createTemplate(engine.htmls[tmpl.html]);
