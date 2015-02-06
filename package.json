@@ -1,13 +1,13 @@
 {
     "name": "view",
     "version": "v0.1.0",
-    "description": "Basic view module",
+    "description": "Render HTML templates",
     "repository": {
         "type": "git",
         "url": "git://github.com/adioo/view.git"
     },
     "keywords": [
-        "layout",
+        "page",
         "render"
     ],
     "author": "adioo",
