@@ -1,9 +1,11 @@
 
 var engine = E;
-var layout = require('./layout.js');
+var state = require('./state.js');
 
 var template_escape = {"\\": "\\\\", "\n": "\\n", "\r": "\\r", "'": "\\'"};
 var render_escape = {'&': '&amp;', '"': '&quot;', '<': '&lt;', '>': '&gt;'};
+
+exports.state = state.state;
 
 /**
  * Initialize the View module instance.
@@ -53,6 +55,18 @@ exports.factory = function (event, data) {
             if (tmpl.render) {
                 self.render({},{tmpl: template});
             }
+        }
+    }
+
+    // setup states
+    if (self._config.states) {
+
+        // create states cache
+        self.states = {};
+
+        // sage state in cache
+        for (var stateName in self._config.states) {
+            self.states[stateName] = self._config.states[stateName];
         }
     }
 }
@@ -261,19 +275,19 @@ function setupDomEventFlow (module_instance, template) {
  * @param {object} The event object.
  * @param {object} The DOM data.
  */
-function domEventAdapter (event, DOM) {
+function domEventAdapter (event, domContext) {
 
     // add dom scope to event
-    event._scope = event._scope || DOM.scope;
+    event._scope = event._scope || domContext.scope;
 
     // dont prevent default browser actions
-    if (!DOM.dontPrevent) {
+    if (!domContext.dontPrevent) {
         event.preventDefault();
     }
 
     // add found elements to event
-    event._elms = DOM.elms;
+    event._elms = domContext.elms;
 
     // add index of found elements
-    event._item = event._item || DOM.data;
+    event._item = event._item || domContext.data;
 }
