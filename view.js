@@ -27,6 +27,37 @@ exports.factory = function (event, data) {
     if (self._config.title) {
         document.title = self._config.title;
     }
+
+    // create and render templates
+    if (self._config.templates) {
+
+        self.tmpls = {};
+
+        var tmpl;
+        var template;
+        for (template in self._config.templates) {
+            tmpl = self._config.templates[template];
+
+            self.tmpls[template] = {
+                "to": tmpl.to,
+                "flow": tmpl.flow,
+                "e": tmpl.dontEscape,
+                "k": tmpl.leaveKeys,
+                "f": default_escape_fn
+            };
+
+            // TODO get data handler methods
+            self.tmpls[template].handlers = {};
+
+            // create template function
+            self.tmpls[template].render = createTemplate(engine.htmls[tmpl.html]);
+
+            // auto render template
+            if (tmpl.render) {
+                self.render({},{tmpl: template});
+            }
+        }
+    }
 }
 
 /**
@@ -39,66 +70,61 @@ exports.factory = function (event, data) {
 exports.render = function (event, data) {
 
     var self = this;
-    var escape_fn;
     var dontEscape = data.dontEscape;
     var leaveKeys = data.leaveKeys;
     var dontAppend = data.dontAppend;
-    var template = self._html ? self._html.tmpl : '';
-
-    // create html template
-    if (typeof template === 'string') {
-        template = self._html.tmpl = createTemplate(template);
-    }
+    var template;
 
     // check if template exists
-    if (!template) {
+    if (!(template = self.tmpls[data.tmpl])) {
         return;
     }
 
-    self.scope = self._config['in'];
-    self.dom = self._config.to;
-    self.html = '';
-    self.data = data = data || [{}];
+    template.data = data = data.data || [{}];
 
     // push a single item to an array
     if (!(data instanceof Array)) {
         data = [data];
     }
 
+    // reset html
+    template.html = '';
+
     // render data
     for (var i = 0, rData; i < data.length; ++i) {
 
         // change data before it gets rendered to the html
-        if (typeof self.handlers.data === 'function') {
-            rData = self.handlers.data.call(self, data[i]) || data[i];
+        if (typeof template.handlers.data === 'function') {
+            data[i] = template.handlers.data.call(self, data[i]);
         }
 
         // create html
-        self.html += template(rData || data[i], default_escape_fn, dontEscape || self._config.dontEscape, leaveKeys || self._config.leaveKeys);
+        template.html += template.render(data[i], dontEscape, leaveKeys);
     }
 
     // change html before writing it to the dom
-    if (typeof self.handlers.html === 'function') {
-        self.html = self.handlers.html(self.html) || self.html;
+    if (typeof template.handlers.html === 'function') {
+        template.html = template.handlers.html(template.html);
     }
 
-    if (typeof self.dom === 'string') {
-        self.dom = (self.scope || document).querySelector(self.dom);
+    // get dom parent
+    if (typeof template.to === 'string') {
+        template.to = document.querySelector(template.to);
     }
 
     // render html
-    if (!dontAppend && self.dom) {
-        self.dom.innerHTML = self.html;
+    if (!dontAppend && template.to) {
+        template.to.innerHTML = template.html;
     }
 
     // append dom events
-    if (self._extFlow) {
-        setupDomEventFlow(self);
+    if (template.flow) {
+        setupDomEventFlow(self, template);
     }
 
     // change html before writing it to the dom
-    if (typeof self.handlers.done === 'function') {
-        self.handlers.done(self);
+    if (typeof template.handlers.done === 'function') {
+        template.handlers.done(self);
     }
 
     /**
@@ -114,12 +140,15 @@ exports.render = function (event, data) {
  * Escape html chars.
  *
  * @private
- * @param {string} The data object.
+ * @param {object} The template object.
+ * @param {object} The data object.
  * @param {string} The data key.
- * @param {boolean} Dont escape HTML chars.
- * @param {boolean} Leave the data keys in the HTML.
 */
 function default_escape_fn (data, key, dont_escape_html, leaveKeys) {
+
+    // get options
+    dont_escape_html = dont_escape_html || this.e;
+    leaveKeys = leaveKeys || this.k;
 
     // get the string value
     str = key.indexOf('.') > 0 ? engine.path(key, data) : data[key];
@@ -129,13 +158,13 @@ function default_escape_fn (data, key, dont_escape_html, leaveKeys) {
 
     // render a nested view
     if (typeof str === 'object' && this.nested && this._.view[this.nested[key]]) {
-        var view = engine.modules[this.nested[key]];
+        var tmpl = this.tmpls[this.nested[key]];
 
         // render nested view and don't append to the dom
-        view.render && view.render(str, dont_escape_html, leaveKeys, true);
+        tmpl.render && tmpl.render(str, dont_escape_html, leaveKeys, true);
 
         // get html of rendered view
-        str = view.html || '';
+        str = tmpl.html || '';
 
         // don't escape html chars
         dont_escape_html = true;
@@ -163,10 +192,10 @@ function default_escape_fn (data, key, dont_escape_html, leaveKeys) {
  * @param {string} The HTML string.
 */
 function createTemplate (tmpl) {
-    return new Function("_", "f", "e", "k", "_=_||{};return '" +
+    return new Function("_", "e", "k", "_=_||{};return '" +
         (tmpl || '').replace(/[\\\n\r']/g, function(_char) {
             return template_escape[_char];
-        }).replace(/{\s*([\w\.]+)\s*}/g, "' + f.call(this,_,'$1',e,k) + '") + "'"
+        }).replace(/{\s*([\w\.]+)\s*}/g, "' + this.f(_,'$1',e,k) + '") + "'"
     );
 }
 
@@ -176,11 +205,10 @@ function createTemplate (tmpl) {
  * @private
  * @param {object} The moule instnace.
 */
-function setupDomEventFlow (module_instance) {
+function setupDomEventFlow (module_instance, template) {
 
-    var domScope = module_instance.dom;
-    var data = module_instance.data;
-    var config = module_instance._extFlow;
+    var domScope = template.to;
+    var data = template.data;
     var scope = [domScope];
 
     // set children as scope if there is more then one data item
@@ -188,8 +216,8 @@ function setupDomEventFlow (module_instance) {
         scope = domScope.children;
     }
 
-    for (var i = 0, flow; i < config.length; ++i) {
-        flow = config[i];
+    for (var i = 0, flow; i < template.flow.length; ++i) {
+        flow = template.flow[i];
 
         // overwrite scope with the document
         if (flow.scope === 'global') {
