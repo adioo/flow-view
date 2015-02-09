@@ -7,48 +7,39 @@
 */
 exports.state = function (event, data) {
 
-    // get the name of the state
-    var state;
-    if (state = this.states[data.name]) {
+    // check if state exists
+    if (this.states[data.name]) {
 
-        // retrun if no selector is found
-        if (!state.sel) {
-            return;
-        }
+        // activate state elements
+        for (var i = 0, state; i < this.states[data.name].length; ++i) {
+            state = this.states[data.name][i];
 
-        // get current state if no "from" state is defined
-        if (!state.from) {
-            state.from = {elms: this.currentState};
-        }
-
-        // handle curent state
-        if (state.from && state.from.sel) {
-
-            // get the template scope for "from" state
-            if (this.tmpls[state.from.tmpl]) {
-                state.from.tmpl = this.tmpls[state.from.tmpl].to;
+            // retrun if no selector is found
+            if (!state.sel) {
+                return;
             }
 
-            // get dom element referecnces
-            var elms_from = (state.from.tmpl || document).querySelectorAll(state.from.sel);
+            // get the tempalte
+            var template = this.tmpls[state.tmpl];
+
+            // get the template scope for "to" state
+            if (state.tmpl && template) {
+                state.tmpl = template.to;
+            }
+
+            // auto hide pages before activate a state
+            if (template && template.page) {
+
+                // add "hide" class to all pages
+                manipulateClasses(
+                  (state.tmpl || document).querySelectorAll('.' + template.page),
+                  {add: ['hide']}
+                );
+            }
 
             // manipulate classes
-            manipulateClasses(elms_from, state.from);
+            manipulateClasses((state.tmpl || document).querySelectorAll(state.sel), state);
         }
-
-        // get the template scope for "to" state
-        if (state.tmpl && this.tmpls[state.tmpl]) {
-            state.tmpl = this.tmpls[state.tmpl].to;
-        }
-
-        // get dom element referecnces
-        var elms = (state.tmpl || document).querySelectorAll(state.sel);
-
-        // manipulate classes
-        manipulateClasses(elms, state);
-
-        // set current state
-        this.currentElms = elms;
     }
 };
 
