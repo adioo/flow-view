@@ -15,18 +15,10 @@ exports.state = function (event, data) {
             state = this.states[data.name][i];
 
             // get dynamic or static selector
-            if (!(selector = state.sel || data.selector)) {
+            if (!(selector = state.sel || data.selector) || !(template = this.tmpls[state.tmpl])) {
 
                 // retrun if no selector is found
                 return;
-            }
-
-            // get the tempalte
-            template = this.tmpls[state.tmpl];
-
-            // get the template scope for "to" state
-            if (state.tmpl && template) {
-                state.tmpl = template.to;
             }
 
             // auto hide pages before activate a state
@@ -34,13 +26,13 @@ exports.state = function (event, data) {
 
                 // add "hide" class to all pages
                 manipulateClasses(
-                  (state.tmpl || document).querySelectorAll('.' + template.page),
+                  (template.to || document).querySelectorAll('.' + template.page),
                   {add: ['hide']}
                 );
             }
 
             // manipulate classes
-            manipulateClasses((state.tmpl || document).querySelectorAll(selector), state);
+            manipulateClasses((template.to || document).querySelectorAll(selector), state);
         }
     }
 };
