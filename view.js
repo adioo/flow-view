@@ -33,11 +33,12 @@ exports.factory = function (event, data) {
             tmpl = self._config.templates[template];
 
             self.tmpls[template] = {
-                "to": tmpl.to,
-                "flow": tmpl.flow,
-                "e": tmpl.dontEscape,
-                "k": tmpl.leaveKeys,
-                "f": default_escape_fn
+                'to': tmpl.to,
+                'flow': tmpl.flow,
+                'e': tmpl.dontEscape,
+                'k': tmpl.leaveKeys,
+                'f': default_escape_fn,
+                'page': '_page_' + self._name + '_' + template
             };
 
             // get data handler methods
@@ -91,6 +92,7 @@ exports.render = function (event, data) {
         return;
     }
 
+    // preare render data
     template.data = data = data.data || [{}];
 
     // push a single item to an array
@@ -103,6 +105,11 @@ exports.render = function (event, data) {
 
     // render data
     for (var i = 0, rData; i < data.length; ++i) {
+
+        // render page class name
+        if (template.page) {
+            data[i].page = template.page;
+        }
 
         // change data before it gets rendered to the html
         if (typeof template.handlers.data === 'function') {
