@@ -12,6 +12,15 @@ A HTML and CSS renderer for jillix/engine.
             "flow": [{}],
             "render": true
         }
+    },
+    "states": {
+        "stateA": {
+            "tmpl": "layout",
+            "sel": "#new",
+            "rm": ["className"],
+            "add": ["className"],
+            "toggle": ["className"]
+        }
     }
 }
 ```
@@ -26,3 +35,7 @@ Example:
     }
 }
 ```
+####Public mehtods
+* factory (init the module instance)
+* render (render data to a template)
+* state (activate a state)
