@@ -10,17 +10,18 @@ A HTML and CSS renderer for jillix/engine.
             "to": "#selector",
             "html": "/file.html",
             "flow": [{}],
-            "render": true
+            "render": true,
+            "pages": true
         }
     },
     "states": {
-        "stateA": {
+        "stateA": [{
             "tmpl": "layout",
             "sel": "#new",
             "rm": ["className"],
             "add": ["className"],
             "toggle": ["className"]
-        }
+        }]
     }
 }
 ```
