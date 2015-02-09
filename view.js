@@ -37,9 +37,13 @@ exports.factory = function (event, data) {
                 'flow': tmpl.flow,
                 'e': tmpl.dontEscape,
                 'k': tmpl.leaveKeys,
-                'f': default_escape_fn,
-                'page': '_page_' + self._name + '_' + template
+                'f': default_escape_fn
             };
+
+            // add page selector to template
+            if (tmpl.pages) {
+                self.tmpls[template].page = '_page_' + self._name + '_' + template;
+            }
 
             // get data handler methods
             self.tmpls[template].handlers = {};
