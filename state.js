@@ -11,16 +11,18 @@ exports.state = function (event, data) {
     if (this.states[data.name]) {
 
         // activate state elements
-        for (var i = 0, state; i < this.states[data.name].length; ++i) {
+        for (var i = 0, state, selector, template; i < this.states[data.name].length; ++i) {
             state = this.states[data.name][i];
 
-            // retrun if no selector is found
-            if (!state.sel) {
+            // get dynamic or static selector
+            if (!(selector = state.sel || data.selector)) {
+
+                // retrun if no selector is found
                 return;
             }
 
             // get the tempalte
-            var template = this.tmpls[state.tmpl];
+            template = this.tmpls[state.tmpl];
 
             // get the template scope for "to" state
             if (state.tmpl && template) {
@@ -28,7 +30,7 @@ exports.state = function (event, data) {
             }
 
             // auto hide pages before activate a state
-            if (template && template.page) {
+            if (template && template.page && !data.noPaging) {
 
                 // add "hide" class to all pages
                 manipulateClasses(
@@ -38,7 +40,7 @@ exports.state = function (event, data) {
             }
 
             // manipulate classes
-            manipulateClasses((state.tmpl || document).querySelectorAll(state.sel), state);
+            manipulateClasses((state.tmpl || document).querySelectorAll(selector), state);
         }
     }
 };
