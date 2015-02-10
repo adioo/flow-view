@@ -14,7 +14,7 @@ exports.state = state.state;
  * @param {object} The event object.
  * @param {object} The data object.
 */
-exports.factory = function (event, data) {
+exports.init = function () {
     var self = this;
 
     // set document title
