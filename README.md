@@ -37,6 +37,6 @@ Example:
 }
 ```
 ####Public mehtods
-* factory (init the module instance)
+* init (init the module instance)
 * render (render data to a template)
 * state (activate a state)
