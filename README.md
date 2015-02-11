@@ -5,18 +5,15 @@ A HTML and CSS renderer for jillix/engine.
 ```json
 {
     "title": "Page title",
-    "templates": {
-        "layout": {
-            "to": "#selector",
-            "html": "/file.html",
-            "flow": [{}],
-            "render": true,
-            "pages": true
-        }
+    "template": {
+        "to": "#selector",
+        "html": "/file.html",
+        "flow": [{}],
+        "render": true,
+        "pages": true
     },
     "states": {
         "stateA": [{
-            "tmpl": "layout",
             "sel": "#new",
             "rm": ["className"],
             "add": ["className"],
