@@ -11,28 +11,28 @@ exports.state = function (event, data) {
     if (this.states[data.name]) {
 
         // activate state elements
-        for (var i = 0, state, selector, template; i < this.states[data.name].length; ++i) {
+        for (var i = 0, state, selector; i < this.states[data.name].length; ++i) {
             state = this.states[data.name][i];
 
             // get dynamic or static selector
-            if (!(selector = state.sel || data.selector) || !(template = this.tmpls[state.tmpl])) {
+            if (!(selector = state.sel || data.selector) || !this.tmpl) {
 
                 // retrun if no selector is found
                 return;
             }
 
             // auto hide pages before activate a state
-            if (template && template.page && !data.noPaging) {
+            if (this.tmpl.page && !data.noPaging) {
 
                 // add "hide" class to all pages
                 manipulateClasses(
-                  (template.to || document).querySelectorAll('.' + template.page),
+                  (this.tmpl.to || document).querySelectorAll('.' + this.tmpl.page),
                   {add: ['hide']}
                 );
             }
 
             // manipulate classes
-            manipulateClasses((template.to || document).querySelectorAll(selector), state);
+            manipulateClasses((this.tmpl.to || document).querySelectorAll(selector), state);
         }
     }
 };
