@@ -22,44 +22,37 @@ exports.init = function () {
         document.title = self._config.title;
     }
 
-    // create and render templates
-    if (self._config.templates) {
+    // create and render the template
+    if (self._config.template) {
 
-        self.tmpls = {};
+        var tmpl = self._config.template;
 
-        var tmpl;
-        var template;
-        for (template in self._config.templates) {
-            tmpl = self._config.templates[template];
+        self.tmpl = {
+            'to': tmpl.to,
+            'e': tmpl.dontEscape,
+            'k': tmpl.leaveKeys,
+            'f': default_escape_fn
+        };
 
-            self.tmpls[template] = {
-                'to': tmpl.to,
-                'flow': tmpl.flow,
-                'e': tmpl.dontEscape,
-                'k': tmpl.leaveKeys,
-                'f': default_escape_fn
-            };
+        // add page selector to template
+        if (tmpl.pages) {
+            self.tmpl.page = '_page_' + self._name;
+        }
 
-            // add page selector to template
-            if (tmpl.pages) {
-                self.tmpls[template].page = '_page_' + self._name + '_' + template;
+        // get data handler methods
+        self.tmpl.handlers = {};
+        if (tmpl.on) {
+            for (var name in tmpl.on) {
+                self.tmpl.handlers[name] = engine.path(tmpl.on[name], self);
             }
+        }
 
-            // get data handler methods
-            self.tmpls[template].handlers = {};
-            if (self._config.templates.on) {
-                for (var name in self._config.templates.on) {
-                    self.tmpls[template].handlers[name] = engine.path(self._config.templates.on[name], self);
-                }
-            }
+        // create template function
+        self.tmpl.render = createTemplate(engine.htmls[tmpl.html]);
 
-            // create template function
-            self.tmpls[template].render = createTemplate(engine.htmls[tmpl.html]);
-
-            // auto render template
-            if (tmpl.render) {
-                self.render({},{tmpl: template});
-            }
+        // auto render template
+        if (tmpl.render) {
+            self.render({});
         }
     }
 
@@ -85,6 +78,8 @@ exports.init = function () {
 */
 exports.render = function (event, data) {
 
+    data = data || {};
+
     var self = this;
     var dontEscape = data.dontEscape;
     var leaveKeys = data.leaveKeys;
@@ -92,7 +87,7 @@ exports.render = function (event, data) {
     var template;
 
     // check if template exists
-    if (!(template = self.tmpls[data.tmpl])) {
+    if (!(template = self.tmpl)) {
         return;
     }
 
@@ -140,8 +135,8 @@ exports.render = function (event, data) {
     }
 
     // append dom events
-    if (template.flow) {
-        setupDomEventFlow(self, template);
+    if (self._extflow) {
+        setupDomEventFlow(self);
     }
 
     // change html before writing it to the dom
@@ -227,10 +222,10 @@ function createTemplate (tmpl) {
  * @private
  * @param {object} The moule instnace.
 */
-function setupDomEventFlow (module_instance, template) {
+function setupDomEventFlow (module_instance) {
 
-    var domScope = template.to;
-    var data = template.data;
+    var domScope = module_instance.tmpl.to;
+    var data = module_instance.tmpl.data;
     var scope = [domScope];
 
     // set children as scope if there is more then one data item
@@ -238,8 +233,8 @@ function setupDomEventFlow (module_instance, template) {
         scope = domScope.children;
     }
 
-    for (var i = 0, flow; i < template.flow.length; ++i) {
-        flow = template.flow[i];
+    for (var i = 0, flow; i < module_instance._extflow.length; ++i) {
+        flow = module_instance._extflow[i];
 
         // overwrite scope with the document
         if (flow.scope === 'global') {
