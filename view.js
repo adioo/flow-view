@@ -11,8 +11,6 @@ exports.state = state.state;
  * Initialize the View module instance.
  *
  * @public
- * @param {object} The event object.
- * @param {object} The data object.
 */
 exports.init = function () {
     var self = this;
@@ -135,7 +133,7 @@ exports.render = function (event, data) {
     }
 
     // append dom events
-    if (self._extflow) {
+    if (self._extFlow) {
         setupDomEventFlow(self);
     }
 
@@ -233,8 +231,8 @@ function setupDomEventFlow (module_instance) {
         scope = domScope.children;
     }
 
-    for (var i = 0, flow; i < module_instance._extflow.length; ++i) {
-        flow = module_instance._extflow[i];
+    for (var i = 0, flow; i < module_instance._extFlow.length; ++i) {
+        flow = module_instance._extFlow[i];
 
         // overwrite scope with the document
         if (flow.scope === 'global') {
