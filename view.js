@@ -1,6 +1,6 @@
 
 var engine = E;
-var state = require('./state.js');
+var state = require('./state');
 
 var template_escape = {"\\": "\\\\", "\n": "\\n", "\r": "\\r", "'": "\\'"};
 var render_escape = {'&': '&amp;', '"': '&quot;', '<': '&lt;', '>': '&gt;'};
