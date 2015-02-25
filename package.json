@@ -7,7 +7,7 @@
         "url": "git://github.com/adioo/view.git"
     },
     "keywords": [
-        "page",
+        "engine",
         "render"
     ],
     "author": "adioo",
@@ -15,7 +15,8 @@
         "url": "https://github.com/adioo/view/issues"
     },
     "homepage": "https://github.com/adioo/view",
-    "clientDependencies": [
+    "dependencies": {},
+    "clientLoad": [
         "./view.js",
         "./state.js"
     ]
