@@ -2,7 +2,7 @@
     "client": {
         "methods": {
             "state": {},
-            "render": {},
+            "render": {}
         },
         "emits": {
             "renderDone": {}
