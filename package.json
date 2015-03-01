@@ -15,9 +15,10 @@
         "url": "https://github.com/adioo/view/issues"
     },
     "homepage": "https://github.com/adioo/view",
-    "dependencies": {},
-    "clientLoad": [
-        "./view.js",
-        "./state.js"
-    ]
+    "components": {
+        "scripts": [
+            "view.js",
+            "state.js"
+        ]
+    }
 }
