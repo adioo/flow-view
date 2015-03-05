@@ -8,7 +8,6 @@ A HTML and CSS renderer for jillix/engine.
     "template": {
         "to": "#selector",
         "html": "/file.html",
-        "flow": [{}],
         "render": true,
         "pages": true
     },
@@ -22,7 +21,7 @@ A HTML and CSS renderer for jillix/engine.
     }
 }
 ```
-Don't forget to load the HTML templates files in the module instance config.
+Don't forget to load the HTML files in the module instance config.
 Example:
 ```json
 {
@@ -34,6 +33,5 @@ Example:
 }
 ```
 ####Public mehtods
-* init (init the module instance)
 * render (render data to a template)
 * state (activate a state)
