@@ -32,6 +32,22 @@ Example:
     }
 }
 ```
+####Flow (out) usage
+```js
+engine.flow([{
+    // call the state method
+    "call": "state",
+    // pass static data
+    "data": {
+        // the name of the state (states.stateName)
+        "name": "stateA",
+        // don't hide page elements
+        "noPaging": true,
+        // dynamic selector
+        "selector": "#mainMenu-{_path.0}"
+    }
+}])
+```
 ####Public mehtods
 * render (render data to a template)
 * state (activate a state)
