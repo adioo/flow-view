@@ -34,19 +34,36 @@ Example:
 ```
 ####Flow (out) usage
 ```js
-engine.flow([{
-    // call the state method
-    "call": "state",
-    // pass static data
-    "data": {
-        // the name of the state (states.stateName)
-        "name": "stateA",
-        // don't hide page elements
-        "noPaging": true,
-        // dynamic selector
-        "selector": "#mainMenu-{_path.0}"
+engine.flow([
+    {
+        // call the state method
+        "call": "state",
+        // pass static data
+        "data": {
+            // the name of the state (states.stateName)
+            "name": "stateA",
+            // don't hide page elements
+            "noPaging": true,
+            // dynamic selector
+            "selector": "#mainMenu-{_path.0}"
+        }
+    },
+    {
+        // call the render method
+        "call": "render",
+        // pass static data
+        "data": {
+            // the render data
+            "data": [{}],
+            // don't escape HTML chars
+            "dontEscape": false,
+            // don't append the rendered HTML to the DOM
+            "dontAppend": false,
+            // don't remove the data keys while rendering
+            "leaveKeys": false
+        }
     }
-}])
+]);
 ```
 ####Public mehtods
 * render (render data to a template)
