@@ -28,7 +28,7 @@ Example:
     "name": "my_view_module_instance",
     "module": "",
     "client": {
-        "html": ["/file.html"]
+        "markup": ["/file.html"]
     }
 }
 ```
