@@ -4,7 +4,8 @@
   "description": "Generate data lists via Engine.",
   "components": {
     "scripts": [
-      "client/main.js",
+      "client/index.js",
+      "client/mustache/index.js",
       "/libs/jquery.js"
     ]
   }
