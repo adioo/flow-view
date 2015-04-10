@@ -1,6 +1,15 @@
 # engine-list
 Generate data lists via Engine.
 
+## Configuration
+
+```json
+{
+    "container": "ul.list.container",
+    "template": "ul.lite.container > li.template"
+}
+```
+
 ## Documentation
 ### `render(ev, data)`
 Renders provided documents.
