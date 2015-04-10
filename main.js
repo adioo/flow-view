@@ -9,7 +9,5 @@ module.exports = function (config) {
         // "delete" is considered a keywork by some browsers
         "delete": "remove"
     };
-
     Table (this, config);
 };
-
