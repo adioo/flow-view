@@ -1,6 +1,6 @@
 {
   "name": "engine-list",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Generate data lists via Engine.",
   "main": "./client/index.js",
   "components": {
@@ -9,5 +9,22 @@
       "client/mustache/index.js",
       "/libs/jquery.js"
     ]
-  }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jillix/engine-list.git"
+  },
+  "keywords": [
+    "jxengine",
+    "lists"
+  ],
+  "author": "jillix <contact@jillix.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jillix/engine-list/issues"
+  },
+  "homepage": "https://github.com/jillix/engine-list"
 }
