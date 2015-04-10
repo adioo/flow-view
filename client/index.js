@@ -1,3 +1,4 @@
+// Dependencies
 var $ = require("/libs/jquery");
 var Mustache = require("./mustache/index").bind(exports);
 
@@ -11,6 +12,19 @@ exports.init = function () {
     $template.remove();
 };
 
+/**
+ * render
+ * Renders provided documents.
+ *
+ * @name render
+ * @function
+ * @param {Event} ev The event object.
+ * @param {Object} data An object containing:
+ *
+ *  - `docs` (Array): An array of objects to list.
+ *
+ * @return {undefined}
+ */
 exports.render = function (ev, data) {
 
     if (!Array.isArray(data.docs)) {
@@ -26,6 +40,17 @@ exports.render = function (ev, data) {
     self.emit("renderDone", ev, data);
 };
 
+/**
+ * renderOne
+ * Renders a document.
+ *
+ * @name renderOne
+ * @function
+ * @param {Event} ev The event object.
+ * @param {Object} data The data object to be added.
+ * @param {Boolean} doNotAppend If true, the item will not be added into HTML its value being returned.
+ * @return {String} The rendered document HTML.
+ */
 exports.renderOne = function (ev, data, doNotAppend) {
     var self = this;
     var rendered = Mustache(self.ui.template, data);
@@ -36,6 +61,14 @@ exports.renderOne = function (ev, data, doNotAppend) {
     return rendered;
 };
 
+/**
+ * empty
+ * Empties the container.
+ *
+ * @name empty
+ * @function
+ * @return {undefined}
+ */
 exports.empty = function (ev, data) {
     self.ui.container.empty();
 };
