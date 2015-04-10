@@ -17,6 +17,7 @@ function List(module) {
 
         config.options = config.options || {};
         config.options.sort = config.options.sort || {};
+        config.options.filter = config.options.filter || {};
         config.options.id = config.options.id || "id";
 
         config.options.pagination = config.options.pagination || {};
@@ -69,11 +70,13 @@ function List(module) {
         // generate general binds from the config
         var binds = [];
 
-        for (var i in config.controls) {
-            switch (i) {
+        for (var key in config.controls) {
+            if (!config.controls.hasOwnProperty(key)) continue;
+
+            switch (key) {
                 case "add":
                     binds.push({
-                        target: config.controls[i],
+                        target: config.controls[key],
                         context: ".controls",
                         on: [{
                             name: "click",
@@ -84,7 +87,7 @@ function List(module) {
                     break;
                 case "delete":
                     binds.push({
-                        target: config.controls[i],
+                        target: config.controls[key],
                         context: ".controls",
                         on: [{
                             name: "click",
@@ -106,12 +109,13 @@ function List(module) {
 
             disabledClass = pagination.controls.disable;
 
-            for (var i in pagination.controls) {
+            for (var key in pagination.controls) {
+                if (!pagination.controls.hasOwnProperty(key)) continue;
 
-                switch (i) {
+                switch (key) {
 
                     case "next":
-                        $(pagination.controls[i]).on("click", function () {
+                        $(pagination.controls[key]).on("click", function () {
                             var clickedElem = $(this);
 
                             if (clickedElem.hasClass(disabledClass) || clickedElem.prop(disabledClass)) {
@@ -124,7 +128,7 @@ function List(module) {
                         break;
 
                     case "previous":
-                        $(pagination.controls[i]).on("click", function () {
+                        $(pagination.controls[key]).on("click", function () {
                             var clickedElem = $(this);
 
                             if (clickedElem.hasClass(disabledClass) || clickedElem.prop(disabledClass)) {
@@ -164,21 +168,26 @@ function List(module) {
         }
 
         // run the internal binds
-        for (var i in binds) {
+        for (var i = 0; i < binds.length; ++i) {
             Bind.call(self, binds[i]);
         }
 
         // run the binds
-        for (var i in config.binds) {
-            Bind.call(self, config.binds[i]);
-        }
+        if (config.binds) {
+            for (var i = 0; i < config.binds.length; ++i) {
+                Bind.call(self, config.binds[i]);
+            }
+	    }
 
         Events.call(self, config);
-
 
         if (config.options.autofetch) {
             self.read(config.options.filters || {}, { sort: config.options.sort });
         }
+    }
+
+    function getDataItem (jQueryObject) {
+        return jQueryObject.data("dataItem");
     }
 
     function render(item) {
@@ -193,20 +202,33 @@ function List(module) {
     }
 
     function renderSelector(item) {
+
+        if (!item) { return; }
+        if (item instanceof Array) {
+            for (var i = 0; i < item.length; ++i) {
+                renderSelector(item[i]);
+            }
+            return;
+        }
+
         var newItem = $(template).clone();
         newItem
             .removeClass("template")
+            .removeClass("hide")
             .addClass(config.options.classes.item)
             .appendTo(container)
+            .data("dataItem", item)
             .show();
 
-        for (var i in config.template.binds) {
-            var bindObj = config.template.binds[i];
-            bindObj.context = newItem;
-            Bind.call(self, bindObj, item);
+        if (config.template.binds) {
+            for (var i = 0; i < config.template.binds.length; ++i) {
+                var bindObj = config.template.binds[i];
+                bindObj.context = newItem;
+                Bind.call(self, bindObj, item);
+            }
         }
 
-        newItem.attr('id', item[config.options.id]);
+        newItem.attr("id", item[config.options.id]);
     }
 
     function clearList() {
@@ -356,8 +378,9 @@ function List(module) {
             }
         }
 
-        for (var i in pagination.dom.pages) {
-            $(numbersConfig.classes.before).before(pagination.dom.pages[i]);
+        for (var key in pagination.dom.pages) {
+            if (!pagination.dom.pages.hasOwnProperty(key)) continue;
+            $(numbersConfig.classes.before).before(pagination.dom.pages[key]);
         }
     }
 
@@ -375,12 +398,31 @@ function List(module) {
     }
 
     function getPages(data, callback) {
-        self.link("getPages", { data: data }, function(err, pagesNr) {
+
+        var query = data.filter || {};
+        var options = data.options || {};
+
+        delete options.limit;
+        delete options.skip;
+
+        var crudObj = {
+            t: config.options.template,
+            q: query,
+            o: options,
+            f: {
+                // this will make sure we receive only empty objects (if the dummy property does not exist)
+                "_dummy_property": 1,
+                "_id": 0
+            }
+        }
+
+        self.emit("find", crudObj, function(err, docs) {
             if (err) {
                 callback(err);
                 return;
             }
 
+            var pagesNr = Math.ceil(docs.length / pagination.size);
             callback(null, pagesNr);
         });
     }
@@ -399,7 +441,7 @@ function List(module) {
 
     var oldFilter, newFilter;
 
-    function read(fil, ops) {
+    function read(fil, ops, callback) {
 
         fil = fil || {};
         ops = ops || {};
@@ -432,14 +474,16 @@ function List(module) {
 
         data.filter = {};
         // merge the configured filters
-        if (config.options.filters && typeof config.options.filters === 'object') {
-            for (var i in config.options.filters) {
-                data.filter[i] = (config.options.filters || {})[i];
+        if (config.options.filters && typeof config.options.filters === "object") {
+            for (var key in config.options.filters) {
+                if (!config.options.filters.hasOwnProperty(key)) continue;
+                data.filter[key] = (config.options.filters || {})[key];
             }
         }
 
-        for (var i in filter) {
-            data.filter[i] = filter[i];
+        for (var key in filter) {
+            if (!filter.hasOwnProperty(key)) continue;
+            data.filter[key] = filter[key];
         }
 
         if (oldFilter !== newFilter && pagination) {
@@ -455,39 +499,81 @@ function List(module) {
             return;
         }
 
-        Waiter.start();
-        self.link(config.crud.read, { data: data }, function(err, data) {
+        var query = data.filter || {};
+        var options = data.options || {};
 
-            Waiter.stop();
+        var crudObj = {
+            t: config.options.template,
+            q: query,
+            o: options,
+            f: config.options.fields
+        };
 
-            if (err) { return; }
+        for (var key in config.options.filter) {
+            if (!config.options.filter.hasOwnProperty(key)) continue;
+            crudObj.q[key] = config.options.filter[key];
+        }
 
-            if (!data || !data.length) {
-                return;
-            }
-
-            for (var i in data) {
-                render.call(self, data[i]);
-            }
-
-            var autoselect = config.options.autoselect;
-            switch (autoselect) {
-                case "first":
-                    selectItem(data[0]);
-                    break;
-                case "last":
-                    selectItem(data[data.length - 1]);
-                    break;
-                default:
-                    if (typeof autoselect === "number") {
-                        selectItem(data[autoselect]);
-                    }
-            }
+        self.emit("find", crudObj, function(err, data) {
+            renderItems(err, data);
+            callback(err, data);
         });
     }
 
-    function createItem(itemData) {
-        self.link(config.crud.create, { data: itemData }, function(err, data) {
+    function renderItemsFromResult (err, data) {
+
+        if (err) { return; }
+
+        clearList();
+
+        if (pagination) {
+            // TODO
+            alert("Pagination not yet implemented using bind-filter... :-(");
+        }
+
+        renderItems(err, data);
+    }
+
+    function renderItems (err, data) {
+
+        if (err) { return; }
+
+        if (!data) {
+            return;
+        }
+
+        for (var i = 0, l = data.length; i < l; ++i) {
+            render.call(self, data[i]);
+        }
+
+        var autoselect = config.options.autoselect;
+        switch (autoselect) {
+            case "first":
+                selectItem(data[0]);
+                break;
+            case "last":
+                selectItem(data[data.length - 1]);
+                break;
+            default:
+                if (typeof autoselect === "number") {
+                    selectItem(data[autoselect]);
+                }
+        }
+
+        self.emit("itemsRendered", data);
+    }
+
+    function createItem(itemData, callback) {
+
+        var crudObj = {
+            t: config.options.template,
+            d: itemData
+        };
+
+        self.emit("insert", crudObj, function(err, data) {
+            if (callback) {
+                return callback(err, data);
+            }
             if (err) { return; }
             if (!pagination) {
                 render.call(self, data);
@@ -498,10 +584,58 @@ function List(module) {
         });
     }
 
+    /*
+     *  This functions updates an item in the database via CRUD
+     *
+     * */
+    function updateItem(query, updateObj, callback) {
+
+        // create the crud object
+        var crudObj = {
+            t: config.options.template,
+            q: query || {},
+            d: updateObj
+        };
+        callback = callback || function () {};
+
+        // Normalize the query if id is provided
+        if (query[config.options.id]) {
+            crudObj.q = {};
+            crudObj.q[config.options.id] = query[config.options.id]
+        }
+
+
+        // send the crud object to crud
+        self.emit("update", crudObj, function (err) {
+            if (err) { return callback(err); }
+            delete crudObj.d;
+            var args = arguments;
+            self.emit("find", crudObj, function(err, data) {
+                if (err) { return callback(err); }
+                for (var i = 0; i < data.length; ++i) {
+                    var cData = $("#" + data[i]._id).data("dataItem");
+                    for (var k in cData) {
+                        delete cData[k];
+                        cData[k] = data[i][k];
+                    }
+                }
+                callback.apply(self, args);
+            });
+        });
+    }
+
     function _sendRemove(itemData) {
-        var data = {};
-        data[config.options.id] = [itemData[config.options.id]];
-        self.link(config.crud['delete'], { data: data }, function(err, data) {
+        var query = {};
+        query[config.options.id] = {
+            "$in": [itemData[config.options.id]]
+        };
+
+        var crudObj = {
+            t: config.options.template,
+            q: query
+        };
+
+        self.emit("remove", crudObj, function(err, data) {
             if (err) { return; }
             $("#" + itemData[config.options.id]).remove();
         });
@@ -531,7 +665,12 @@ function List(module) {
         filter.data = {};
         filter.data[config.options.id] = ids;
 
-        self.link(config.crud['delete'], filter, function(err, data) {
+        var crudObj = {
+            t: config.options.template,
+            q: filter
+        };
+
+        self.emit("remove", crudObj, function(err, data) {
             if (err) { return; }
             $("." + selectedClass, container).remove();
         });
@@ -548,12 +687,37 @@ function List(module) {
             return;
         }
 
+        if (dataItem instanceof jQuery) {
+            dataItem = getDataItem(dataItem);
+            selectItem(dataItem);
+            return;
+        }
+
         var selectedClass = config.options.classes.selected;
 
         switch (config.options.selection) {
 
             case "single":
                 var currentItem = $("#" + dataItem[config.options.id], container);
+
+                if (!currentItem.length) {
+
+                    var crudObj = {
+                        t: config.options.template,
+                        q: query,
+                        o: options
+                    }
+
+                    return self.emit("find", crudObj, function(err, doc) {
+                        if (err) { return console.error (err); }
+                        if (!doc || !doc.length) {
+                            return console.error ("No document found");
+                        }
+                        doc = doc[0];
+                        selectItem (doc);
+                    });
+                }
+
                 if (currentItem.hasClass(selectedClass)) {
                     break;
                 }
@@ -577,6 +741,22 @@ function List(module) {
 
     function hide() {
         $(self.dom).parent().hide();
+    }
+
+    function getSelected (data) {
+
+        var $selected = $("." + config.options.classes.item + "." + config.options.classes.selected, self.dom);
+
+        if (!data) {
+            return $selected;
+        }
+
+        var selectedData = [];
+        $selected.each(function () {
+            selectedData.push($(this).data("dataItem"));
+        });
+
+        return selectedData;
     }
 
       //////////////////////////////
@@ -609,33 +789,76 @@ function List(module) {
         pagination.dom.pages = [];
     }
 
-    return {
+    function setTemplate (template) {
+        config.options.template = template.toString();
+    }
+
+    var moduleMethods = {
         init: init,
         read: read,
+
+        renderItemsFromResult: renderItemsFromResult,
+
         createItem: createItem,
+        updateItem: updateItem,
         removeItem: removeItem,
+
         removeSelected: removeSelected,
+
         deselect: deselect,
         selectItem: selectItem,
+        getSelected: getSelected,
+
         goToNextPage: goToNextPage,
         goToPrevPage: goToPrevPage,
         showPage: showPage,
         emptyPagination: emptyPagination,
+
+        setTemplate: setTemplate,
+
         show: show,
         hide: hide
     };
+
+    // create listen interface and attach functions to self
+    for (var meth in moduleMethods) {
+        if (!moduleMethods.hasOwnProperty(meth)) continue;
+        (function (method) {
+            module[method] = moduleMethods[method];
+            module.on(method, function () {
+
+                var args = Array.prototype.slice.call(arguments, 0);
+                var callback = args[args.length - 1];
+
+                var argsWithoutCallback = [];
+                for (var i = 0; i < args.length; ++i) {
+                    if (typeof args[i] === "function") continue;
+                    argsWithoutCallback.push(args[i]);
+                }
+
+                var result = moduleMethods[method].apply(this, argsWithoutCallback);
+
+                if (typeof callback === "function") {
+                    callback(result);
+                }
+            });
+        })(meth);
+    }
+
+    return moduleMethods;
 }
 
 module.exports = function (module, config) {
 
     var list = new List(module);
 
-    for (var i in list) {
-        list[i] = module[i] || list[i];
+    for (var key in list) {
+        if (!list.hasOwnProperty(key)) continue;
+        list[key] = module[key] || list[key];
     }
 
     list = Object.extend(list, module);
     list.init(config);
 
     return list;
-}
+};

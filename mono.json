@@ -1,22 +1,10 @@
 {
     "source": "github",
     "owner": "jillix",
-    "name": "bind-list",
+    "name": "bind-list-crud",
     "dependencies": [
         "/main.js",
         "/list.js",
-        "/waiter.js",
-        "github/jillix/bind/v0.2.1",
-        "github/jillix/events/v0.1.8"
     ],
-    "operations": [
-        { "file": "operations.js", "function": "create" },
-        { "file": "operations.js", "function": "read" },
-        { "file": "operations.js", "function": "update" },
-        { "file": "operations.js", "function": "remove" },
-        { "file": "operations.js", "function": "getPages" }
-    ],
-    "templates": {
-        "List with pagination": "templates/list_with_pagination"
-    }
+    "operations": []
 }
