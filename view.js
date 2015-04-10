@@ -169,7 +169,7 @@ function default_escape_fn (data, key, dont_escape_html, leaveKeys) {
     str = key.indexOf('.') > 0 ? engine.path(key, data) : data[key];
 
     // if str is null or undefined
-    str = str == null ? (leaveKeys ? key : '') : str;
+    str = str == null ? (leaveKeys ? '{' + key + '}' : '') : str;
 
     // render a nested view
     if (typeof str === 'object' && this.nested && this._.view[this.nested[key]]) {
