@@ -1,5 +1,5 @@
 var $ = require("/libs/jquery");
-var Mustache = require("./mustache").bind(exports);
+var Mustache = require("./mustache/index").bind(exports);
 
 exports.init = function () {
     var conf = this._config;
