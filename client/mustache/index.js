@@ -14,10 +14,9 @@ module.exports = function (str, data, lang) {
     var fieldsToReplace = getWordsBetweenCurlies(str);
     var self = this;
     fieldsToReplace.forEach(function (cField) {
-        var cField = fieldsToReplace[i];
-        var value = engine.utils.path(cField, [data, self, window]);
+        var value = engine.path(cField, [data, self, window]);
 
-        value = value[language] || value;
+        value = value[lang] || value;
         str = str.replace(
             new RegExp("{{" + cField + "}}", "g"),
             value
