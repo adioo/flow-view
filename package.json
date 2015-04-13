@@ -2,7 +2,6 @@
   "name": "engine-list",
   "version": "1.0.0",
   "description": "Generate data lists via Engine.",
-  "main": "./client/index.js",
   "components": {
     "scripts": [
       "client/index.js",
