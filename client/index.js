@@ -70,5 +70,5 @@ exports.renderOne = function (ev, data, doNotAppend) {
  * @return {undefined}
  */
 exports.empty = function (ev, data) {
-    self.ui.container.empty();
+    this.ui.container.empty();
 };
