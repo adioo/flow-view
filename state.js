@@ -32,7 +32,8 @@ exports.state = function (event, data) {
             }
 
             // manipulate classes
-            manipulateClasses((this.tmpl.to || document).querySelectorAll(selector), state);
+            selector = typeof selector !== 'string' ? selector : (this.tmpl.to || document).querySelectorAll(selector);
+            manipulateClasses(selector, state);
         }
     }
 };
@@ -45,6 +46,10 @@ exports.state = function (event, data) {
  * @param {object} The data object.
 */
 function manipulateClasses (elms, state) {
+
+    if (!(elms instanceof NodeList)) {
+      elms = [elms];
+    }
 
     // manipulate classes
     for (var i = 0; i < elms.length; ++i) {
