@@ -2,6 +2,7 @@
 var engine = E;
 var state = require('./state');
 
+var default_element_name = 'element';
 var template_escape = {"\\": "\\\\", "\n": "\\n", "\r": "\\r", "'": "\\'"};
 var render_escape = {'&': '&amp;', '"': '&quot;', '<': '&lt;', '>': '&gt;'};
 
@@ -29,7 +30,10 @@ exports.init = function () {
             'to': tmpl.to,
             'e': tmpl.dontEscape,
             'k': tmpl.leaveKeys,
-            'f': default_escape_fn
+            'f': default_escape_fn,
+            '_elmName': tmpl.element || default_element_name,
+            'element': '[data-' + (tmpl.element || default_element_name) + ']',
+            'elements': {}
         };
 
         // add page selector to template
@@ -130,6 +134,14 @@ exports.render = function (event, data) {
     // render html
     if (!dontAppend && template.to) {
         template.to.innerHTML = template.html;
+        
+        // get available elements
+        var elements = template.to.querySelectorAll(template.element);
+        if (elements.length) {
+            for (var e = 0, l = elements.length; e < l; ++e) {
+                template.elements[elements[e].dataset[template._elmName]] = elements[e];
+            }
+        }
     }
 
     // append dom events
@@ -233,7 +245,30 @@ function setupDomEventFlow (module_instance) {
 
     for (var i = 0, flow; i < module_instance._extFlow.length; ++i) {
         flow = module_instance._extFlow[i];
-
+        
+        // handle element config
+        if (flow.element && module_instance.tmpl.elements[flow.element]) {
+            var element = module_instance.tmpl.elements[flow.element];
+            element.addEventListener(
+                flow['in'],
+                engine.flow(
+                    module_instance,
+                    flow.out,
+                    {
+                        handler: domEventAdapter,
+                        data: {
+                            scope: module_instance.tmpl.to,
+                            data: data[0],
+                            elms: [element],
+                            dontPrevent: flow.dontPrevent
+                        }
+                    }
+                )
+            );
+            
+            continue;
+        }
+        
         // overwrite scope with the document
         if (flow.scope === 'global') {
             scope = [document];

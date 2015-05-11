@@ -8,14 +8,16 @@
 exports.state = function (event, data) {
 
     // check if state exists
-    if (this.states[data.name]) {
+    if (this.tmpl && this.states[data.name]) {
 
         // activate state elements
-        for (var i = 0, state, selector; i < this.states[data.name].length; ++i) {
+        for (var i = 0, state, selector, element; i < this.states[data.name].length; ++i) {
             state = this.states[data.name][i];
+            element = this.tmpl.elements[data.element || state.element];
+            selector = state.sel || data.selector;
 
             // get dynamic or static selector
-            if (!(selector = state.sel || data.selector) || !this.tmpl) {
+            if (!element && !selector) {
 
                 // retrun if no selector is found
                 return;
@@ -33,7 +35,7 @@ exports.state = function (event, data) {
 
             // manipulate classes
             selector = typeof selector !== 'string' ? selector : (this.tmpl.to || document).querySelectorAll(selector);
-            manipulateClasses(selector, state);
+            manipulateClasses(element || selector, state);
         }
     }
 };
