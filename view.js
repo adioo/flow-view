@@ -2,6 +2,7 @@
 var engine = E;
 var state = require('./state');
 
+var default_element_name = 'element';
 var template_escape = {"\\": "\\\\", "\n": "\\n", "\r": "\\r", "'": "\\'"};
 var render_escape = {'&': '&amp;', '"': '&quot;', '<': '&lt;', '>': '&gt;'};
 
@@ -30,7 +31,8 @@ exports.init = function () {
             'e': tmpl.dontEscape,
             'k': tmpl.leaveKeys,
             'f': default_escape_fn,
-            'element': '[' + (tmpl.element || 'data-element') + ']'
+            '_elmName': tmpl.element || default_element_name,
+            'element': '[data-' + (tmpl.element || default_element_name) + ']'
         };
 
         // add page selector to template
@@ -137,7 +139,7 @@ exports.render = function (event, data) {
         if (elements.length) {
             template.elements = {};
             for (var e = 0, l = elements.length; e < l; ++e) {
-                template.elements[elements[e].dataset.element] = elements[e];
+                template.elements[elements[e].dataset[template._elmName]] = elements[e];
             }
         }
     }
