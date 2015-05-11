@@ -32,7 +32,8 @@ exports.init = function () {
             'k': tmpl.leaveKeys,
             'f': default_escape_fn,
             '_elmName': tmpl.element || default_element_name,
-            'element': '[data-' + (tmpl.element || default_element_name) + ']'
+            'element': '[data-' + (tmpl.element || default_element_name) + ']',
+            'elements': {}
         };
 
         // add page selector to template
@@ -137,7 +138,6 @@ exports.render = function (event, data) {
         // get available elements
         var elements = template.to.querySelectorAll(template.element);
         if (elements.length) {
-            template.elements = {};
             for (var e = 0, l = elements.length; e < l; ++e) {
                 template.elements[elements[e].dataset[template._elmName]] = elements[e];
             }
