@@ -33,6 +33,14 @@ Example:
     }
 }
 ```
+####extFlow
+```json
+{
+    "in": "click",
+    "element": "myElement",
+    "out": [{}]
+}
+```
 ####Flow (out) usage
 ```js
 engine.flow([
