@@ -29,7 +29,8 @@ exports.init = function () {
             'to': tmpl.to,
             'e': tmpl.dontEscape,
             'k': tmpl.leaveKeys,
-            'f': default_escape_fn
+            'f': default_escape_fn,
+            'element': '[' + (tmpl.element || 'data-element') + ']'
         };
 
         // add page selector to template
@@ -130,6 +131,15 @@ exports.render = function (event, data) {
     // render html
     if (!dontAppend && template.to) {
         template.to.innerHTML = template.html;
+        
+        // get available elements
+        var elements = template.to.querySelectorAll(template.element);
+        if (elements.length) {
+            template.elements = {};
+            for (var e = 0, l = elements.length; e < l; ++e) {
+                template.elements[elements[e].dataset.element] = elements[e];
+            }
+        }
     }
 
     // append dom events
@@ -233,7 +243,27 @@ function setupDomEventFlow (module_instance) {
 
     for (var i = 0, flow; i < module_instance._extFlow.length; ++i) {
         flow = module_instance._extFlow[i];
-
+        
+        // handle element config
+        /*if (flow.element && module_instance.tmpl[flow.element]) {
+            module_instance.tmpl[flow.element].addEventListener(
+                flow['in'],
+                engine.flow(
+                    module_instance,
+                    flow.out,
+                    {
+                        handler: domEventAdapter,
+                        data: {
+                            scope: scope[s],
+                            data: data[s],
+                            elms: elms,
+                            dontPrevent: flow.dontPrevent
+                        }
+                    }
+                )
+            );
+        }*/
+        
         // overwrite scope with the document
         if (flow.scope === 'global') {
             scope = [document];
