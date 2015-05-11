@@ -247,8 +247,9 @@ function setupDomEventFlow (module_instance) {
         flow = module_instance._extFlow[i];
         
         // handle element config
-        /*if (flow.element && module_instance.tmpl[flow.element]) {
-            module_instance.tmpl[flow.element].addEventListener(
+        if (flow.element && module_instance.tmpl.elements[flow.element]) {
+            var element = module_instance.tmpl.elements[flow.element];
+            element.addEventListener(
                 flow['in'],
                 engine.flow(
                     module_instance,
@@ -256,15 +257,17 @@ function setupDomEventFlow (module_instance) {
                     {
                         handler: domEventAdapter,
                         data: {
-                            scope: scope[s],
-                            data: data[s],
-                            elms: elms,
+                            scope: module_instance.tmpl.to,
+                            data: data[0],
+                            elms: [element],
                             dontPrevent: flow.dontPrevent
                         }
                     }
                 )
             );
-        }*/
+            
+            continue;
+        }
         
         // overwrite scope with the document
         if (flow.scope === 'global') {
