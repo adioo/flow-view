@@ -10,7 +10,7 @@ A HTML and CSS renderer for jillix/engine.
         "html": "/file.html",
         "render": true,
         "pages": true,
-        "element: "customDataAttribute"
+        "element": "customDataAttribute"
     },
     "states": {
         "stateA": [{
