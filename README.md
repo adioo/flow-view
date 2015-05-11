@@ -1,5 +1,5 @@
 # view
-A HTML and CSS renderer for jillix/engine.
+A HTML renderer for jillix/engine.
 
 ####Client config example
 ```json
@@ -27,7 +27,7 @@ Example:
 ```json
 {
     "name": "my_view_module_instance",
-    "module": "",
+    "module": "view",
     "client": {
         "markup": ["/file.html"]
     }
