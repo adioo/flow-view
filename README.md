@@ -70,7 +70,7 @@ engine.flow([
 ```
 ####HTML data attribute
 ```html
-<div data-element="myIdentifier"></div>
+<div data-element="myElement"></div>
 ```
 ####Public mehtods
 * render (render data to a template)
