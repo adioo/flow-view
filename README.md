@@ -9,7 +9,8 @@ A HTML and CSS renderer for jillix/engine.
         "to": "#selector",
         "html": "/file.html",
         "render": true,
-        "pages": true
+        "pages": true,
+        "element: "customDataAttribute"
     },
     "states": {
         "stateA": [{
@@ -45,7 +46,9 @@ engine.flow([
             // don't hide page elements
             "noPaging": true,
             // dynamic selector
-            "selector": "#mainMenu-{_path.0}"
+            "selector": "#mainMenu-{_path.0}",
+            // element selector
+            "element": "myElement"
         }
     },
     {
@@ -64,6 +67,10 @@ engine.flow([
         }
     }
 ]);
+```
+####HTML data attribute
+```html
+<div data-element="myIdentifier"></div>
 ```
 ####Public mehtods
 * render (render data to a template)
