@@ -5,7 +5,7 @@
  * @param {object} The event object.
  * @param {object} The data object.
 */
-exports.state = function (event, data) {
+exports.state = function activateState (event, data) {
 
     // check if state exists
     if (this.tmpl && this.states[data.name]) {
@@ -31,6 +31,13 @@ exports.state = function (event, data) {
                   (this.tmpl.to || document).querySelectorAll('.' + this.tmpl.page),
                   {add: ['hide']}
                 );
+            }
+            
+            // call other states
+            if (state.states) {
+                for (var s = 0, l = state.states.length; i < l; ++i) {
+                    activateState.call(this, event, {name: state.states[i]});
+                }
             }
 
             // manipulate classes

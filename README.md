@@ -15,6 +15,8 @@ A HTML renderer for jillix/engine.
     "states": {
         "stateA": [{
             "sel": "#new",
+            "element": "myElement",
+            "states": ["stateB"],
             "rm": ["className"],
             "add": ["className"],
             "toggle": ["className"]
