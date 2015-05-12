@@ -35,15 +35,16 @@ Example:
     }
 }
 ```
-####extFlow
+####`extFlow` config
 ```json
 {
     "in": "click",
+    "selector": "#element",
     "element": "myElement",
     "out": [{}]
 }
 ```
-####Flow (out) usage
+####`flow` (out) usage
 ```js
 engine.flow([
     {
