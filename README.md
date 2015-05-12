@@ -24,8 +24,7 @@ A HTML renderer for jillix/engine.
     }
 }
 ```
-Don't forget to load the HTML files in the module instance config.
-Example:
+Don't forget to load the HTML files in the module instance config:
 ```json
 {
     "name": "my_view_module_instance",
