@@ -1,5 +1,3 @@
-
-var engine = E;
 var state = require('./state');
 
 var default_element_name = 'element';
@@ -41,20 +39,12 @@ exports.init = function () {
             self.tmpl.page = '_page_' + self._name;
         }
 
-        // get data handler methods
-        self.tmpl.handlers = {};
-        if (tmpl.on) {
-            for (var name in tmpl.on) {
-                self.tmpl.handlers[name] = engine.path(tmpl.on[name], self);
-            }
-        }
-
         // create template function
-        self.tmpl.render = createTemplate(engine.htmls[tmpl.html]);
+        self.tmpl.render = createTemplate(engine.markup[tmpl.html]);
 
         // auto render template
         if (tmpl.render) {
-            self.render({});
+            self.render(null, {});
         }
     }
 
@@ -69,7 +59,7 @@ exports.init = function () {
             self.states[stateName] = self._config.states[stateName];
         }
     }
-}
+};
 
 /**
  * Render data to the HTML template.
@@ -78,7 +68,7 @@ exports.init = function () {
  * @param {object} The event object.
  * @param {object} The data object.
 */
-exports.render = function (event, data) {
+exports.render = function (err, data) {
 
     data = data || {};
 
@@ -112,18 +102,8 @@ exports.render = function (event, data) {
             data[i].page = template.page;
         }
 
-        // change data before it gets rendered to the html
-        if (typeof template.handlers.data === 'function') {
-            data[i] = template.handlers.data.call(self, data[i]);
-        }
-
         // create html
         template.html += template.render(data[i], dontEscape, leaveKeys);
-    }
-
-    // change html before writing it to the dom
-    if (typeof template.handlers.html === 'function') {
-        template.html = template.handlers.html(template.html);
     }
 
     // get dom parent
@@ -145,22 +125,9 @@ exports.render = function (event, data) {
     }
 
     // append dom events
-    if (self._extFlow) {
+    if (self._config && self._config.flow) {
         setupDomEventFlow(self);
     }
-
-    // change html before writing it to the dom
-    if (typeof template.handlers.done === 'function') {
-        template.handlers.done(self);
-    }
-
-    /**
-     * This event is emitted, after successfull rendering.
-     *
-     * @event jillix/layout#renderDone
-     * @type {object}
-     */
-    self.emit('renderDone', event, data);
 };
 
 /**
@@ -181,7 +148,7 @@ function default_escape_fn (data, key, dont_escape_html, leaveKeys) {
     str = key.indexOf('.') > 0 ? engine.path(key, data) : data[key];
 
     // if str is null or undefined
-    str = str == null ? (leaveKeys ? '{' + key + '}' : '') : str;
+    str = str === null ? (leaveKeys ? '{' + key + '}' : '') : str;
 
     // render a nested view
     if (typeof str === 'object' && this.nested && this._.view[this.nested[key]]) {
@@ -232,78 +199,71 @@ function createTemplate (tmpl) {
  * @private
  * @param {object} The moule instnace.
 */
-function setupDomEventFlow (module_instance) {
+function setupDomEventFlow (instance) {
+    
+    if (!instance._config || !instance._config.flow) {
+        return;
+    }
 
-    var domScope = module_instance.tmpl.to;
-    var data = module_instance.tmpl.data;
+    var domScope = instance.tmpl.to;
+    var data = instance.tmpl.data;
     var scope = [domScope];
+    var flows = instance._config.flow;
 
     // set children as scope if there is more then one data item
     if (domScope && data.length > 1 && domScope.children) {
         scope = domScope.children;
     }
 
-    for (var i = 0, flow; i < module_instance._extFlow.length; ++i) {
-        flow = module_instance._extFlow[i];
+    for (var i = 0, l = flows.length, flow, stream; i < l; ++i) {
+        flow = flows[i];
+        
+        // create event stream
+        stream = instance.flow(flow, {
+            scope: scope,
+            renderData: data,
+            dontPrevent: flow.dontPrevent,
+            _write: domEventAdapter
+        });
         
         // handle element config
-        if (flow.element && module_instance.tmpl.elements[flow.element]) {
-            var element = module_instance.tmpl.elements[flow.element];
-            element.addEventListener(
-                flow['in'],
-                engine.flow(
-                    module_instance,
-                    flow.out,
-                    {
-                        handler: domEventAdapter,
-                        data: {
-                            scope: module_instance.tmpl.to,
-                            data: data[0],
-                            elms: [element],
-                            dontPrevent: flow.dontPrevent
-                        }
-                    }
-                )
-            );
-            
-            continue;
-        }
+        if (flow.element && instance.tmpl.elements[flow.element]) {
+            var element = instance.tmpl.elements[flow.element];
+            element.addEventListener(flow.on, domEventListenerClosure(stream, [element], data[0]));
         
-        // overwrite scope with the document
-        if (flow.scope === 'global') {
-            scope = [document];
-        }
-
-        // overwrite scope with parent
-        if (flow.scope === 'parent') {
-            scope = [domScope];
-        }
-
-        for (var s = 0, elms; s < scope.length; ++s) {
-            elms = flow.selector === '.' ? [scope[s]] : scope[s].querySelectorAll(flow.selector);
-            if (elms) {
-                for (var e = 0; e < elms.length; ++e) {
-
-                    elms[e].addEventListener(
-                        flow['in'],
-                        engine.flow(
-                            module_instance,
-                            flow.out,
-                            {
-                                handler: domEventAdapter,
-                                data: {
-                                    scope: scope[s],
-                                    data: data[s],
-                                    elms: elms,
-                                    dontPrevent: flow.dontPrevent
-                                }
-                            }
-                        )
-                    );
+        // handle selector config
+        } else {
+        
+            // overwrite scope with the document
+            if (flow.scope === 'global') {
+                stream.scope = [document];
+            }
+    
+            // overwrite scope with parent
+            if (flow.scope === 'parent') {
+                stream.scope = [domScope];
+            }
+    
+            for (var s = 0, elms; s < scope.length; ++s) {
+                elms = flow.selector === '.' ? [scope[s]] : scope[s].querySelectorAll(flow.selector);
+                if (elms) {
+                    for (var e = 0; e < elms.length; ++e) {
+                        elms[e].addEventListener(flow.on, domEventListenerClosure(stream, elms, data[s]));
+                    }
                 }
             }
         }
     }
+}
+
+function domEventListenerClosure (stream, elms, item) {
+    return function (event) {
+        stream.write(null, {
+            event: event,
+            elms: elms,
+            item: item
+        });
+    };
 }
 
 /**
@@ -314,19 +274,20 @@ function setupDomEventFlow (module_instance) {
  * @param {object} The event object.
  * @param {object} The DOM data.
  */
-function domEventAdapter (event, domContext) {
-
+function domEventAdapter (err, data) {
+    
+    data = data || {};
+    
     // add dom scope to event
-    event._scope = event._scope || domContext.scope;
+    data.scope = data.scope || this.scope;
 
     // dont prevent default browser actions
-    if (!domContext.dontPrevent) {
+    if (!this.dontPrevent) {
         event.preventDefault();
     }
 
-    // add found elements to event
-    event._elms = domContext.elms;
-
     // add index of found elements
-    event._item = event._item || domContext.data;
+    data.data = data.data || this.renderData;
+    
+    return data;
 }
