@@ -1,6 +1,6 @@
 {
     "name": "view",
-    "version": "v0.1.0",
+    "version": "0.1.0",
     "description": "Render HTML templates",
     "repository": {
         "type": "git",
@@ -15,10 +15,12 @@
         "url": "https://github.com/adioo/view/issues"
     },
     "homepage": "https://github.com/adioo/view",
-    "components": {
-        "scripts": [
-            "view.js",
-            "state.js"
-        ]
+    "composition": {
+        "client": {
+            "module": [
+                "view.js",
+                "state.js"
+            ]
+        }
     }
 }
