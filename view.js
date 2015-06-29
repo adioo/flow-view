@@ -80,11 +80,7 @@ exports.render = function (err, renderObj) {
 
     var self = this;
     self._config = self._config || {};
-
-    // normalize the data object
-    if (!renderObj || !renderObj.data) {
-        renderObj = { data: {} };
-    }
+    renderObj = renderObj || {};
 
     // the template must exist
     var template = self.templates[renderObj.template || self._config.defaultTemplate];
@@ -92,9 +88,10 @@ exports.render = function (err, renderObj) {
         return;
     }
 
-    var dontEscape = renderObj.dontEscape;
-    var leaveKeys = renderObj.leaveKeys;
-    var insertPosition = renderObj.insertPosition || template.insertPosition || 'afterend';
+    var dontEscape = !!renderObj.dontEscape;
+    var leaveKeys = !!renderObj.leaveKeys;
+    var clearList = !!renderObj.clear;
+    var insertPosition = renderObj.position || template.position || 'beforeend';
 
     // prepare render data
     template.data = renderObj.data;
@@ -114,6 +111,13 @@ exports.render = function (err, renderObj) {
 
     // render html
     if (template.to) {
+        if (clearList) {
+            template.to.innerHTML = '';
+            if (!renderObj.data) {
+                return;
+            }
+        }
+
         // append dom events
         if (!self._config.flow) {
             template.to.insertAdjacentHTML(insertPosition, template.html);
@@ -152,7 +156,7 @@ function default_escape_fn (data, key, dont_escape_html, leaveKeys) {
     leaveKeys = leaveKeys || this.k;
 
     // get the string value
-    str = key.indexOf('.') > 0 ? engine.path(key, data) : data[key];
+    str = key.indexOf('.') > 0 ? engine.path(key, data) : (data[key] || null);
 
     // if str is null or undefined
     str = str === null ? (leaveKeys ? '{' + key + '}' : '') : str;
