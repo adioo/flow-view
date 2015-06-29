@@ -19,32 +19,40 @@ exports.init = function () {
         document.title = self._config.title;
     }
 
+    this.templates = {};
+
     // create and render the template
-    if (self._config.template) {
+    if (self._config.templates) {
 
-        var tmpl = self._config.template;
+        var tmpl;
 
-        self.tmpl = {
-            'to': tmpl.to,
-            'e': tmpl.dontEscape,
-            'k': tmpl.leaveKeys,
-            'f': default_escape_fn,
-            '_elmName': tmpl.element || default_element_name,
-            'element': '[data-' + (tmpl.element || default_element_name) + ']',
-            'elements': {}
-        };
+        for (var tmplKey in self._config.templates) {
+            tmpl = self._config.templates[tmplKey];
 
-        // add page selector to template
-        if (tmpl.pages) {
-            self.tmpl.page = '_page_' + self._name;
-        }
+            self.templates[tmplKey] = {
+                'to': tmpl.to,
+                'e': tmpl.dontEscape,
+                'k': tmpl.leaveKeys,
+                'f': default_escape_fn,
+                '_elmName': tmpl.element || default_element_name,
+                'element': '[data-' + (tmpl.element || default_element_name) + ']',
+                'elements': {}
+            };
 
-        // create template function
-        self.tmpl.render = createTemplate(engine.markup[tmpl.html]);
+            // add page selector to template
+            if (tmpl.pages) {
+                self.templates[tmplKey].pages.page = '_page_' + self._name;
+            }
 
-        // auto render template
-        if (tmpl.render) {
-            self.render(null, {});
+            // create template function
+            if (engine.markup[tmpl.html]) {
+                self.templates[tmplKey].render = createTemplate(engine.markup[tmpl.html]);
+            }
+
+            // auto render template
+            if (tmpl.render) {
+                self.render(null, { template: tmplKey, data: {} });
+            }
         }
     }
 
@@ -68,43 +76,36 @@ exports.init = function () {
  * @param {object} The event object.
  * @param {object} The data object.
 */
-exports.render = function (err, data) {
-
-    data = data || {};
+exports.render = function (err, renderObj) {
 
     var self = this;
-    var dontEscape = data.dontEscape;
-    var leaveKeys = data.leaveKeys;
-    var dontAppend = data.dontAppend;
-    var template;
+    self._config = self._config || {};
 
-    // check if template exists
-    if (!(template = self.tmpl)) {
+    // normalize the data object
+    if (!renderObj || !renderObj.data) {
+        renderObj = { data: {} };
+    }
+
+    // the template must exist
+    var template = self.templates[renderObj.template || self._config.defaultTemplate];
+    if (!template) {
         return;
     }
 
-    // preare render data
-    template.data = data = data.data || [{}];
+    var dontEscape = renderObj.dontEscape;
+    var leaveKeys = renderObj.leaveKeys;
+    var insertPosition = renderObj.insertPosition || template.insertPosition || 'afterend';
 
-    // push a single item to an array
-    if (!(data instanceof Array)) {
-        data = [data];
+    // prepare render data
+    template.data = renderObj.data;
+
+    // render page class name
+    if (template.page) {
+        template.data.page = template.page;
     }
 
-    // reset html
-    template.html = '';
-
-    // render data
-    for (var i = 0, rData; i < data.length; ++i) {
-
-        // render page class name
-        if (template.page) {
-            data[i].page = template.page;
-        }
-
-        // create html
-        template.html += template.render(data[i], dontEscape, leaveKeys);
-    }
+    // create html
+    template.html = template.render(renderObj.data, dontEscape, leaveKeys);
 
     // get dom parent
     if (typeof template.to === 'string') {
@@ -112,21 +113,27 @@ exports.render = function (err, data) {
     }
 
     // render html
-    if (!dontAppend && template.to) {
-        template.to.innerHTML = template.html;
-        
-        // get available elements
-        var elements = template.to.querySelectorAll(template.element);
-        if (elements.length) {
-            for (var e = 0, l = elements.length; e < l; ++e) {
-                template.elements[elements[e].dataset[template._elmName]] = elements[e];
-            }
-        }
-    }
+    if (template.to) {
+        // append dom events
+        if (!self._config.flow) {
+            template.to.insertAdjacentHTML(insertPosition, template.html);
+        } else {
+            // TODO consider insertPosition
+            var toContent = template.to.innerHTML + template.html;
+            template.to.innerHTML = toContent;
 
-    // append dom events
-    if (self._config && self._config.flow) {
-        setupDomEventFlow(self);
+            if (template.element) {
+                // get available elements
+                var elements = template.to.querySelectorAll(template.element);
+                if (elements.length) {
+                    for (var e = 0, l = elements.length; e < l; ++e) {
+                        template.elements[elements[e].dataset[template._elmName]] = elements[e];
+                    }
+                }
+            }
+
+            setupDomEventFlow.call(self, template);
+        }
     }
 };
 
@@ -199,16 +206,18 @@ function createTemplate (tmpl) {
  * @private
  * @param {object} The moule instnace.
 */
-function setupDomEventFlow (instance) {
+function setupDomEventFlow (template) {
+
+    var self = this;
     
-    if (!instance._config || !instance._config.flow) {
+    if (!self._config || !self._config.flow) {
         return;
     }
 
-    var domScope = instance.tmpl.to;
-    var data = instance.tmpl.data;
+    var domScope = template.to;
+    var data = template.data;
     var scope = [domScope];
-    var flows = instance._config.flow;
+    var flows = self._config.flow;
 
     // set children as scope if there is more then one data item
     if (domScope && data.length > 1 && domScope.children) {
@@ -219,7 +228,7 @@ function setupDomEventFlow (instance) {
         flow = flows[i];
         
         // create event stream
-        stream = instance.flow(flow, {
+        stream = self.flow(flow, {
             scope: scope,
             renderData: data,
             dontPrevent: flow.dontPrevent,
@@ -227,8 +236,8 @@ function setupDomEventFlow (instance) {
         });
         
         // handle element config
-        if (flow.element && instance.tmpl.elements[flow.element]) {
-            var element = instance.tmpl.elements[flow.element];
+        if (flow.element && template.elements[flow.element]) {
+            var element = template.elements[flow.element];
             element.addEventListener(flow.on, domEventListenerClosure(stream, [element], data[0]));
         
         // handle selector config
