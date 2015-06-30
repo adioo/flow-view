@@ -1,30 +1,46 @@
 # view
 A HTML renderer for jillix/engine.
 
-####Client config example
+#### Client config example
+
 ```json
 {
     "title": "Page title",
     "template": {
-        "to": "#selector",
-        "html": "/file.html",
-        "render": true,
-        "pages": true,
-        "element": "customDataAttribute"
+        "template_1": {
+            "to": "#selector",
+            "html": "/file_1.html",
+            "render": true,
+            "element": "customDataAttribute"
+        },
+        "template_2": {
+            "to": "#selector",
+            "html": "/file_2.html",
+            "render": false,
+            "element": "customDataAttribute"
+        }
     },
-    "states": {
-        "stateA": [{
-            "sel": "#new",
-            "element": "myElement",
-            "states": ["stateB"],
-            "rm": ["className"],
-            "add": ["className"],
-            "toggle": ["className"]
-        }]
-    }
+    "detaultTemplate": "template_2",
+    "flow": [
+        {
+            "on": "click",
+            "selector": "#my_clickable_1",
+            "call": "foo",
+            "to": "target_instance",
+            "data": ["bar", {}]
+        },
+        {
+            "on": "click",
+            "element": "clickable_2",
+            "dontPrevent": true,
+            "emit": "an_event"
+        }
+    ]
 }
 ```
+
 Don't forget to load the HTML files in the module instance config:
+
 ```json
 {
     "name": "my_view_module_instance",
@@ -34,54 +50,16 @@ Don't forget to load the HTML files in the module instance config:
     }
 }
 ```
-####`extFlow` config
-```json
-{
-    "in": "click",
-    "selector": "#element",
-    "element": "myElement",
-    "out": [{}]
-}
-```
-####`flow` (out) usage
-```js
-engine.flow([
-    {
-        // call the state method
-        "call": "state",
-        // pass static data
-        "data": {
-            // the name of the state (states.stateName)
-            "name": "stateA",
-            // don't hide page elements
-            "noPaging": true,
-            // dynamic selector
-            "selector": "#mainMenu-{_path.0}",
-            // element selector
-            "element": "myElement"
-        }
-    },
-    {
-        // call the render method
-        "call": "render",
-        // pass static data
-        "data": {
-            // the render data
-            "data": [{}],
-            // don't escape HTML chars
-            "dontEscape": false,
-            // don't append the rendered HTML to the DOM
-            "dontAppend": false,
-            // don't remove the data keys while rendering
-            "leaveKeys": false
-        }
-    }
-]);
-```
-####HTML data attribute
+
+#### HTML data attribute
+
+The `element` flow option searches for elements that have a `data-element` attribute with that value.
+
 ```html
 <div data-element="myElement"></div>
 ```
-####Public mehtods
-* render (render data to a template)
-* state (activate a state)
+
+#### Public mehtods
+
+* `render` (render data to a template)
+* `state` (activate a state)
