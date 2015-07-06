@@ -21,6 +21,16 @@ A HTML renderer for jillix/engine.
         }
     },
     "detaultTemplate": "template_2",
+    "states": {
+        "stateA": [{
+            "sel": "#new",
+            "element": "myElement",
+            "states": ["stateB"],
+            "rm": ["className"],
+            "add": ["className"],
+            "toggle": ["className"]
+        }]
+    }
     "flow": [
         {
             "on": "click",
