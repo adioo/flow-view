@@ -30,7 +30,7 @@ A HTML renderer for jillix/engine.
             "add": ["className"],
             "toggle": ["className"]
         }]
-    }
+    },
     "flow": [
         {
             "on": "click",
