@@ -14,6 +14,7 @@ exports.state = state.state;
 exports.init = function () {
     var self = this;
 
+    self._config = self._config || {};
     // set document title
     if (self._config.title) {
         document.title = self._config.title;
@@ -25,6 +26,7 @@ exports.init = function () {
     if (self._config.templates) {
 
         var tmpl;
+        self._config.defaultTemplate = self._config.defaultTemplate || Object.keys(self._config.templates)[0];
 
         for (var tmplKey in self._config.templates) {
             tmpl = self._config.templates[tmplKey];
@@ -79,8 +81,14 @@ exports.init = function () {
 exports.render = function (err, renderObj) {
 
     var self = this;
-    self._config = self._config || {};
     renderObj = renderObj || {};
+
+    // Handle streams
+    if (err && err.constructor === Object && typeof err.data === "function") {
+        return err.data(function (err, data) {
+            self.render(null, data);
+        });
+    }
 
     // the template must exist
     var template = self.templates[renderObj.template || self._config.defaultTemplate];
@@ -113,9 +121,6 @@ exports.render = function (err, renderObj) {
     if (template.to) {
         if (clearList) {
             template.to.innerHTML = '';
-            if (!renderObj.data) {
-                return;
-            }
         }
 
         // append dom events
@@ -134,6 +139,10 @@ exports.render = function (err, renderObj) {
                         template.elements[elements[e].dataset[template._elmName]] = elements[e];
                     }
                 }
+            }
+
+            if (!renderObj.data) {
+                return;
             }
 
             setupDomEventFlow.call(self, template);
