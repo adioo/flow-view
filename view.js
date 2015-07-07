@@ -110,7 +110,9 @@ exports.render = function (err, renderObj) {
     }
 
     // create html
-    template.html = template.render(renderObj.data, dontEscape, leaveKeys);
+    if (typeof template.render === "function") {
+        template.html = template.render(renderObj.data, dontEscape, leaveKeys);
+    }
 
     // get dom parent
     if (typeof template.to === 'string') {
