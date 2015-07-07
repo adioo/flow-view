@@ -131,7 +131,6 @@ function draw (err, renderObj) {
 
             var children = tmpDiv.children;
             for (var i = 0, l = children.length; i < l; ++i) {
-                console.log(children[0].tagName);
                 template.to.appendChild(document.adoptNode(children[0]));
             }
         }
