@@ -1,5 +1,3 @@
-
-var engine = E;
 var state = require('./state');
 
 var default_element_name = 'element';
@@ -16,45 +14,47 @@ exports.state = state.state;
 exports.init = function () {
     var self = this;
 
+    self._config = self._config || {};
     // set document title
     if (self._config.title) {
         document.title = self._config.title;
     }
 
+    this.templates = {};
+
     // create and render the template
-    if (self._config.template) {
+    if (self._config.templates) {
 
-        var tmpl = self._config.template;
+        var tmpl;
+        self._config.defaultTemplate = self._config.defaultTemplate || Object.keys(self._config.templates)[0];
 
-        self.tmpl = {
-            'to': tmpl.to,
-            'e': tmpl.dontEscape,
-            'k': tmpl.leaveKeys,
-            'f': default_escape_fn,
-            '_elmName': tmpl.element || default_element_name,
-            'element': '[data-' + (tmpl.element || default_element_name) + ']',
-            'elements': {}
-        };
+        for (var tmplKey in self._config.templates) {
+            tmpl = self._config.templates[tmplKey];
 
-        // add page selector to template
-        if (tmpl.pages) {
-            self.tmpl.page = '_page_' + self._name;
-        }
+            self.templates[tmplKey] = {
+                'to': tmpl.to,
+                'e': tmpl.dontEscape,
+                'k': tmpl.leaveKeys,
+                'f': default_escape_fn,
+                '_elmName': tmpl.element || default_element_name,
+                'element': '[data-' + (tmpl.element || default_element_name) + ']',
+                'elements': {}
+            };
 
-        // get data handler methods
-        self.tmpl.handlers = {};
-        if (tmpl.on) {
-            for (var name in tmpl.on) {
-                self.tmpl.handlers[name] = engine.path(tmpl.on[name], self);
+            // add page selector to template
+            if (tmpl.pages) {
+                self.templates[tmplKey].pages.page = '_page_' + self._name;
             }
-        }
 
-        // create template function
-        self.tmpl.render = createTemplate(engine.htmls[tmpl.html]);
+            // create template function
+            if (engine.markup[tmpl.html]) {
+                self.templates[tmplKey].render = createTemplate(engine.markup[tmpl.html]);
+            }
 
-        // auto render template
-        if (tmpl.render) {
-            self.render({});
+            // auto render template
+            if (tmpl.render) {
+                draw.call(self, null, { template: tmplKey, data: {} });
+            }
         }
     }
 
@@ -69,6 +69,72 @@ exports.init = function () {
             self.states[stateName] = self._config.states[stateName];
         }
     }
+};
+
+function draw (err, renderObj) {
+
+    var self = this;
+    renderObj = renderObj || {};
+
+    // the template must exist
+    var template = self.templates[renderObj.template || self._config.defaultTemplate];
+    if (!template) {
+        return;
+    }
+
+    var dontEscape = !!renderObj.dontEscape;
+    var leaveKeys = !!renderObj.leaveKeys;
+    var clearList = !!renderObj.clear;
+    var insertPosition = renderObj.position || template.position || 'beforeend';
+
+    // prepare render data
+    template.data = renderObj.data;
+
+    // render page class name
+    if (template.page) {
+        template.data.page = template.page;
+    }
+
+    // create html
+    template.html = template.render(renderObj.data, dontEscape, leaveKeys);
+
+    // get dom parent
+    if (typeof template.to === 'string') {
+        template.to = document.querySelector(template.to);
+    }
+
+    // render html
+    if (template.to) {
+        if (clearList) {
+            template.to.innerHTML = '';
+        }
+
+        // append dom events
+        if (!self._config.flow) {
+            template.to.insertAdjacentHTML(insertPosition, template.html);
+        } else {
+            var tmpDiv = document.createElement('div');
+            tmpDiv.innerHTML = template.html;
+
+            // TODO
+            //if (template.element) {
+            //    // get available elements
+            //    var elements = template.to.querySelectorAll(template.element);
+            //    if (elements.length) {
+            //        for (var e = 0, l = elements.length; e < l; ++e) {
+            //            template.elements[elements[e].dataset[template._elmName]] = elements[e];
+            //        }
+            //    }
+            //}
+
+            setupDomEventFlow.call(self, tmpDiv, renderObj.data);
+
+            var children = tmpDiv.children;
+            for (var i = 0, l = children.length; i < l; ++i) {
+                template.to.appendChild(document.adoptNode(children[0]));
+            }
+        }
+    }
 }
 
 /**
@@ -78,89 +144,8 @@ exports.init = function () {
  * @param {object} The event object.
  * @param {object} The data object.
 */
-exports.render = function (event, data) {
-
-    data = data || {};
-
-    var self = this;
-    var dontEscape = data.dontEscape;
-    var leaveKeys = data.leaveKeys;
-    var dontAppend = data.dontAppend;
-    var template;
-
-    // check if template exists
-    if (!(template = self.tmpl)) {
-        return;
-    }
-
-    // preare render data
-    template.data = data = data.data || [{}];
-
-    // push a single item to an array
-    if (!(data instanceof Array)) {
-        data = [data];
-    }
-
-    // reset html
-    template.html = '';
-
-    // render data
-    for (var i = 0, rData; i < data.length; ++i) {
-
-        // render page class name
-        if (template.page) {
-            data[i].page = template.page;
-        }
-
-        // change data before it gets rendered to the html
-        if (typeof template.handlers.data === 'function') {
-            data[i] = template.handlers.data.call(self, data[i]);
-        }
-
-        // create html
-        template.html += template.render(data[i], dontEscape, leaveKeys);
-    }
-
-    // change html before writing it to the dom
-    if (typeof template.handlers.html === 'function') {
-        template.html = template.handlers.html(template.html);
-    }
-
-    // get dom parent
-    if (typeof template.to === 'string') {
-        template.to = document.querySelector(template.to);
-    }
-
-    // render html
-    if (!dontAppend && template.to) {
-        template.to.innerHTML = template.html;
-        
-        // get available elements
-        var elements = template.to.querySelectorAll(template.element);
-        if (elements.length) {
-            for (var e = 0, l = elements.length; e < l; ++e) {
-                template.elements[elements[e].dataset[template._elmName]] = elements[e];
-            }
-        }
-    }
-
-    // append dom events
-    if (self._extFlow) {
-        setupDomEventFlow(self);
-    }
-
-    // change html before writing it to the dom
-    if (typeof template.handlers.done === 'function') {
-        template.handlers.done(self);
-    }
-
-    /**
-     * This event is emitted, after successfull rendering.
-     *
-     * @event jillix/layout#renderDone
-     * @type {object}
-     */
-    self.emit('renderDone', event, data);
+exports.render = function (stream) {
+    stream.data(draw);
 };
 
 /**
@@ -178,10 +163,10 @@ function default_escape_fn (data, key, dont_escape_html, leaveKeys) {
     leaveKeys = leaveKeys || this.k;
 
     // get the string value
-    str = key.indexOf('.') > 0 ? engine.path(key, data) : data[key];
+    str = key.indexOf('.') > 0 ? engine.path(key, data) : (data[key] || null);
 
     // if str is null or undefined
-    str = str == null ? (leaveKeys ? '{' + key + '}' : '') : str;
+    str = str === null ? (leaveKeys ? '{' + key + '}' : '') : str;
 
     // render a nested view
     if (typeof str === 'object' && this.nested && this._.view[this.nested[key]]) {
@@ -232,101 +217,54 @@ function createTemplate (tmpl) {
  * @private
  * @param {object} The moule instnace.
 */
-function setupDomEventFlow (module_instance) {
+function setupDomEventFlow (scope, data) {
 
-    var domScope = module_instance.tmpl.to;
-    var data = module_instance.tmpl.data;
-    var scope = [domScope];
+    var self = this;
 
-    // set children as scope if there is more then one data item
-    if (domScope && data.length > 1 && domScope.children) {
-        scope = domScope.children;
+    if (!self._config || !self._config.flow) {
+        return;
     }
 
-    for (var i = 0, flow; i < module_instance._extFlow.length; ++i) {
-        flow = module_instance._extFlow[i];
+    var flows = self._config.flow;
+
+    for (var i = 0, l = flows.length, flow, stream; i < l; ++i) {
+        flow = flows[i];
         
-        // handle element config
-        if (flow.element && module_instance.tmpl.elements[flow.element]) {
-            var element = module_instance.tmpl.elements[flow.element];
-            element.addEventListener(
-                flow['in'],
-                engine.flow(
-                    module_instance,
-                    flow.out,
-                    {
-                        handler: domEventAdapter,
-                        data: {
-                            scope: module_instance.tmpl.to,
-                            data: data[0],
-                            elms: [element],
-                            dontPrevent: flow.dontPrevent
-                        }
-                    }
-                )
-            );
-            
-            continue;
-        }
-        
-        // overwrite scope with the document
-        if (flow.scope === 'global') {
-            scope = [document];
-        }
+        //// handle element config
+        //if (flow.element && template.elements[flow.element]) {
+        //    var element = template.elements[flow.element];
+        //    element.addEventListener(flow.on, domEventListenerClosure(stream, [element], data[0]));
+        //
+        //// handle selector config
+        //} else {
 
-        // overwrite scope with parent
-        if (flow.scope === 'parent') {
-            scope = [domScope];
-        }
+        var elms = scope.querySelectorAll(flow.selector);
+        if (elms) {
+            // create event stream
+            stream = self.flow(flow, {
+                renderData: data,
+                dontPrevent: flow.dontPrevent
+            });
 
-        for (var s = 0, elms; s < scope.length; ++s) {
-            elms = flow.selector === '.' ? [scope[s]] : scope[s].querySelectorAll(flow.selector);
-            if (elms) {
-                for (var e = 0; e < elms.length; ++e) {
-
-                    elms[e].addEventListener(
-                        flow['in'],
-                        engine.flow(
-                            module_instance,
-                            flow.out,
-                            {
-                                handler: domEventAdapter,
-                                data: {
-                                    scope: scope[s],
-                                    data: data[s],
-                                    elms: elms,
-                                    dontPrevent: flow.dontPrevent
-                                }
-                            }
-                        )
-                    );
-                }
+            for (var e = 0; e < elms.length; ++e) {
+                elms[e].addEventListener(flow.on, domEventListenerClosure(stream, elms, data));
             }
         }
+        //}
     }
 }
 
-/**
- * Extend the event object with DOM scope, elements and the data item,
- * which was rendered with to the scope.
- *
- * @private
- * @param {object} The event object.
- * @param {object} The DOM data.
- */
-function domEventAdapter (event, domContext) {
+function domEventListenerClosure (stream, elms, data) {
+    return function (event) {
+        // dont prevent default browser actions
+        if (!stream.dontPrevent) {
+            event.preventDefault();
+        }
 
-    // add dom scope to event
-    event._scope = event._scope || domContext.scope;
-
-    // dont prevent default browser actions
-    if (!domContext.dontPrevent) {
-        event.preventDefault();
-    }
-
-    // add found elements to event
-    event._elms = domContext.elms;
-
-    // add index of found elements
-    event._item = event._item || domContext.data;
+        stream.write(null, {
+            event: event,
+            elms: elms,
+            item: data
+        });
+    };
 }
