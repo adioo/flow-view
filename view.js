@@ -141,10 +141,6 @@ exports.render = function (err, renderObj) {
                 }
             }
 
-            if (!renderObj.data) {
-                return;
-            }
-
             setupDomEventFlow.call(self, template);
         }
     }
@@ -228,7 +224,7 @@ function setupDomEventFlow (template) {
     }
 
     var domScope = template.to;
-    var data = template.data;
+    var data = template.data || [];
     var scope = [domScope];
     var flows = self._config.flow;
 
