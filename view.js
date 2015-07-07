@@ -21,7 +21,10 @@ exports.init = function () {
     }
 
     this.templates = {};
-
+    
+    // create event stream
+    this._renderedDOMStream = self.flow("renderedDOM");
+    
     // create and render the template
     if (self._config.templates) {
 
@@ -135,6 +138,9 @@ function draw (err, renderObj) {
             }
         }
     }
+    
+    // write to render done stream
+    self._renderedDOMStream.write(null, renderObj);
 }
 
 /**
