@@ -51,7 +51,7 @@ exports.init = function () {
 
             // auto render template
             if (tmpl.render) {
-                self.render(null, { template: tmplKey, data: {} });
+                draw.call(self, null, { template: tmplKey, data: {} });
             }
         }
     }
@@ -69,14 +69,7 @@ exports.init = function () {
     }
 };
 
-/**
- * Render data to the HTML template.
- *
- * @public
- * @param {object} The event object.
- * @param {object} The data object.
-*/
-exports.render = function (err, renderObj) {
+function draw (err, renderObj) {
 
     var self = this;
     self._config = self._config || {};
@@ -122,24 +115,41 @@ exports.render = function (err, renderObj) {
         if (!self._config.flow) {
             template.to.insertAdjacentHTML(insertPosition, template.html);
         } else {
-            // TODO consider insertPosition
-            var toContent = template.to.innerHTML + template.html;
-            template.to.innerHTML = toContent;
+            var tmpDiv = document.createElement('div');
+            tmpDiv.innerHTML = template.html;
 
-            if (template.element) {
-                // get available elements
-                var elements = template.to.querySelectorAll(template.element);
-                if (elements.length) {
-                    for (var e = 0, l = elements.length; e < l; ++e) {
-                        template.elements[elements[e].dataset[template._elmName]] = elements[e];
-                    }
-                }
+            // TODO
+            //if (template.element) {
+            //    // get available elements
+            //    var elements = template.to.querySelectorAll(template.element);
+            //    if (elements.length) {
+            //        for (var e = 0, l = elements.length; e < l; ++e) {
+            //            template.elements[elements[e].dataset[template._elmName]] = elements[e];
+            //        }
+            //    }
+            //}
+
+            setupDomEventFlow.call(self, tmpDiv, renderObj.data);
+
+            var children = tmpDiv.children;
+            for (var i = 0, l = children.length; i < l; ++i) {
+                console.log(children[0].tagName);
+                template.to.appendChild(document.adoptNode(children[0]));
             }
-
-            setupDomEventFlow.call(self, template);
         }
     }
 };
+
+/**
+ * Render data to the HTML template.
+ *
+ * @public
+ * @param {object} The event object.
+ * @param {object} The data object.
+*/
+exports.render = function (stream) {
+    stream.data(draw);
+}
 
 /**
  * Escape html chars.
@@ -210,97 +220,54 @@ function createTemplate (tmpl) {
  * @private
  * @param {object} The moule instnace.
 */
-function setupDomEventFlow (template) {
+function setupDomEventFlow (scope, data) {
 
     var self = this;
-    
+
     if (!self._config || !self._config.flow) {
         return;
     }
 
-    var domScope = template.to;
-    var data = template.data;
-    var scope = [domScope];
     var flows = self._config.flow;
-
-    // set children as scope if there is more then one data item
-    if (domScope && data.length > 1 && domScope.children) {
-        scope = domScope.children;
-    }
 
     for (var i = 0, l = flows.length, flow, stream; i < l; ++i) {
         flow = flows[i];
-        
-        // create event stream
-        stream = self.flow(flow, {
-            scope: scope,
-            renderData: data,
-            dontPrevent: flow.dontPrevent,
-            _write: domEventAdapter
-        });
-        
-        // handle element config
-        if (flow.element && template.elements[flow.element]) {
-            var element = template.elements[flow.element];
-            element.addEventListener(flow.on, domEventListenerClosure(stream, [element], data[0]));
-        
-        // handle selector config
-        } else {
-        
-            // overwrite scope with the document
-            if (flow.scope === 'global') {
-                stream.scope = [document];
-            }
-    
-            // overwrite scope with parent
-            if (flow.scope === 'parent') {
-                stream.scope = [domScope];
-            }
-    
-            for (var s = 0, elms; s < scope.length; ++s) {
-                elms = flow.selector === '.' ? [scope[s]] : scope[s].querySelectorAll(flow.selector);
-                if (elms) {
-                    for (var e = 0; e < elms.length; ++e) {
-                        elms[e].addEventListener(flow.on, domEventListenerClosure(stream, elms, data[s]));
-                    }
-                }
+
+        //// handle element config
+        //if (flow.element && template.elements[flow.element]) {
+        //    var element = template.elements[flow.element];
+        //    element.addEventListener(flow.on, domEventListenerClosure(stream, [element], data[0]));
+        //
+        //// handle selector config
+        //} else {
+
+        var elms = scope.querySelectorAll(flow.selector);
+        if (elms) {
+            // create event stream
+            stream = self.flow(flow, {
+                renderData: data,
+                dontPrevent: flow.dontPrevent
+            });
+
+            for (var e = 0; e < elms.length; ++e) {
+                elms[e].addEventListener(flow.on, domEventListenerClosure(stream, elms, data));
             }
         }
+        //}
     }
 }
 
-function domEventListenerClosure (stream, elms, item) {
+function domEventListenerClosure (stream, elms, data) {
     return function (event) {
+        // dont prevent default browser actions
+        if (!stream.dontPrevent) {
+            event.preventDefault();
+        }
+
         stream.write(null, {
             event: event,
             elms: elms,
-            item: item
+            item: data
         });
     };
-}
-
-/**
- * Extend the event object with DOM scope, elements and the data item,
- * which was rendered with to the scope.
- *
- * @private
- * @param {object} The event object.
- * @param {object} The DOM data.
- */
-function domEventAdapter (err, data) {
-    
-    data = data || {};
-    
-    // add dom scope to event
-    data.scope = data.scope || this.scope;
-
-    // dont prevent default browser actions
-    if (!this.dontPrevent) {
-        event.preventDefault();
-    }
-
-    // add index of found elements
-    data.data = data.data || this.renderData;
-    
-    return data;
 }
