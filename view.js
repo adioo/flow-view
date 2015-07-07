@@ -213,7 +213,7 @@ function createTemplate (tmpl) {
 function setupDomEventFlow (template) {
 
     var self = this;
-    
+
     if (!self._config || !self._config.flow) {
         return;
     }
@@ -230,7 +230,7 @@ function setupDomEventFlow (template) {
 
     for (var i = 0, l = flows.length, flow, stream; i < l; ++i) {
         flow = flows[i];
-        
+
         // create event stream
         stream = self.flow(flow, {
             scope: scope,
@@ -238,25 +238,25 @@ function setupDomEventFlow (template) {
             dontPrevent: flow.dontPrevent,
             _write: domEventAdapter
         });
-        
+
         // handle element config
         if (flow.element && template.elements[flow.element]) {
             var element = template.elements[flow.element];
             element.addEventListener(flow.on, domEventListenerClosure(stream, [element], data[0]));
-        
+
         // handle selector config
         } else {
-        
+
             // overwrite scope with the document
             if (flow.scope === 'global') {
                 stream.scope = [document];
             }
-    
+
             // overwrite scope with parent
             if (flow.scope === 'parent') {
                 stream.scope = [domScope];
             }
-    
+
             for (var s = 0, elms; s < scope.length; ++s) {
                 elms = flow.selector === '.' ? [scope[s]] : scope[s].querySelectorAll(flow.selector);
                 if (elms) {
@@ -288,9 +288,9 @@ function domEventListenerClosure (stream, elms, item) {
  * @param {object} The DOM data.
  */
 function domEventAdapter (err, data) {
-    
+
     data = data || {};
-    
+
     // add dom scope to event
     data.scope = data.scope || this.scope;
 
@@ -301,6 +301,6 @@ function domEventAdapter (err, data) {
 
     // add index of found elements
     data.data = data.data || this.renderData;
-    
+
     return data;
 }
