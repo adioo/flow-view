@@ -21,10 +21,10 @@ exports.init = function () {
     }
 
     this.templates = {};
-    
+
     // create event stream
     this._renderedDOMStream = self.flow("renderedDOM");
-    
+
     // create and render the template
     if (self._config.templates) {
 
@@ -138,7 +138,7 @@ function draw (err, renderObj) {
             }
         }
     }
-    
+
     // write to render done stream
     self._renderedDOMStream.write(null, renderObj);
 }
@@ -235,14 +235,12 @@ function setupDomEventFlow (scope, data) {
 
     for (var i = 0, l = flows.length, flow, stream; i < l; ++i) {
         flow = flows[i];
-        
-        //// handle element config
-        //if (flow.element && template.elements[flow.element]) {
-        //    var element = template.elements[flow.element];
-        //    element.addEventListener(flow.on, domEventListenerClosure(stream, [element], data[0]));
-        //
-        //// handle selector config
-        //} else {
+
+        // handle element config
+        if (flow.element) {
+            flow.selector = "[data-element='" + flow.element + "']";
+            delete flow.element;
+        }
 
         var elms = scope.querySelectorAll(flow.selector);
         if (elms) {
