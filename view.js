@@ -103,7 +103,10 @@ function draw (err, renderObj) {
 
     // get dom parent
     if (typeof template.to === 'string') {
-        template.to = document.querySelector(template.to);
+        template._to = template.to;
+    }
+    if (typeof template._to === 'string') {
+        template.to = document.querySelector(template._to);
     }
 
     // render html
