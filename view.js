@@ -15,10 +15,6 @@ exports.init = function () {
     var self = this;
 
     self._config = self._config || {};
-    // set document title
-    if (self._config.title) {
-        document.title = self._config.title;
-    }
 
     this.templates = {};
 
@@ -77,6 +73,10 @@ exports.init = function () {
 function draw (err, renderObj) {
 
     var self = this;
+    // set document title
+    if (self._config.title) {
+        document.title = self._config.title;
+    }
     renderObj = renderObj || {};
 
     // the template must exist
