@@ -248,7 +248,7 @@ function setupDomEventFlow (scope, data) {
         var elms = scope.querySelectorAll(flow.selector);
         if (elms) {
             // create event stream
-            stream = self.flow(flow, {
+            stream = self.flow(flow.flow, {
                 renderData: data,
                 dontPrevent: flow.dontPrevent
             });
