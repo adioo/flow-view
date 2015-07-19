@@ -35,15 +35,11 @@ A HTML renderer for jillix/engine.
         {
             "on": "click",
             "selector": "#my_clickable_1",
-            "call": "foo",
-            "to": "target_instance",
-            "data": ["bar", {}]
-        },
-        {
-            "on": "click",
-            "element": "clickable_2",
             "dontPrevent": true,
-            "emit": "an_event"
+            "flow": [
+                [":transform", {}]
+		"target_instance/foo"
+            ]
         }
     ]
 }
