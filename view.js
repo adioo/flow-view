@@ -154,7 +154,7 @@ function draw (err, renderObj) {
  * @param {object} The data object.
 */
 exports.render = function (stream) {
-    stream.data(draw);
+    stream.data(draw, this);
 };
 
 /**
