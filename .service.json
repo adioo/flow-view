@@ -1,10 +1,10 @@
 {
     "client": {
-        "methods": {
+        "streamHandlers": {
             "state": {},
             "render": {}
         },
-        "emits": {
+        "streams": {
             "renderDone": {}
         }
     }
