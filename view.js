@@ -70,7 +70,7 @@ exports.init = function () {
     }
 };
 
-function draw (err, renderObj) {
+function draw (renderObj) {
 
     var self = this;
     // set document title
@@ -155,6 +155,7 @@ function draw (err, renderObj) {
 */
 exports.render = function (stream) {
     stream.data([this, draw]);
+    stream.error([this, draw]);
 };
 
 /**
@@ -248,23 +249,23 @@ function setupDomEventFlow (scope, data) {
         var elms = scope.querySelectorAll(flow.selector);
         if (elms) {
             // create event stream
-            stream = self.flow(flow.flow, {
+            stream = self.flow(flow.flow);
+            stream.context = {
                 renderData: data,
                 dontPrevent: flow.dontPrevent
-            });
+            };
 
             for (var e = 0; e < elms.length; ++e) {
                 elms[e].addEventListener(flow.on, domEventListenerClosure(stream, elms, data));
             }
         }
-        //}
     }
 }
 
 function domEventListenerClosure (stream, elms, data) {
     return function (event) {
         // dont prevent default browser actions
-        if (!stream.dontPrevent) {
+        if (!stream.context.dontPrevent) {
             event.preventDefault();
         }
 

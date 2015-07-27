@@ -6,50 +6,52 @@
  * @param {object} The data object.
 */
 exports.state = function activateState (stream) {
-    stream.data([this, function (err, data) {
-
-        var template = this.templates[data.template || this._config.defaultTemplate];
-
-        // check if state exists
-        if (template && this.states[data.name]) {
-
-            // activate state elements
-            for (var i = 0, state, selector, element; i < this.states[data.name].length; ++i) {
-                state = this.states[data.name][i];
-                element = template.elements[data.element || state.element];
-                selector = state.sel || data.selector;
-
-                // get dynamic or static selector
-                if (!element && !selector) {
-
-                    // retrun if no selector is found
-                    return;
-                }
-
-                // auto hide pages before activate a state
-                if (template.page && !data.noPaging) {
-
-                    // add "hide" class to all pages
-                    manipulateClasses(
-                      (template.to || document).querySelectorAll('.' + template.page),
-                      {add: ['hide']}
-                    );
-                }
-
-                // call other states
-                if (state.states) {
-                    for (var s = 0, l = state.states.length; i < l; ++i) {
-                        activateState.call(this, err, {name: state.states[i]});
-                    }
-                }
-
-                // manipulate classes
-                selector = typeof selector !== 'string' ? selector : (template.to || document).querySelectorAll(selector);
-                manipulateClasses(element || selector, state);
-            }
-        }
-    }]);
+    stream.data([this, changeState]);
+    stream.error([this, changeState]);
 };
+
+function changeState (data) {
+    var template = this.templates[data.template || this._config.defaultTemplate];
+
+    // check if state exists
+    if (template && this.states[data.name]) {
+  
+        // activate state elements
+        for (var i = 0, state, selector, element; i < this.states[data.name].length; ++i) {
+            state = this.states[data.name][i];
+            element = template.elements[data.element || state.element];
+            selector = state.sel || data.selector;
+  
+            // get dynamic or static selector
+            if (!element && !selector) {
+  
+                // retrun if no selector is found
+                return;
+            }
+  
+            // auto hide pages before activate a state
+            if (template.page && !data.noPaging) {
+  
+                // add "hide" class to all pages
+                manipulateClasses(
+                  (template.to || document).querySelectorAll('.' + template.page),
+                  {add: ['hide']}
+                );
+            }
+  
+            // call other states
+            if (state.states) {
+                for (var s = 0, l = state.states.length; i < l; ++i) {
+                    activateState.call(this, err, {name: state.states[i]});
+                }
+            }
+  
+            // manipulate classes
+            selector = typeof selector !== 'string' ? selector : (template.to || document).querySelectorAll(selector);
+            manipulateClasses(element || selector, state);
+        }
+    }
+}
 
 /**
  * Manipulate css classes (add, rm, toggle).
