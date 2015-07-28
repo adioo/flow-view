@@ -5,12 +5,16 @@
  * @param {object} The error object.
  * @param {object} The data object.
 */
-exports.state = function activateState (stream) {
-    stream.data([this, changeState]);
-    stream.error([this, changeState]);
-};
+exports.state = function (data, stream, forceState) {
+  
+    if (typeof data !== 'object') {
+        data = {name: data};
+    }
+    
+    if (forceState) {
+        data.name = forceState;
+    }
 
-function changeState (data) {
     var template = this.templates[data.template || this._config.defaultTemplate];
 
     // check if state exists
@@ -51,7 +55,7 @@ function changeState (data) {
             manipulateClasses(element || selector, state);
         }
     }
-}
+};
 
 /**
  * Manipulate css classes (add, rm, toggle).
