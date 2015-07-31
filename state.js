@@ -5,7 +5,7 @@
  * @param {object} The error object.
  * @param {object} The data object.
 */
-exports.state = function (data, stream, forceState) {
+exports.state = function activateState (data, stream, forceState) {
   
     if (typeof data !== 'object') {
         data = {name: data};
@@ -46,7 +46,7 @@ exports.state = function (data, stream, forceState) {
             // call other states
             if (state.states) {
                 for (var s = 0, l = state.states.length; i < l; ++i) {
-                    activateState.call(this, err, {name: state.states[i]});
+                    activateState.call(this, {name: state.states[i]});
                 }
             }
   
