@@ -31,15 +31,12 @@ A HTML renderer for jillix/engine.
             "toggle": ["className"]
         }]
     },
-    "flow": [
+    "domEvents": [
         {
             "on": "click",
             "selector": "#my_clickable_1",
             "dontPrevent": true,
-            "flow": [
-                [":transform", {}]
-		"target_instance/foo"
-            ]
+            "flow": "event"
         }
     ]
 }
