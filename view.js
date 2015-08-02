@@ -116,7 +116,7 @@ function draw (renderObj) {
         }
 
         // append dom events
-        if (!self._config.flow) {
+        if (!self._config.domEvents) {
             template.to.insertAdjacentHTML(insertPosition, template.html);
         } else {
             var tmpDiv = document.createElement('div');
@@ -231,32 +231,32 @@ function setupDomEventFlow (scope, data) {
 
     var self = this;
 
-    if (!self._config || !self._config.flow) {
+    if (!self._config || !self._config.domEvents) {
         return;
     }
 
-    var flows = self._config.flow;
+    var events = self._config.domEvents;
 
-    for (var i = 0, l = flows.length, flow, stream; i < l; ++i) {
-        flow = flows[i];
+    for (var i = 0, l = events.length, event, stream; i < l; ++i) {
+        event = events[i];
 
         // handle element config
-        if (flow.element) {
-            flow.selector = "[data-element='" + flow.element + "']";
-            delete flow.element;
+        if (event.element) {
+            event.selector = "[data-element='" + event.element + "']";
+            delete event.element;
         }
 
-        var elms = scope.querySelectorAll(flow.selector);
+        var elms = scope.querySelectorAll(event.selector);
         if (elms) {
             // create event stream
-            stream = self.flow(flow.flow);
+            stream = self.flow(event.flow);
             stream.context = {
                 renderData: data,
-                dontPrevent: flow.dontPrevent
+                dontPrevent: event.dontPrevent
             };
 
             for (var e = 0; e < elms.length; ++e) {
-                elms[e].addEventListener(flow.on, domEventListenerClosure(stream, elms, data));
+                elms[e].addEventListener(event.on, domEventListenerClosure(stream, elms, data));
             }
         }
     }
