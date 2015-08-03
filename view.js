@@ -87,7 +87,7 @@ function draw (renderObj) {
 
     var dontEscape = !!renderObj.dontEscape;
     var leaveKeys = !!renderObj.leaveKeys;
-    var clearList = !!renderObj.clear;
+    var clearList = renderObj.clear === false ? false : true;
     var insertPosition = renderObj.position || template.position || 'beforeend';
 
     // prepare render data
