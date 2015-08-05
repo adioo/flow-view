@@ -18,9 +18,6 @@ exports.init = function () {
 
     this.templates = {};
 
-    // create event stream
-    this._renderedDOMStream = self.flow("renderedDOM");
-
     // create and render the template
     if (self._config.templates) {
 
@@ -46,9 +43,10 @@ exports.init = function () {
             }
 
             // create template function
-            if (engine.markup[tmpl.html]) {
-                self.templates[tmplKey].render = createTemplate(engine.markup[tmpl.html]);
+            if (!engine.markup[tmpl.html]) {
+                return self.log('E', 'Template markup "' + tmpl.html + '" not found.');
             }
+            self.templates[tmplKey].render = createTemplate(engine.markup[tmpl.html]);
 
             // auto render template
             if (tmpl.render) {
@@ -143,7 +141,7 @@ function draw (renderObj) {
     }
 
     // write to render done stream
-    self._renderedDOMStream.write(null, renderObj);
+    self.flow("renderedDOM").write(null, renderObj);
 }
 
 /**
