@@ -156,4 +156,76 @@ To use the navbar in a view module instance it must be loaded:
   "module": "view",
   "name": "public_layout"
 }
+
+#### Footer visibility on certain pages
+The footer will be a module view instance
+
+```json
+{
+  "client": {
+    "config": {
+      "templates": {
+        "layout": {
+          "to": "footer",
+          "html": "/any_footer.html",
+          "render": true
+        }
+      },
+      "defaultTemplate": "layout",
+    },
+    "markup": [
+      "/any_footer.html"
+    ]
+  },
+  "name": "footer_layout",
+  "module": "view",
+  "roles": {
+    "*": true
+  }
+}
+```
+The main html file which contains and empty footer:
+```html
+<div id="page-content">
+    <div class="_container hide"></div>
+</div>
+<footer></footer>
+
+```
+In the main composition, for ex. `private_layout.json`, `footer_layout` can be loaded and states can be used to control the footer visibility:
+```
+{
+  "client": {
+    "load": [
+      "footer_private_layout"
+    ]
+    ......
+    "states": {
+        "showFooter": [{
+            "sel": "footer",
+            "rm": ["hide"]
+    }],
+        "hideFooter": [{
+            "sel": "footer",
+            "add": ["hide"]
+        }]
+}
+```
+In a view module instance composition in which the footer must be shown or hidden, the following flow configuration can be used:
+```json
+    "flow": [
+      [
+        "renderedDOM",
+        [":private_layout/state", "showFooter"],
+      ]
+    ]
+```
+or
+```json
+    "flow": [
+      [
+        "renderedDOM",
+        [":private_layout/state", "hideFooter"],
+      ]
+    ]
 ```
