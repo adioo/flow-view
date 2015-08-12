@@ -67,11 +67,11 @@ The `element` flow option searches for elements that have a `data-element` attri
 * `render` (render data to a template)
 * `state` (activate a state)
 
-# Standard ways for standard configurations
+# Implementing standard configurations
 This section covers "how to do" general configurations.
 
 
-#### Configurating navbars
+#### Navbars
 
 The navbar will be an instance of the view module.
 
@@ -160,17 +160,10 @@ To use the navbar in a view module instance it must be loaded:
       "nav_layout",
     ],
     "config": {
-      "templates": {
-        "layout": {
-          "to": "body",
-          "html": "/layout_public.html",
-          "render": true
-        }
-      },
-      "defaultTemplate": "layout",
+    ...
     },
     "markup": [
-      "/layout_public.html"
+    ...
     ]
   },
   "roles": {
