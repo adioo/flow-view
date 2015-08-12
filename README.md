@@ -66,3 +66,10 @@ The `element` flow option searches for elements that have a `data-element` attri
 
 * `render` (render data to a template)
 * `state` (activate a state)
+
+# Standard ways for standard configurations
+This section covers "how to do" general configurations.
+
+
+#### Configurating navbars
+
