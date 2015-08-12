@@ -73,3 +73,110 @@ This section covers "how to do" general configurations.
 
 #### Configurating navbars
 
+The navbar will be an instance of the view module.
+
+Practical example:
+The composition file of the navbar `nav_layout`:
+
+```json
+{
+  "client": {
+    "config": {
+      "templates": {
+        "layout": {
+          "to": ".one-container",
+          "html": "/nav.html",
+          "render": true
+        }
+      },
+      "defaultTemplate": "layout",
+      "states": {
+        "resetNav": [
+          {
+            "sel": ".navbar li",
+            "rm": [
+              "active"
+            ]
+          }
+        ],
+        "nav": [
+          {
+            "states": [
+              "resetNav"
+            ],
+            "add": [
+              "active"
+            ]
+          }
+        ]
+      },
+      "domEvents": [
+        {
+          "on": "click",
+          "selector": "li",
+          "flow": "itemClick"
+        }
+      ]
+    },
+    "flow": [
+      [
+        "itemClick",
+        [":ALTR", {"data": {"url": "{event.target.href}"}}],
+        ":public_router/route"
+      ]
+    ],
+    "markup": [
+      "/nav.html"
+    ]
+  },
+  "name": "nav_layout",
+  "module": "view",
+  "roles": {
+    "*": true
+  }
+}
+```
+The states are for adding the active class to the active `li`.
+The 'domEvents' triggers the 'itemClick' event on item click.
+The 'flow', on `itemClick` event, takes the href of the clicked element and sends it to an instance of the engine-ruut module.
+
+Html navbar example `nav.html`:
+
+```html
+<ul class="navbar">
+    <li><a href="faq">FAQ</a></li>
+    <li><a href="features">Features</a></li>
+    <li><a href="pricing">Pricing</a></li>
+    <li><a href="signin">Login</a></li>
+    <li><a href="signup">Sign up</a></li>
+</ul>
+```
+
+To use the navbar in a view module instance it must be loaded:
+```json
+{
+  "client": {
+    "load": [
+      "nav_layout",
+    ],
+    "config": {
+      "templates": {
+        "layout": {
+          "to": "body",
+          "html": "/layout_public.html",
+          "render": true
+        }
+      },
+      "defaultTemplate": "layout",
+    },
+    "markup": [
+      "/layout_public.html"
+    ]
+  },
+  "roles": {
+    "*": true
+  },
+  "module": "view",
+  "name": "public_layout"
+}
+```
