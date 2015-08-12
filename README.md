@@ -138,8 +138,6 @@ The composition file of the navbar `nav_layout`:
 ```
 The states are for adding the active class to the active `li`.
 The 'domEvents' triggers the 'itemClick' event on item click.
-The 'flow', on `itemClick` event, takes the href of the clicked element and sends it to an instance of the engine-ruut module.
-
 Html navbar example `nav.html`:
 
 ```html
