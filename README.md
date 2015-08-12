@@ -156,6 +156,7 @@ To use the navbar in a view module instance it must be loaded:
   "module": "view",
   "name": "public_layout"
 }
+```
 
 #### Footer visibility on certain pages
 The footer will be a module view instance
