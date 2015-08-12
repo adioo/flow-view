@@ -91,32 +91,20 @@ The composition file of the navbar `nav_layout`:
       },
       "defaultTemplate": "layout",
       "states": {
-        "resetNav": [
-          {
+        "resetNav": [{
             "sel": ".navbar li",
-            "rm": [
-              "active"
-            ]
-          }
-        ],
-        "nav": [
-          {
-            "states": [
-              "resetNav"
-            ],
-            "add": [
-              "active"
-            ]
-          }
-        ]
+            "rm": ["active"]
+          }],
+        "nav": [{
+            "states": ["resetNav"],
+            "add": ["active"]
+          }]
       },
-      "domEvents": [
-        {
+      "domEvents": [{
           "on": "click",
           "selector": "li",
           "flow": "itemClick"
-        }
-      ]
+        }]
     },
     "flow": [
       [
