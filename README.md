@@ -160,10 +160,8 @@ To use the navbar in a view module instance it must be loaded:
       "nav_layout",
     ],
     "config": {
-    ...
     },
     "markup": [
-    ...
     ]
   },
   "roles": {
