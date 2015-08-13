@@ -293,3 +293,64 @@ In special cases (ex. service builder, service file editor) the `renderedDOM` ev
     ]
 ]
 ```
+#### Pages inside a certain container
+If a section which contains multiple pages must be added to `container` class, states can be used to show/hide pages
+```html
+<div class="pages-container container hide"></div>
+```
+A section added to `container` can be similar to the following:
+```html
+<div class="app-options">
+    <div class="app-dashboard hide"></div>
+    <div class="app-editor hide"></div>
+    <div class="app-terminal hide"></div>
+</div>
+```
+A view module instance composition file `app_options_layout.json` can be used for the section configuration.
+The `app_dashboard`, `app_editor`, `app_terminal` events from the flow configuration come from an engine-ruut module instance.
+```json
+"states": {
+    "hide-all": [{
+        "sel": ".app-options > div",
+        "add": ["hide"]
+    }],
+    "app_dashboard": [{
+        "sel": ".app-options > .app-dashboard",
+        "rm": ["hide"]
+    }],
+    "app_editor": [{
+        "sel": ".app-options > .app-editor",
+        "rm": ["hide"]
+    }],
+    "app_terminal": [{
+        "sel": ".app-options > .app-terminal",
+        "rm": ["hide"]
+    }]
+    }
+```
+```json
+"flow": [
+    [
+        "renderedDOM",
+        ["LOAD", ["nav_app_layout"]]
+    ],
+    [
+        "app_dashboard",
+        ["LOAD", ["app_dashboard_layout"]],
+        [":state", "hide-all"],
+        [":state", "app_dashboard"],
+    ],
+    [
+        "app_editor",
+        ["LOAD", ["app_editor_layout"]],
+        [":state", "hide-all"],
+        [":state", "app_editor"]
+    ],
+    [
+        "app_terminal",
+        ["LOAD", ["app_terminal_layout"]],
+        [":state", "hide-all"],
+        [":state", "app_terminal"],
+    ]
+]
+```
