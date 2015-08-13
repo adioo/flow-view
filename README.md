@@ -230,3 +230,66 @@ or
       ]
     ]
 ```
+
+#### Loader for loading pages
+For page loader implementation the states can be used to control the loader visibility
+
+In the main html file the loader must be present and `hide` must be the default class for the pages container:
+```html
+<div id="page-content">
+    <div class="pages-container _container hide">
+    </div>
+    <div class="page-loader">Loader</div>
+</div>
+```
+In the main composition, for ex. 'private_layout.json', states can be defined to control the loader visibility:
+```json
+{
+    "showLoader": [{
+        "sel": ".page-loader",
+        "rm": ["hide"]
+    }],
+    "hideLoader": [{
+        "sel": ".page-loader",
+        "add": ["hide"]
+    }],
+    "showContainer": [{
+        "sel": "._container",
+        "rm": ["hide"]
+    }],
+    "hideContainer": [{
+        "sel": "._container",
+        "add": ["hide"]
+    }],
+    "displayLoader": [{
+        "states": [
+            "showLoader",
+            "hideContainer"
+            ]
+    }],
+    "displayContainer": [{
+        "states": [
+            "showContainer",
+            "hideLoader"
+            ]
+    }]
+}
+```
+In the compositions in which the loader is needed, the flow configuration can be used to manipulate the loader state:
+```json
+"flow": [
+    [
+        "renderedDOM",
+        [":private_layout/state", "displayContainer"]
+    ]
+]
+```
+In special cases (ex. service builder, service file editor) the `renderedDOM` event will not be the right event to be used for manipulating the loader states and thus a custom event will be needed.
+```json
+"flow": [
+    [
+        "renderedGraph",
+        [":private_layout/state", "displayContainer"]
+    ]
+]
+```
