@@ -29,6 +29,9 @@ exports.state = function activateState (data, stream, forceState) {
                 for (var ii = 0, l = state.states.length; ii < l; ++ii) {
                     activateState.call(this, {name: state.states[ii]});
                 }
+                // TODO
+                // currently in states declarations it must be states or selector
+                return;
             }
 
             element = template.elements[data.element || state.element];
