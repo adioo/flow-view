@@ -120,17 +120,6 @@ function draw (renderObj) {
             var tmpDiv = document.createElement('div');
             tmpDiv.innerHTML = template.html;
 
-            // TODO
-            //if (template.element) {
-            //    // get available elements
-            //    var elements = template.to.querySelectorAll(template.element);
-            //    if (elements.length) {
-            //        for (var e = 0, l = elements.length; e < l; ++e) {
-            //            template.elements[elements[e].dataset[template._elmName]] = elements[e];
-            //        }
-            //    }
-            //}
-
             setupDomEventFlow.call(self, tmpDiv, renderObj.data);
 
             var children = tmpDiv.children;
