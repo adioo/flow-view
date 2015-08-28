@@ -235,28 +235,22 @@ function setupDomEventFlow (scope, data) {
 
         var elms = scope.querySelectorAll(event.selector);
         if (elms) {
-            // create event stream
-            stream = self.flow(event.flow);
-            stream.context = {
-                renderData: data,
-                dontPrevent: event.dontPrevent
-            };
-
             for (var e = 0; e < elms.length; ++e) {
-                elms[e].addEventListener(event.on, domEventListenerClosure(stream, elms, data));
+                elms[e].addEventListener(event.on, domEventListenerClosure.call(self, event.flow, event.dontPrevent, elms, data));
             }
         }
     }
 }
 
-function domEventListenerClosure (stream, elms, data) {
+function domEventListenerClosure (eventName, dontPrevent, elms, data) {
+    var self = this;
     return function (event) {
         // dont prevent default browser actions
-        if (!stream.context.dontPrevent) {
+        if (!dontPrevent) {
             event.preventDefault();
         }
 
-        stream.write(null, {
+        self.flow(eventName).write(null, {
             event: event,
             elms: elms,
             item: data
