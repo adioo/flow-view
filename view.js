@@ -243,13 +243,13 @@ function setupDomEventFlow (scope, data) {
             };
 
             for (var e = 0; e < elms.length; ++e) {
-                elms[e].addEventListener(event.on, domEventListenerClosure(stream, elms, data));
+                elms[e].addEventListener(event.on, domEventListenerClosure(stream, elms, elms[e], data));
             }
         }
     }
 }
 
-function domEventListenerClosure (stream, elms, data) {
+function domEventListenerClosure (stream, elms, currentElement, data) {
     return function (event) {
         // dont prevent default browser actions
         if (!stream.context.dontPrevent) {
@@ -259,6 +259,7 @@ function domEventListenerClosure (stream, elms, data) {
         stream.write(null, {
             event: event,
             elms: elms,
+            target: currentElement,
             item: data
         });
     };
