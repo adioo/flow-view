@@ -1,4 +1,5 @@
 var state = require('./state');
+var utils = require("@/utils");
 
 var default_element_name = 'element';
 var template_escape = {"\\": "\\\\", "\n": "\\n", "\r": "\\r", "'": "\\'"};
@@ -129,8 +130,18 @@ function draw (renderObj) {
         }
     }
 
+
     // write to render done stream
-    self.flow("renderedDOM").write(null, renderObj);
+    setTimeout(function() {
+        self.flow("renderedDOM").write(null, renderObj);
+
+    if (self._name === "app_builder_layout") {
+        console.log(">");
+        console.log(E.instances.app_builder);
+    }
+    }, 1000);
+    //(function () {
+    //});
 }
 
 /**
