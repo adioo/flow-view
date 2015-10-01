@@ -172,7 +172,7 @@ function default_escape_fn (data, key, dont_escape_html, leaveKeys) {
     leaveKeys = leaveKeys || this.k;
 
     // get the string value
-    str = key.indexOf('.') > 0 ? utils.path(key, data) : (data[key] || null);
+    str = key.indexOf('.') > 0 ? utils.path(key, [data]) : (data[key] || null);
 
     // if str is null or undefined
     str = str === null ? (leaveKeys ? '{' + key + '}' : '') : str;
