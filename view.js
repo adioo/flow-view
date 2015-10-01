@@ -130,7 +130,6 @@ function draw (renderObj) {
         }
     }
 
-
     // write to render done stream
     setTimeout(function() {
         self.flow("renderedDOM").write(null, renderObj);
@@ -153,7 +152,9 @@ function draw (renderObj) {
 */
 exports.render = function (stream) {
     stream.data([this, draw]);
-    stream.error([this, draw]);
+    stream.error(function (error) {
+        return;
+    });
 };
 
 /**
@@ -171,7 +172,7 @@ function default_escape_fn (data, key, dont_escape_html, leaveKeys) {
     leaveKeys = leaveKeys || this.k;
 
     // get the string value
-    str = key.indexOf('.') > 0 ? engine.path(key, data) : (data[key] || null);
+    str = key.indexOf('.') > 0 ? findValue(data, key) : (data[key] || null);
 
     // if str is null or undefined
     str = str === null ? (leaveKeys ? '{' + key + '}' : '') : str;
@@ -203,6 +204,31 @@ function default_escape_fn (data, key, dont_escape_html, leaveKeys) {
 
     return str;
 }
+/**
+ * findValue
+ * Finds a value in parent (object) using the dot notation passed in dotNot.
+ *
+ * @name findValue
+ * @function
+ * @param {Object} parent The object containing the searched value
+ * @param {String} dotNot Path to the value
+ * @return {Anything} Found value or undefined
+ */
+function findValue (parent, dotNot) {
+
+    if (!dotNot || !dotNot) return undefined;
+
+    var splits = dotNot.split(".");
+    var value;
+
+    for (var i = 0; i < splits.length; ++i) {
+        value = parent[splits[i]];
+        if (value === undefined) return undefined;
+        if (typeof value === "object") parent = value;
+    }
+
+    return value;
+};
 
 /**
  * Create a template function.
