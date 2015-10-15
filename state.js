@@ -5,57 +5,38 @@
  * @param {object} The error object.
  * @param {object} The data object.
 */
-exports.state = function activateState (data, stream, forceState) {
+exports.state = function activateState (stream, options) {
 
-    if (typeof data !== 'object') {
-        data = {name: data};
+    // check options
+    var template = this.t[options.tmpl];
+    if (!template || !options.name || !this.s[options.name]) {
+        return;
     }
 
-    if (forceState) {
-        data.name = forceState;
-    }
+    // activate state elements
+    for (var i = 0, state, selector, element; i < this.s[options.name].length; ++i) {
+        state = this.s[options.name][i];
 
-    var template = this.templates[data.template || this._config.defaultTemplate];
-
-    // check if state exists
-    if (template && this.states[data.name]) {
-
-        // activate state elements
-        for (var i = 0, state, selector, element; i < this.states[data.name].length; ++i) {
-            state = this.states[data.name][i];
-
-            // call other states
-            if (state.states) {
-                for (var ii = 0, l = state.states.length; ii < l; ++ii) {
-                    activateState.call(this, {name: state.states[ii]});
-                }
+        // call other states
+        if (state.states) {
+            for (var ii = 0, l = state.states.length; ii < l; ++ii) {
+                activateState.call(this, {name: state.states[ii]});
             }
-
-            element = template.elements[data.element || state.element];
-            selector = state.sel || data.selector;
-
-            // get dynamic or static selector
-            if (!element && !selector) {
-
-                // retrun if no selector is found
-                return;
-            }
-
-            // auto hide pages before activate a state
-            if (template.page && !data.noPaging) {
-
-                // add "hide" class to all pages
-                manipulateClasses(
-                  (template.to || document).querySelectorAll('.' + template.page),
-                  {add: ['hide']}
-                );
-            }
-
-
-            // manipulate classes
-            selector = typeof selector !== 'string' ? selector : (template.to || document).querySelectorAll(selector);
-            manipulateClasses(element || selector, state);
         }
+
+        element = template.elements[options.element || state.element];
+        selector = state.sel || options.selector;
+
+        // get dynamic or static selector
+        if (!element && !selector) {
+
+            // retrun if no selector is found
+            return;
+        }
+
+        // manipulate classes
+        selector = typeof selector !== 'string' ? selector : (template.to || document).querySelectorAll(selector);
+        manipulateClasses(element || selector, state);
     }
 };
 
@@ -67,7 +48,7 @@ exports.state = function activateState (data, stream, forceState) {
 function manipulateClasses (elms, state) {
 
     if (!(elms instanceof NodeList)) {
-      elms = [elms];
+        elms = [elms];
     }
 
     // manipulate classes
