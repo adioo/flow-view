@@ -15,6 +15,7 @@
         "url": "https://github.com/adioo/view/issues"
     },
     "homepage": "https://github.com/adioo/view",
+    "main": "view.js",
     "composition": {
         "client": {
             "module": [
