@@ -45,9 +45,9 @@ exports.init = function () {
             };
 
             // auto render template
-            //if (tmpl.render) {
-            //    render.call(self, null, { template: tmplName, data: {} });
-            //}
+            if (tmpl.render) {
+                render.call(self, function () {}, {tmpl: tmplName});
+            }
         }
     }
 
@@ -72,6 +72,7 @@ exports.init = function () {
  * @param {object} The data object.
 */
 exports.render = render;
+
 /**
  * Instance options:
  * {
@@ -108,7 +109,7 @@ function renderDefOptions (options, data) {
     return options;
 }
 
-function render (stream, options, data) {
+function render (next, options, data) {
 
     var instance = this;
     options = renderDefOptions(options);
@@ -124,7 +125,7 @@ function render (stream, options, data) {
     // the template must exist
     var template = self.t[options.tmpl];
     if (!template) {
-        return;
+        return next(new Error('View.render: Template "' + options.tmpl + '" not found.'));
     }
 
     // set document title
@@ -170,6 +171,8 @@ function render (stream, options, data) {
             }
         }
     }
+
+    next(null, data);
 }
 
 /**
