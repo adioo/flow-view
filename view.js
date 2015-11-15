@@ -16,9 +16,9 @@ exports.state = state.state;
  *
  * @public
 */
-exports.init = function () {
+exports.init = function (config, ready) {
     var self = this;
-    var config = self._config || {};
+    config = config || {};
 
     // instances template cache
     this.t = {};
@@ -62,6 +62,8 @@ exports.init = function () {
             self.s[stateName] = config.states[stateName];
         }
     }
+
+    ready();
 };
 
 /**
@@ -140,7 +142,7 @@ function render (next, options, data) {
     //var position = options.position || template.position || 'beforeend';
 
     // create html
-    template.html = template.render(data, options);
+    template.html = template.render(data, options, default_escape_fn);
 
     // get dom parent
     if (typeof template.to === 'string') {
@@ -271,9 +273,9 @@ function default_escape_fn (data, key, options) {
  * @param {string} The HTML string.
 */
 function createTemplate (tmpl) {
-    return new Function("_", "o", "return '" +
+    return new Function("_", "o", "e", "return '" +
         (tmpl || '').replace(/[\\\n\r']/g, function(_char) {
             return template_escape[_char];
-        }).replace(/{\s*([\w\.]+)\s*}/g, "' + default_escape_fn(_,'$1',o) + '") + "'"
+        }).replace(/{\s*([\w\.]+)\s*}/g, "' + e(_,'$1',o) + '") + "'"
     );
 }
