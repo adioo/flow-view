@@ -111,7 +111,23 @@ function renderDefOptions (options, data) {
     return options;
 }
 
-function render (next, options, data) {
+function render (next, options, data, justRender) {
+
+    var self = this;
+
+    //TEMPORARAY
+    if (!justRender && data instanceof Uint8Array) {
+        data = JSON.parse(data.toString());
+        if (data instanceof Array) {
+            data.forEach(function (item) {
+                render.call(self, next, options, item, true);
+            });
+            next();
+        }
+        return;
+    }
+    
+
 
     var instance = this;
     options = renderDefOptions(options);
@@ -121,8 +137,6 @@ function render (next, options, data) {
     // 2 options config
     // 3 instance config
     // TODO: merge default configs
-
-    var self = this;
 
     // the template must exist
     var template = self.t[options.tmpl];
@@ -174,7 +188,7 @@ function render (next, options, data) {
         }
     }
 
-    next(null, data);
+    !justRender && next(null, data);
 }
 
 /**
