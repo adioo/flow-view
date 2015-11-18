@@ -98,7 +98,14 @@ function draw (renderObj) {
     }
 
     // create html
-    template.html = template.render(renderObj.data, dontEscape, leaveKeys);
+    if (renderObj.data && renderObj.data instanceof Array) {
+        template.html = '';
+        for (var i = 0; i < renderObj.data.length; ++i) {
+            template.html += template.render(renderObj.data[i], dontEscape, leaveKeys);
+        }
+    } else {
+        template.html = template.render(renderObj.data, dontEscape, leaveKeys);
+    }
 
     // get dom parent
     if (typeof template.to === 'string') {
@@ -131,14 +138,18 @@ function draw (renderObj) {
     }
 
     // write to render done stream
-    setTimeout(function() {
-        self.flow("renderedDOM").write(null, renderObj);
+    if (renderObj.preventStreamWrite) {
+        return;
+    }
+
+    self.flow("renderedDOM").write(null, renderObj);
+
 
     if (self._name === "app_builder_layout") {
         console.log(">");
         console.log(E.instances.app_builder);
     }
-    }, 1000);
+
     //(function () {
     //});
 }
@@ -175,7 +186,7 @@ function default_escape_fn (data, key, dont_escape_html, leaveKeys) {
     str = key.indexOf('.') > 0 ? utils.path(key, [data]) : (data[key] || null);
 
     // if str is null or undefined
-    str = str === null ? (leaveKeys ? '{' + key + '}' : '') : str;
+    str = (str === null || str === undefined) ? (leaveKeys ? '{' + key + '}' : '') : str;
 
     // render a nested view
     if (typeof str === 'object' && this.nested && this._.view[this.nested[key]]) {
