@@ -17,10 +17,6 @@
 var render = require('./lib/render');
 var state = require('./lib/state');
 var events = require('./lib/events');
-
-var default_element_name = 'element';
-var template_escape = {"\\": "\\\\", "\n": "\\n", "\r": "\\r", "'": "\\'"};
-var render_escape = {'&': '&amp;', '"': '&quot;', '<': '&lt;', '>': '&gt;'};
 var defaulOptions = {
     render: {
         tmpl: "layout",
@@ -32,7 +28,7 @@ var defaulOptions = {
     }
 };
 
-exports.state = state.state;
+exports.state = state;
 
 function renderDefOptions (options, data) {
 
@@ -52,13 +48,13 @@ function renderDefOptions (options, data) {
  * @param {object} The event object.
  * @param {object} The data object.
 */
-exports.render = function render (_options, data, next) {
+exports.render = function (_options, data, next) {
 
     // TODO look also in data for render configs?
     var options = renderDefOptions(_options);
 
     // the template must exist
-    var template = self.t[options.tmpl];
+    var template = (this._config.templates || {})[options.tmpl];
     if (!template) {
         return next(new Error('View.render: Template "' + options.tmpl + '" not found.'));
     }
