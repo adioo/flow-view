@@ -8,19 +8,14 @@
     },
     "keywords": [
         "jxengine",
-        "render"
+        "render",
+        "dom",
+        "events"
     ],
     "author": "adioo",
     "bugs": {
         "url": "https://github.com/adioo/view/issues"
     },
     "homepage": "https://github.com/adioo/view",
-    "composition": {
-        "client": {
-            "module": [
-                "view.js",
-                "state.js"
-            ]
-        }
-    }
+    "main": "index.js"
 }
