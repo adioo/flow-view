@@ -24,7 +24,8 @@ var defaulOptions = {
         position: "beforeend",
         clearList: "",
         leaveKeys: false,
-        dontEscape: false
+        dontEscape: false,
+        dontPrevent: false
     }
 };
 
@@ -58,6 +59,9 @@ exports.render = function (_options, data, next) {
     if (!template) {
         return next(new Error('View.render: Template "' + options.tmpl + '" not found.'));
     }
+
+    // set streams cache
+    template.streams = template.streams || {};
 
     // set document title
     if (template.title) {
@@ -97,15 +101,14 @@ exports.render = function (_options, data, next) {
             var tmpElm = document.createElement(template.to.tagName);
             tmpElm.innerHTML = template.html;
 
-            //setupDomEventFlow.call(self, tmpElm, renderObj.data);
+            // setup flow streams
+            events(this, template, options, tmpElm, data);
 
-            var children = tmpElm.children;
-            for (var i = 0, l = children.length; i < l; ++i) {
-                template.to.appendChild(document.adoptNode(children[0]));
-            }
+            Array.from(tmpElm.children).forEach(function (elm) {
+                template.to.appendChild(elm);
+            });
         }
     }
 
     next(null, data);
 }
-
