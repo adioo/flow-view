@@ -1,19 +1,3 @@
-/**
- * Instance options:
- * {
- *    templates: {
- *        name: {
- *            title: "",
- *            position: ""
- *            clearList: "",
- *            leaveKeys: true,
- *            dontEscape: false
- *       }
- *    },
- *    states: {}
- * }
- */
-
 var render = require('./lib/render');
 var state = require('./lib/state');
 var events = require('./lib/events');
