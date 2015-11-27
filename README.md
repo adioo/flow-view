@@ -1,48 +1,43 @@
 # view
 A HTML renderer for jillix/engine.
 
-
-### WARNGIN! Docs are incorrect!
-
-
-#### Client config example
+#### Config example
 
 ```json
 {
-    "title": "Page title",
     "template": {
-        "template_1": {
-            "to": "#selector",
-            "html": "/file_1.html",
-            "render": true,
-            "element": "customDataAttribute"
-        },
-        "template_2": {
-            "to": "#selector",
-            "html": "/file_2.html",
-            "render": false,
-            "element": "customDataAttribute"
+        "name": {
+            "to": "#css",
+            "html": "/path/file.html",
+            "title": "Document title",
+            "position:" "beforebegin|afterbegin|beforeend|afterend"
+            "clear": false,
+            "leaveKeys": true,
+            "dontEscape": false,
+            "events": {
+                "listener": [
+                    {
+                        "on": "event",
+                        "sel": "#css",
+                        "elm": "elmName",
+                        "dontPrevent": true
+                    }
+                ]
+            }
         }
     },
-    "detaultTemplate": "template_2",
     "states": {
-        "stateA": [{
-            "sel": "#new",
-            "element": "myElement",
-            "states": ["stateB"],
-            "rm": ["className"],
-            "add": ["className"],
-            "toggle": ["className"]
-        }]
-    },
-    "domEvents": [
-        {
-            "on": "click",
-            "selector": "#my_clickable_1",
-            "dontPrevent": true,
-            "flow": "event"
-        }
-    ]
+        "stateA": [
+            {
+                "sel": "#css",
+                "element": "elmName",
+                "states": ["stateB"],
+                "rm": ["className"],
+                "add": ["className"],
+                "toggle": ["className"]
+            }
+        ]
+    }
 }
 ```
 
@@ -50,13 +45,11 @@ Don't forget to load the HTML files in the module instance config:
 
 ```json
 {
-    "name": "my_view_module_instance",
-    "module": "view",
-    "client": {
-        "markup": ["/file.html"]
-    }
+    "markup": ["/file.html"]
 }
 ```
+
+# WARNING! The docs below are outdated.
 
 #### HTML data attribute
 
@@ -73,7 +66,6 @@ The `element` flow option searches for elements that have a `data-element` attri
 
 # Implementing standard configurations
 This section covers "how to do" general configurations.
-
 
 #### Navbars
 
