@@ -6,7 +6,7 @@ var defaulOptions = {
         tmpl: "layout",
         title: "",
         position: "beforeend",
-        clearList: false,
+        clearList: true,
         leaveKeys: false,
         dontEscape: false,
         dontPrevent: false
