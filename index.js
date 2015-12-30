@@ -52,6 +52,7 @@ exports.render = function (_options, data, next) {
         document.title = template.title;
     }
 
+    // init template
     if (typeof template.render !== 'function') {
 
         if (!this._markups[template.html]) {
@@ -59,6 +60,21 @@ exports.render = function (_options, data, next) {
         }
 
         template.render = render.create(this._markups[template.html]);
+
+        // reset target with selector if target is removed from the document
+        template.sel = template.to;
+        template.obs = new MutationObserver(function (event) {
+            event = event[0];
+            Object.keys(event.removedNodes).forEach(function (node) {
+                node = event.removedNodes[node];
+
+                // check if template target is under the removed nodes
+                if (typeof template.to !== 'string' && node.isSameNode(template.to)) {
+                    template.obs.disconnect();
+                    template.to = template.sel;
+                }
+            });
+        });    
     }
 
     // create html
@@ -66,7 +82,8 @@ exports.render = function (_options, data, next) {
 
     // get dom parent
     if (typeof template.to === 'string') {
-        template.to = document.querySelector(template.to);
+        template.to = document.querySelector(template.sel);
+        template.obs.observe(template.to.parentNode, {childList: true});
     }
 
     // render html
