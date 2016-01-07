@@ -20,7 +20,7 @@ function renderDefOptions (options, data) {
     var renderOptions = {};
 
     for (var option in defaulOptions.render) {
-        renderOptions[option] = options[option] || defaulOptions.render[option];
+        renderOptions[option] = typeof options[option] !== 'undefined' ? options[option] : defaulOptions.render[option];
     }
 
     return renderOptions;
