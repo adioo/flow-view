@@ -19,29 +19,30 @@ exports.state = state;
 
 // render templates
 exports.render = function (_options, data, next) {
+    var instance = this;
 
     // TODO look also in the data for render configs?
     var options = renderDefOptions(_options);
-    var config = (this._config.templates || {})[options.tmpl];
+    var config = (instance._config.templates || {})[options.tmpl];
     if (!config) {
         return next(new Error('View.render: Template config "' + options.tmpl + '" not found.'));
     }
 
     // get template
-    template(config, options, function (err, tmpl) {
+    template(instance, config, options, function (err, tmpl) {
 
         if (err) {
             return next(err);
         }
 
         // merge data to html, setup dom events and append to the DOM
-        doRender(tmpl, options, data);
+        doRender(instance, tmpl, options, data);
 
         next(null, data);
     });
 };
 
-function doRender (tmpl, options, data) {
+function doRender (instance, tmpl, options, data) {
 
     // set document title
     if (tmpl.title) {
@@ -69,7 +70,7 @@ function doRender (tmpl, options, data) {
             tmpElm.innerHTML = html;
 
             // setup flow event streams
-            events(this, tmpl, options, tmpElm, data);
+            events(instance, tmpl, options, tmpElm, data);
 
             Array.from(tmpElm.children).forEach(function (elm) {
                 tmpl.to.appendChild(elm);
