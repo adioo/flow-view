@@ -8,6 +8,7 @@ A HTML renderer for jillix/engine.
     "template": {
         "name": {
             "to": "#css",
+            "css": ["/path/file.css"],
             "html": "/path/file.html",
             "title": "Document title",
             "position:" "beforebegin|afterbegin|beforeend|afterend"
@@ -40,15 +41,6 @@ A HTML renderer for jillix/engine.
     }
 }
 ```
-
-Don't forget to load the HTML files in the module instance config:
-
-```json
-{
-    "markup": ["/file.html"]
-}
-```
-
 # WARNING! The docs below are outdated.
 
 #### HTML data attribute
