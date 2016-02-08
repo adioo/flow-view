@@ -1,21 +1,27 @@
 {
-    "name": "view",
-    "version": "0.1.0",
-    "description": "Render HTML templates",
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/adioo/view.git"
-    },
-    "keywords": [
-        "jxengine",
-        "render",
-        "dom",
-        "events"
-    ],
-    "author": "adioo",
-    "bugs": {
-        "url": "https://github.com/adioo/view/issues"
-    },
-    "homepage": "https://github.com/adioo/view",
-    "main": "index.js"
+  "name": "view",
+  "version": "0.1.0",
+  "description": "Render HTML templates",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/adioo/view.git"
+  },
+  "keywords": [
+    "flow",
+    "render",
+    "dom",
+    "events",
+    "html",
+    "view"
+  ],
+  "author": "adioo",
+  "bugs": {
+    "url": "https://github.com/adioo/view/issues"
+  },
+  "homepage": "https://github.com/adioo/view",
+  "main": "index.js",
+  "browser": "client.js",
+  "dependencies": {
+    "dompurify": "^0.7.3"
+  }
 }
