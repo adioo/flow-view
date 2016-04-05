@@ -3,6 +3,7 @@ var template = require('./lib/template');
 var render = require('./lib/render');
 var state = require('./lib/state');
 var events = require('./lib/events');
+var url = require('./lib/url');
 var defaulOptions = {
     render: {
         tmpl: "layout",
@@ -17,6 +18,9 @@ var defaulOptions = {
 
 // activate states
 exports.state = state;
+
+// export url state
+exports.url = url;
 
 // render templates
 exports.render = function (_options, data, next) {
