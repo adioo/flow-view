@@ -2,6 +2,7 @@ var DOMPurify = require('dompurify');
 var template = require('./lib/template');
 var render = require('./lib/render');
 var state = require('./lib/state');
+var dom = require('./lib/dom');
 var events = require('./lib/events');
 var url = require('./lib/url');
 var defaulOptions = {
@@ -21,6 +22,9 @@ exports.state = state;
 
 // export url state
 exports.url = url;
+
+// export dom ref
+exports.dom = dom;
 
 // render templates
 exports.render = function (_options, data, next) {
