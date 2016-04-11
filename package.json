@@ -20,7 +20,6 @@
   },
   "homepage": "https://github.com/adioo/view",
   "main": "index.js",
-  "browser": "client.js",
   "dependencies": {
     "dompurify": "^0.7.3"
   }
