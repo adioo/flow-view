@@ -1,6 +1,8 @@
+var DOMPurify = require('dompurify');
 var template = require('./lib/template');
 var render = require('./lib/render');
 var state = require('./lib/state');
+var dom = require('./lib/dom');
 var events = require('./lib/events');
 var defaulOptions = {
     render: {
@@ -16,6 +18,9 @@ var defaulOptions = {
 
 // activate states
 exports.state = state;
+
+// export dom ref
+exports.dom = dom;
 
 // render templates
 exports.render = function (_options, data, next) {
@@ -51,7 +56,7 @@ function doRender (instance, tmpl, options, data) {
 
     // create html
     // TODO cache rendered html if data is the same?
-    var html = tmpl.render(data, options, render.escFn);
+    var html = DOMPurify.sanitize(tmpl.render(data, options, render.escFn));
 
     // render html
     if (typeof tmpl.to === 'object') {
@@ -84,7 +89,7 @@ function renderDefOptions (options, data) {
     var renderOptions = {};
 
     for (var option in defaulOptions.render) {
-        renderOptions[option] = typeof options[option] !== 'undefined' ? options[option] : defaulOptions.render[option];
+        renderOptions[option] = typeof options._[option] !== 'undefined' ? options._[option] : defaulOptions.render[option];
     }
 
     return renderOptions;
