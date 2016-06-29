@@ -54,9 +54,20 @@ function doRender (instance, tmpl, options, data) {
         document.title = tmpl.title;
     }
 
+	var html;
+
     // create html
     // TODO cache rendered html if data is the same?
-    var html = DOMPurify.sanitize(tmpl.render(data, options, render.escFn));
+	if (tmpl.render) {
+		html = DOMPurify.sanitize(tmpl.render(data, options, render.escFn));
+	}
+
+	if (!html) {
+		if (tmpl.events) {
+			events(instance, tmpl, options, document, data);
+		}
+		return;
+	}
 
     // render html
     if (typeof tmpl.to === 'object') {
@@ -72,7 +83,7 @@ function doRender (instance, tmpl, options, data) {
 
         } else {
             var tmpElm = document.createElement(tmpl.to.tagName);
-            tmpElm.innerHTML = html;
+			tmpElm.innerHTML = html;
 
             // setup flow event streams
             events(instance, tmpl, options, tmpElm, data);
