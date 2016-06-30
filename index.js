@@ -16,6 +16,11 @@ var defaulOptions = {
     }
 };
 
+// close window
+exports.close = function () {
+	window.close();
+};
+
 // activate states
 exports.state = state;
 
