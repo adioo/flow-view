@@ -9,6 +9,7 @@ A HTML renderer for jillix/engine.
         "name": {
             "to": "#css",
             "css": ["/path/file.css"],
+            "httpClient": "http_client",
             "html": "/path/file.html",
             "title": "Document title",
             "position:" "beforebegin|afterbegin|beforeend|afterend"
