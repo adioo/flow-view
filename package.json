@@ -1,10 +1,10 @@
 {
-  "name": "view",
+  "name": "flow-view",
   "version": "0.1.0",
   "description": "Render HTML templates",
   "repository": {
     "type": "git",
-    "url": "git://github.com/adioo/view.git"
+    "url": "git://github.com/adioo/flow-view.git"
   },
   "keywords": [
     "flow",
@@ -16,9 +16,9 @@
   ],
   "author": "adioo",
   "bugs": {
-    "url": "https://github.com/adioo/view/issues"
+    "url": "https://github.com/adioo/flow-view/issues"
   },
-  "homepage": "https://github.com/adioo/view",
+  "homepage": "https://github.com/adioo/flow-view",
   "main": "index.js",
   "dependencies": {
     "dompurify": "^0.7.3"
