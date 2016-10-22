@@ -33,7 +33,7 @@ exports.render = function (_options, data, next) {
 
     // TODO look also in the data for render configs?
     var options = renderDefOptions(_options);
-    var config = (instance._config.templates || {})[options.tmpl];
+    var config = (instance._args.templates || {})[options.tmpl];
     if (!config) {
         return next(new Error('View.render: Template config "' + options.tmpl + '" not found.'));
     }
@@ -105,7 +105,7 @@ function renderDefOptions (options, data) {
     var renderOptions = {};
 
     for (var option in defaulOptions.render) {
-        renderOptions[option] = typeof options._[option] !== 'undefined' ? options._[option] : defaulOptions.render[option];
+        renderOptions[option] = typeof options[option] !== 'undefined' ? options[option] : defaulOptions.render[option];
     }
 
     return renderOptions;
