@@ -28,8 +28,7 @@ exports.state = state;
 exports.dom = dom;
 
 // render templates
-exports.render = function (_options, data, next) {
-    var instance = this;
+exports.render = function (scope, instance, _options, data, next) {
 
     // TODO look also in the data for render configs?
     var options = renderDefOptions(_options);
