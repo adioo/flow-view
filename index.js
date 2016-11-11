@@ -16,6 +16,18 @@ var defaulOptions = {
     }
 };
 
+exports.addStates = (scope, inst, args, data, next) => {
+    inst.states = inst.states || {};
+    Object.keys(args).forEach(state => inst.states[state] = args[state]);
+    next(null, data);
+};
+
+exports.addTemplates = (scope, inst, args, data, next) => {
+    inst.templates = inst.templates || {};
+    Object.keys(args).forEach(template => inst.templates[template] = args[template]);
+    next(null, data);
+};
+
 // close window
 exports.close = function () {
 	window.close();
@@ -28,12 +40,11 @@ exports.state = state;
 exports.dom = dom;
 
 // render templates
-exports.render = function (_options, data, next) {
-    var instance = this;
+exports.render = function (scope, instance, _options, data, next) {
 
     // TODO look also in the data for render configs?
     var options = renderDefOptions(_options);
-    var config = (instance._config.templates || {})[options.tmpl];
+    var config = (instance.templates || {})[options.tmpl];
     if (!config) {
         return next(new Error('View.render: Template config "' + options.tmpl + '" not found.'));
     }
@@ -105,7 +116,7 @@ function renderDefOptions (options, data) {
     var renderOptions = {};
 
     for (var option in defaulOptions.render) {
-        renderOptions[option] = typeof options._[option] !== 'undefined' ? options._[option] : defaulOptions.render[option];
+        renderOptions[option] = typeof options[option] !== 'undefined' ? options[option] : defaulOptions.render[option];
     }
 
     return renderOptions;
