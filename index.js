@@ -57,13 +57,13 @@ exports.render = function (scope, instance, _options, data, next) {
         }
 
         // merge data to html, setup dom events and append to the DOM
-        doRender(instance, tmpl, options, data);
+        doRender(scope, instance, tmpl, options, data);
 
         next(null, data);
     });
 };
 
-function doRender (instance, tmpl, options, data) {
+function doRender (scope, instance, tmpl, options, data) {
 
     // set document title
     if (tmpl.title) {
@@ -80,7 +80,7 @@ function doRender (instance, tmpl, options, data) {
 
 	if (!html) {
 		if (tmpl.events) {
-			events(instance, tmpl, options, document, data);
+			events(scope, instance, tmpl, options, document, data);
 		}
 		return;
 	}
@@ -102,7 +102,7 @@ function doRender (instance, tmpl, options, data) {
 			tmpElm.innerHTML = html;
 
             // setup flow event streams
-            events(instance, tmpl, options, tmpElm, data);
+            events(scope, instance, tmpl, options, tmpElm, data);
 
             Array.from(tmpElm.children).forEach(function (elm) {
                 tmpl.to.appendChild(elm);
