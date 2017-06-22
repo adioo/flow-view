@@ -44,7 +44,6 @@
  */
 
 // Dependencies
-const Events = require("events");
 const render = require("./lib/render");
 const state = require("./lib/state");
 
@@ -60,12 +59,10 @@ const View = {
         return key[0][key[1]] !== undefined ? key[0][key[1]] : key[0];
     }
 };
-
-// onevent will be called on dom events
-
 View.render = render(View);
 View.state = state(View);
-module.exports = Object.freeze(View);
+
+module.exports = View;
 
  /*
  self.addStates = states => {
