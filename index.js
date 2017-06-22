@@ -1,9 +1,4 @@
-'use strict';
-
-// Dependencies
-const Events = require('events');
-const render = require('./lib/render');
-const state = require('./lib/state');
+"use strict";
 
 /*
  * Returns a flow-view instance
@@ -47,43 +42,37 @@ const state = require('./lib/state');
  *    }
  * }
  */
-module.exports = config => {
-    let self = new Events();
 
-    // create the config object
-    config = config || {};
-    self.config = {};
-    self.config.states = config.states || {};
-    self.config.templates = config.templates || {};
+// Dependencies
+const render = require("./lib/render");
+const state = require("./lib/state");
 
-    // caches
-    self.templates = {};
-    self.htmls = {};
-
-    // flow-view methods
-    self.state = state;
-    self.render = render;
-    self.addStates = states => {
-        Object.keys(states).forEach(stateName => {
-            self.config.states[stateName] = states[stateName];
-        });
-    };
-    self.addTemplates = templates => {
-        Object.keys(templates).forEach(templateName => {
-            self.config.templates[templateName] = templates[templateName]
-        });
-    };
-    self.close = () => {
-        window.close();
-    };
-    self.dom = key => {
-        let path = key.split(':');
-
-        // get find an element in the document
-        path[0] = document.querySelector(path[0]);
-
-        return path[0][path[1]] !== undefined ? path[0][path[1]] : path[0];
+// TODO use a service worker
+const View = {
+    templates: {},
+    snippets: {},
+    listeners: [],
+    close: window.close,
+    dom: (key) => {
+        key = key.split(":");
+        key[0] = document.querySelector(key[0]);
+        return key[0][key[1]] !== undefined ? key[0][key[1]] : key[0];
     }
-
-    return self;
 };
+View.render = render(View);
+View.state = state(View);
+
+module.exports = View;
+
+ /*
+ self.addStates = states => {
+     Object.keys(states).forEach(stateName => {
+         self.config.states[stateName] = states[stateName];
+     });
+ };
+ self.addTemplates = templates => {
+     Object.keys(templates).forEach(templateName => {
+         self.config.templates[templateName] = templates[templateName]
+     });
+ };
+ */
