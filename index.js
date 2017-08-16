@@ -55,6 +55,7 @@ module.exports = config => {
     self.config = {};
     self.config.states = config.states || {};
     self.config.templates = config.templates || {};
+    self.config.static = config.static || '';
 
     // caches
     self.templates = {};
